@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mailmembersplver = 'YaBB 2.4 $Revision: 1.16 $';
+$mailmembersplver = 'YaBB 2.5 AE $Revision: 1.17 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if ($iamguest) { &admin_fatal_error("no_access"); }
@@ -49,7 +49,7 @@ sub Mailing {
 	<div class="windowbg2" style="float: left; width: 44%; height: 260px; margin: 1%; border: 1px #cccccc solid;">
 	<table border="0" width="98%" cellspacing="0" cellpadding="3" align="center" class="windowbg2">
 	<tr>
-		<td align="left" width="100%"><b>$amv_txt{'40'}:</b><br /><span class="small">$amv_txt{'46'}</span></td>
+		<td align="left" width="100%"><label for="field1"><b>$amv_txt{'40'}:</b><br /><span class="small">$amv_txt{'46'}</span></label></td>
 	</tr>
 	<tr>
 		<td align="left" width="100%">
@@ -75,10 +75,10 @@ sub Mailing {
 	}
 	if ($groupcnt > 12) { $groupcnt = 12; }
 	$yymain .= qq~
-	<select name="field1" size="$groupcnt" multiple="multiple" style="width: 100%; font-size: 11px;">
+	<select name="field1" id="field1" size="$groupcnt" multiple="multiple" style="width: 100%; font-size: 11px;">
 	$grpselect
 	</select>
-	<b>$amv_txt{"42a"}: </b><input type="checkbox" name="check_all" value="1" class="windowbg2" style="border: 0; vertical-align: middle;" onclick="javascript: if (this.checked) selectCheckAll(true); else selectCheckAll(false);" />
+	<label for="check_all"><b>$amv_txt{"42a"}: </b></label><input type="checkbox" name="check_all" id="check_all" value="1" class="windowbg2" style="border: 0; vertical-align: middle;" onclick="javascript: if (this.checked) selectCheckAll(true); else selectCheckAll(false);" />
 	</td>
 	</tr>
 	</table>
@@ -92,16 +92,16 @@ sub Mailing {
 
 	<table border="0" width="98%" cellspacing="0" cellpadding="3" align="center" class="windowbg2">
         <tr>
-           <td align="left" width="100%"><b>$amv_txt{'1'}:</b></td>
+           <td align="left" width="100%"><label for="emailsubject"><b>$amv_txt{'1'}:</b></label></td>
         </tr>
         <tr>
-           <td align="left" width="100%"><input type="text" value="" size="40" name="emailsubject" style="width: 100%" /></td>
+           <td align="left" width="100%"><input type="text" value="" size="40" name="emailsubject" id="emailsubject" style="width: 100%" /></td>
         </tr>
         <tr>
-           <td align="left" width="100%"><b>$amv_txt{'2'}:</b></td>
+           <td align="left" width="100%"><label for="emailtext"><b>$amv_txt{'2'}:</b></label></td>
         </tr>
         <tr>
-           <td align="left" width="100%"><textarea cols="38" rows="9" name="emailtext" style="width:100%"></textarea></td>
+           <td align="left" width="100%"><textarea cols="38" rows="9" name="emailtext" id="emailtext" style="width:100%"></textarea></td>
         </tr>
         <tr>
 		<td align="left" width="100%"><span class="small">$amv_txt{'39'}</span></td>
@@ -243,30 +243,29 @@ function showMail(thesubject, thetext, thetime) {
 }
 
 sub Mailing2 {
-	if ($iamguest) { &admin_fatal_error('no_access'); }
-	if (!$FORM{'mailsend'} && !$FORM{'convert'}) { &admin_fatal_error('no_access'); }
+	if ($iamguest) { &fatal_error('no_access'); }
+	if (!$FORM{'mailsend'} && !$FORM{'convert'}) { &fatal_error('no_access'); }
 	@convlist = ();
 	if ($FORM{'mailsend'} && $FORM{'emailtext'} ne '') {
-		$emailsubject = $FORM{'emailsubject'};
-		$emailsubject =~ s~\|~&#124;~g;
-		$emailtext = $FORM{'emailtext'};
-		$emailtext =~ s~\|~&#124;~g;
-		$emailtext =~ s/\r(?=\n*)//g;
+		$FORM{'emailsubject'} =~ s~\|~&#124;~g;
+		$FORM{'emailtext'} =~ s~\|~&#124;~g;
+		$FORM{'emailtext'} =~ s~\r~~g;
 		$mailline = qq~$date|$FORM{'emailsubject'}|$FORM{'emailtext'}|$username~;
 		&MailList($mailline);
 	}
 	(@mailgroups) = split(/\, /, $FORM{'field1'});
 	&ManageMemberinfo("load");
 	$i = 0;
-	foreach $user (keys %memberinf) {
-		($memrealname, $mememail, $memposition, $memposts, $memaddgrp) = split(/\|/, $memberinf{$user});
+	my ($emailsubject,$emailtext);
+	foreach my $user (keys %memberinf) {
+		(undef, $memrealname, $mememail, $memposition, $memposts, $memaddgrp, undef) = split(/\|/, $memberinf{$user}, 7);
 		&FromHTML($memrealname);
 
 		if ($FORM{'mailsend'} && $FORM{'emailtext'} ne '') {
 			$emailsubject = $FORM{'emailsubject'};
-			$emailtext = $FORM{'emailtext'};
 			$emailsubject =~ s~\[name\]~$memrealname~ig;
 			$emailsubject =~ s~\[username\]~$user~ig;
+			$emailtext = $FORM{'emailtext'};
 			$emailtext =~ s~\[name\]~$memrealname~ig;
 			$emailtext =~ s~\[username\]~$user~ig;
 		}
@@ -337,8 +336,8 @@ sub MailingMembers {
 		</span>
 		<form action="$adminurl?action=mailinggrps" method="post" name="selsort" style="display: inline">
 		<span style="float: right;">
-		<b>$ml_txt{'1'}</b>
-		<select name="sortform" style="font-size: 9pt;" onchange="submit()">
+		<label for="sortform"><b>$ml_txt{'1'}</b></label>
+		<select name="sortform" id="sortform" style="font-size: 9pt;" onchange="submit()">
 			<option value="username"$selUser>$ml_txt{'35'}</option>
 			<option value="position"$selPos>$ml_txt{'87'}</option>
 		</select>
@@ -492,16 +491,16 @@ sub MailingMembers {
 
 	<table border="0" width="100%" cellspacing="0" cellpadding="2" class="windowbg2">
         <tr>
-           <td align="left" width="100%"><b>$amv_txt{'1'}:</b></td>
+           <td align="left" width="100%"><label for="emailsubject"><b>$amv_txt{'1'}:</b></label></td>
         </tr>
         <tr>
-           <td align="left" width="100%"><input type="text" value="" size="40" name="emailsubject" style="width: 100%" /></td>
+           <td align="left" width="100%"><input type="text" value="" size="40" name="emailsubject" id="emailsubject" style="width: 100%" /></td>
         </tr>
         <tr>
-           <td align="left" width="100%"><b>$amv_txt{'2'}:</b></td>
+           <td align="left" width="100%"><label for="emailtext"><b>$amv_txt{'2'}:</b></label></td>
         </tr>
         <tr>
-           <td align="left" width="100%"><textarea cols="38" rows="9" name="emailtext" style="width:100%"></textarea></td>
+           <td align="left" width="100%"><textarea cols="38" rows="9" name="emailtext" id="emailtext" style="width:100%"></textarea></td>
         </tr>
         <tr>
 		<td align="left" width="100%"><span class="small">$amv_txt{'39'}</span></td>
@@ -513,14 +512,14 @@ sub MailingMembers {
 	<div class="windowbg2" style="float: left; width: 44%; margin: 1%; margin-top: 0; border: 0;">
 	<table border="0" width="100%" cellspacing="0" cellpadding="3" class="windowbg2">
 	<tr>
-	<td class="windowbg2" align="left" valign="top" nowrap="nowrap"><b>$amv_txt{'42'}:</b></td>
-	<td class="windowbg2" align="left" valign="top"><input type="checkbox" name="check_all" value="1" class="windowbg2" style="border: 0;" onclick="javascript: if (this.checked) selectCheckAllmemb(true); else selectCheckAllmemb(false);" /></td>
+	<td class="windowbg2" align="left" valign="top" nowrap="nowrap"><label for="check_all"><b>$amv_txt{'42'}:</b></label></td>
+	<td class="windowbg2" align="left" valign="top"><input type="checkbox" name="check_all" id="check_all" value="1" class="windowbg2" style="border: 0;" onclick="javascript: if (this.checked) selectCheckAllmemb(true); else selectCheckAllmemb(false);" /></td>
 	</tr>
 	<tr>
-	<td class="windowbg2" align="left" valign="top" nowrap="nowrap"><b>$amv_txt{'40'}:</b></td>
+	<td class="windowbg2" align="left" valign="top" nowrap="nowrap"><label for="field1"><b>$amv_txt{'40'}:</b></label></td>
 	<td class="windowbg2" align="left" valign="top">
-		<span class="small">$amv_txt{'46'}</span><br />
-		<select name="field1" size="$groupcnt" multiple="multiple" onchange="selectCheck()">~;
+		<label for="field1"><span class="small">$amv_txt{'46'}</span></label><br />
+		<select name="field1" id="field1" size="$groupcnt" multiple="multiple" onchange="selectCheck()">~;
 
 		$i = 0;
 		while ($i < $groupcnt) {

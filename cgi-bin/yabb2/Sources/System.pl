@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$systemplver = 'YaBB 2.4 $Revision: 1.38.2.1 $';
+$systemplver = 'YaBB 2.5 AE $Revision: 1.39 $';
 
 sub BoardTotals {
 	my ($testboard, $line, @lines, $updateboard, @boardvars, $tag, $cnt);
@@ -26,67 +26,64 @@ sub BoardTotals {
 		if ($job eq "load") {
 			fopen(FORUMTOTALS, "$boardsdir/forum.totals") || &fatal_error('cannot_open', "$boardsdir/forum.totals", 1);
 			@lines = <FORUMTOTALS>;
-			chomp(@lines);
 			fclose(FORUMTOTALS);
-			foreach $line (@lines) {
-				@boardvars = split(/\|/, $line);
-				foreach $updateboard (@updateboards) {
+			chomp(@lines);
+			foreach $updateboard (@updateboards) {
+				foreach $line (@lines) {
+					@boardvars = split(/\|/, $line);
 					if ($boardvars[0] eq $updateboard && exists($board{ $boardvars[0] })) {
 						for ($cnt = 1; $cnt < @tags; $cnt++) {
 							${$uid.$updateboard}{ $tags[$cnt] } = $boardvars[$cnt];
 						}
+						last;
 					}
 				}
 			}
 
 		} elsif ($job eq "update") {
 			fopen(FORUMTOTALS, "+<$boardsdir/forum.totals") || &fatal_error('cannot_open', "$boardsdir/forum.totals", 1);
-			seek FORUMTOTALS, 0, 0;
 			@lines = <FORUMTOTALS>;
-			truncate FORUMTOTALS, 0;
-			seek FORUMTOTALS, 0, 0;
-			print FORUMTOTALS "$updateboards[0]|";
 			for ($line = 0; $line < @lines; $line++) {
 				@boardvars = split(/\|/, $lines[$line]);
-				if ($boardvars[0] eq $updateboards[0] && exists($board{ $boardvars[0] })) {
-					$lines[$line] = '';
-					chomp $boardvars[9];
-					for ($cnt = 1; $cnt < @tags; $cnt++) {
-						if (exists(${$uid.$boardvars[0]}{ $tags[$cnt] })) {
-							print FORUMTOTALS ${$uid.$boardvars[0]}{ $tags[$cnt] };
-						} else {
-							print FORUMTOTALS $boardvars[$cnt];
+				if (exists $board{ $boardvars[0] }) {
+					if ($boardvars[0] eq $updateboards[0]) {
+						$lines[$line] = "$updateboards[0]|";
+						chomp $boardvars[9];
+						for ($cnt = 1; $cnt < @tags; $cnt++) {
+							if (exists(${$uid.$boardvars[0]}{ $tags[$cnt] })) {
+								$lines[$line] .= ${$uid.$boardvars[0]}{ $tags[$cnt] };
+							} else {
+								$lines[$line] .= $boardvars[$cnt];
+							}
+							$lines[$line] .= $cnt < $#tags ? "|" : "\n";
 						}
-						if ($cnt < $#tags) { print FORUMTOTALS "|"; }
 					}
+				} else {
+					$lines[$line] = '';
 				}
 			}
-			print FORUMTOTALS "\n";
+			truncate FORUMTOTALS, 0;
+			seek FORUMTOTALS, 0, 0;
 			print FORUMTOTALS @lines;
 			fclose(FORUMTOTALS);
 
 		} elsif ($job eq "delete") {
 			fopen(FORUMTOTALS, "+<$boardsdir/forum.totals") || &fatal_error('cannot_open', "$boardsdir/forum.totasl", 1);
-			seek FORUMTOTALS, 0, 0;
 			@lines = <FORUMTOTALS>;
-			truncate FORUMTOTALS, 0;
-			seek FORUMTOTALS, 0, 0;
-			foreach $line (@lines) {
-				@boardvars = split(/\|/, $line, 2);
-				if ($boardvars[0] ne $updateboards[0] && exists($board{ $boardvars[0] })) {
-					print FORUMTOTALS $line;
+			for ($line = 0; $line < @lines; $line++) {
+				@boardvars = split(/\|/, $lines[$line], 2);
+				if ($boardvars[0] eq $updateboards[0] || !exists $board{$boardvars[0]}) {
+					$lines[$line] = '';
 				}
 			}
+			truncate FORUMTOTALS, 0;
+			seek FORUMTOTALS, 0, 0;
+			print FORUMTOTALS @lines;
 			fclose(FORUMTOTALS);
 
 		} elsif ($job eq "add") {
-			fopen(FORUMTOTALS, "+<$boardsdir/forum.totals") || &fatal_error('cannot_open', "$boardsdir/forum.totals", 1);
-			seek FORUMTOTALS, 0, 0;
-			@lines = <FORUMTOTALS>;
-			truncate FORUMTOTALS, 0;
-			seek FORUMTOTALS, 0, 0;
+			fopen(FORUMTOTALS, ">>$boardsdir/forum.totals") || &fatal_error('cannot_open', "$boardsdir/forum.totals", 1);
 			foreach (@updateboards) { print FORUMTOTALS "$_|0|0|N/A|N/A||||\n"; }
-			print FORUMTOTALS @lines;
 			fclose(FORUMTOTALS);
 		}
 	}
@@ -102,40 +99,45 @@ sub BoardCountTotals {
 	fclose(BOARD);
 	$threadcount  = @threads;
 	$messagecount = $threadcount;
-	if ($threadcount) {
-		for ($i = 0; $i < @threads; $i++) {
-			@threadline = split(/\|/, $threads[$i]);
-			$messagecount += $threadline[5];
+	for ($i = 0; $i < @threads; $i++) {
+		@threadline = split(/\|/, $threads[$i]);
+		if ($threadline[8] =~ /m/) {
+			$threadcount--;
+			$messagecount--;
+			next;
 		}
+		$messagecount += $threadline[5];
 	}
 	${$uid.$cntboard}{'threadcount'}  = $threadcount;
 	${$uid.$cntboard}{'messagecount'} = $messagecount;
-	&BoardSetLastInfo($cntboard);
+	&BoardSetLastInfo($cntboard,\@threads);
 }
 
 sub BoardSetLastInfo {
-	my $setboard = $_[0];
-	unless ($setboard) { return undef; }
+	my ($setboard,$board_ref) = @_;
 	my ($lastthread, $lastthreadid, $lastthreadstate, @lastthreadmessages, @lastmessage);
 
-	fopen(BOARD, "$boardsdir/$setboard.txt") || &fatal_error('cannot_open', "$boardsdir/$setboard.txt", 1);
-	$lastthread = <BOARD>;
-	fclose(BOARD);
-	chomp $lastthread;
-	if ($lastthread) {
-		($lastthreadid, undef, undef, undef, undef, undef, undef, undef, $lastthreadstate) = split(/\|/, $lastthread);
-		fopen(FILE, "$datadir/$lastthreadid.txt") || &fatal_error("cannot_open","$datadir/$lastthreadid.txt", 1);
-		@lastthreadmessages = <FILE>;
-		fclose(FILE);
-		@lastmessage = split(/\|/, $lastthreadmessages[$#lastthreadmessages], 7);
+	foreach $lastthread (@$board_ref) {
+		if ($lastthread) {
+			($lastthreadid, undef, undef, undef, undef, undef, undef, undef, $lastthreadstate) = split(/\|/, $lastthread);
+			if ($lastthreadstate !~ /m/) {
+				chomp $lastthreadstate;
+				fopen(FILE, "$datadir/$lastthreadid.txt") || &fatal_error("cannot_open","$datadir/$lastthreadid.txt", 1);
+				@lastthreadmessages = <FILE>;
+				fclose(FILE);
+				@lastmessage = split(/\|/, $lastthreadmessages[$#lastthreadmessages], 7);
+				last;
+			}
+			$lastthreadid = '';
+		}
 	}
-	${$uid.$setboard}{'lastposttime'}   = $lastthread ? $lastmessage[3]      : 'N/A';
-	${$uid.$setboard}{'lastposter'}     = $lastthread ? ($lastmessage[4] eq "Guest" ? "Guest-$lastmessage[1]" : $lastmessage[4]) : 'N/A';
-	${$uid.$setboard}{'lastpostid'}     = $lastthread ? $lastthreadid        : '';
-	${$uid.$setboard}{'lastreply'}      = $lastthread ? $#lastthreadmessages : '';
-	${$uid.$setboard}{'lastsubject'}    = $lastthread ? $lastmessage[0]      : '';
-	${$uid.$setboard}{'lasttopicstate'} = ($lastthread && $lastthreadstate) ? $lastthreadstate : "0";
-	${$uid.$setboard}{'lasticon'}       = $lastthread ? $lastmessage[5]      : '';
+	${$uid.$setboard}{'lastposttime'}   = $lastthreadid ? $lastmessage[3]      : 'N/A';
+	${$uid.$setboard}{'lastposter'}     = $lastthreadid ? ($lastmessage[4] eq "Guest" ? "Guest-$lastmessage[1]" : $lastmessage[4]) : 'N/A';
+	${$uid.$setboard}{'lastpostid'}     = $lastthreadid ? $lastthreadid        : '';
+	${$uid.$setboard}{'lastreply'}      = $lastthreadid ? $#lastthreadmessages : '';
+	${$uid.$setboard}{'lastsubject'}    = $lastthreadid ? $lastmessage[0]      : '';
+	${$uid.$setboard}{'lasticon'}       = $lastthreadid ? $lastmessage[5]      : '';
+	${$uid.$setboard}{'lasttopicstate'} = ($lastthreadid && $lastthreadstate) ? $lastthreadstate : "0";
 	&BoardTotals("update", $setboard);
 }
 
@@ -259,7 +261,7 @@ sub UserAccount {
 	} else { $userext = "vars"; }
 
 	# using sequential tag writing as hashes do not sort the way we like them to
-	my @tags = qw(realname password position addgroups email hidemail regdate regtime regreason location bday gender userpic usertext signature template language stealth webtitle weburl icq aim yim skype myspace facebook msn gtalk timeselect timeformat timeoffset dsttimeoffset dynamic_clock postcount lastonline lastpost lastim im_ignorelist im_popup im_imspop pmmessprev pmviewMess pmactprev notify_me board_notifications thread_notifications favorites buddylist cathide pageindex reversetopic postlayout sesquest sesanswer session lastips onlinealert offlinestatus awaysubj awayreply awayreplysent spamcount spamtime);
+	my @tags = qw(realname password position addgroups email hidemail regdate regtime regreason location bday gender userpic usertext signature template language stealth webtitle weburl icq aim yim skype myspace facebook msn gtalk timeselect timeformat timeoffset dsttimeoffset dynamic_clock postcount lastonline lastpost lastim im_ignorelist im_popup im_imspop pmmessprev pmviewMess pmactprev notify_me board_notifications thread_notifications favorites buddylist cathide pageindex reversetopic postlayout sesquest sesanswer session lastips onlinealert offlinestatus awaysubj awayreply awayreplysent spamcount spamtime numberformat);
 	if ($extendedprofiles) {
 		require "$sourcedir/ExtendedProfiles.pl";
 		push(@tags, &ext_get_fields_array());
@@ -326,6 +328,7 @@ sub MemberIndex {
 		&ManageMemberinfo("load");
 		while (($curmemb, $value) = each(%memberinf)) {
 			($curname, $curmail, $curposition, $curpostcnt) = split(/\|/, $value);
+			if    (lc $user eq lc $curmemb) { undef %memberinf; return $curmemb; }
 			if    (lc $user eq lc $curmail) { undef %memberinf; return $curmemb; }
 			elsif (lc $user eq lc $curname) { undef %memberinf; return $curmemb; }
 		}

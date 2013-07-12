@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$manageboardsplver = 'YaBB 2.4 $Revision: 1.20 $';
+$manageboardsplver = 'YaBB 2.5 AE $Revision: 1.21 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub ManageBoards {
@@ -143,8 +143,8 @@ sub ManageBoards {
 
 	$yymain .= qq~
   	<tr>
-      <td class="catbg" width="100%" align="center" valign="middle" $colspan> $admin_txt{'52'}
-    	<input type="radio" name="baction" value="edit" checked="checked" /> $admin_txt{'53'} 
+      <td class="catbg" width="100%" align="center" valign="middle" $colspan> <label for="baction">$admin_txt{'52'}</label>
+    	<input type="radio" name="baction" id="baction" value="edit" checked="checked" /> $admin_txt{'53'} 
     	<input type="radio" name="baction" value="delme" /> $admin_txt{'54'} 
     	<input type="submit" value="$admin_txt{'32'}" class="button" /></td>
   	 </tr>
@@ -156,8 +156,8 @@ sub ManageBoards {
  <div class="bordercolor" style="padding: 0px; width: 99%; margin-left: 0px; margin-right: auto;">
    <table width="100%" cellspacing="1" cellpadding="4">
   <tr>
-    <td class="catbg" align="center" valign="middle"><b>$add: </b>
-	<input type="text" name="amount" value="3" size="2" maxlength="2" /> 
+    <td class="catbg" align="center" valign="middle"><label for="amount"><b>$add: </b></label>
+	<input type="text" name="amount" id="amount" value="3" size="2" maxlength="2" /> 
 	<input type="submit" value="$admintxt{'45'}" class="button" />
 	</td>
   </tr>
@@ -407,7 +407,6 @@ function pasteNames(num,total) {
 			&ToChars($curcatname);
 			$catsel{$i} .= qq~<option value="$catid"$selected>$curcatname</option>~;
 		}
-		$catsel .= qq~</select>~;
 		if ($istart == 0) { $istart = $i; }
 
 		($boardname, $boardperms, $boardview) = split(/\|/, $board{"$id"});
@@ -422,7 +421,7 @@ function pasteNames(num,total) {
 		$boardminage     = ${$uid.$editboards[$i]}{'minageperms'};
 		$boardmaxage     = ${$uid.$editboards[$i]}{'maxageperms'};
 		$boardgender     = ${$uid.$editboards[$i]}{'genderperms'};
-		$genselect       = qq~<select name="gender$i">~;
+		$genselect       = qq~<select name="gender$i" id="gender$i">~;
 		$gentag[0]       = "";
 		$gentag[1]       = "M";
 		$gentag[2]       = "F";
@@ -475,29 +474,30 @@ function pasteNames(num,total) {
 	<td class="titlebg" width="100%" colspan="5" align="left"> <b>$boardtext</b></td>
   </tr><tr>
 	<td class="catbg"  colspan="4"><b>$admin_txt{'59'}:</b> $admin_txt{'60'}</td>
-  </tr><tr>
-	<td class="windowbg" width="25%" align="left"><b>$admin_txt{'61'}:</b></td>~;
-		if ($id ne "") {
+  </tr><tr>~;
+		if ($id ne '') {
 			$yymain .= qq~
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="hidden" name="id$i" value="$id" />$id</td>~;
+	<td class="windowbg" width="25%" align="left"><label for="id$i"><b>$admin_txt{'61'}</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="hidden" name="id$i" id="id$i" value="$id" />$id</td>~;
 		} else {
 			$yymain .= qq~
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" name="id$i" /></td>~;
+	<td class="windowbg" width="25%" align="left"><label for="id$i"><b>$admin_txt{'61'}</b><br />$admin_txt{'61b'}</label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" name="id$i" id="id$i" /></td>~;
 		}
 		$yymain .= qq~
   </tr><tr>
-    <td class="windowbg"  width="25%" align="left"><b>$admin_txt{'68'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" name="name$i" value="$boardname" size="50" maxlength="100" /></td>
+    <td class="windowbg"  width="25%" align="left"><label for="name$i"><b>$admin_txt{'68'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" name="name$i" id="name$i" value="$boardname" size="50" maxlength="100" /></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'62'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><textarea name="description$i" rows="5" cols="30" style="width:98%; height:60px">$description</textarea></td>
+    <td class="windowbg" width="25%" align="left"><label for="description$i"><b>$admin_txt{'62'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><textarea name="description$i" id="description$i" rows="5" cols="30" style="width:98%; height:60px">$description</textarea></td>
   </tr><tr>
     <td class="windowbg" width="25%" align="left">
-	<b>$admin_txt{'63'}:</b><br />
-	<!-- <span class="small"><a href="javascript:void(0);" onclick="window.open('$scripturl?action=imlist;sort=username;toid=moderators$i','','status=no,height=345,width=464,menubar=no,toolbar=no,top=50,left=50,scrollbars=no')">$selector_txt{linklabel}</a><br/> -->
+	<b>$admin_txt{'63'}:</b><br /><span class="small">
+	<!-- <a href="javascript:void(0);" onclick="window.open('$scripturl?action=imlist;sort=username;toid=moderators$i','','status=no,height=345,width=464,menubar=no,toolbar=no,top=50,left=50,scrollbars=no')">$selector_txt{linklabel}</a><br/> -->
 	<a href="javascript:void(0);" onclick="window.open('$scripturl?action=qsearch;toid=moderators$i','','status=no,height=325px,width=300,menubar=no,toolbar=no,top=50,left=50,scrollbars=no')">$selector_txt{linklabel}</a><br />
-	<a href="javascript:copyNames($i)">$admin_txt{'63a'}</a></span><br/>
-	<a href="javascript:pasteNames($i,1)">$admin_txt{'63b'}</a></span><br/>
+	<a href="javascript:copyNames($i)">$admin_txt{'63a'}</a><br/>
+	<a href="javascript:pasteNames($i,1)">$admin_txt{'63b'}</a><br/>
 	<a href="javascript:pasteNames(1,$FORM{'amount'})">$admin_txt{'63c'}</a></span>
     </td>
     <td class="windowbg2" width="75%" colspan="3" align="left">
@@ -518,7 +518,7 @@ function pasteNames(num,total) {
 	        <br /><span class="small">$selector_txt{instructions}</span>
     <!--<input type="text" name="moderators$i" value="$moderators" size="50" maxlength="100" />-->
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'13'}:</b></td>
+    <td class="windowbg" width="25%" align="left"><label for="moderatorgroups$i"><b>$admin_txt{'13'}:</b></label></td>
 	<td class="windowbg2"  width="75%" colspan="3">
 ~;
 
@@ -539,7 +539,7 @@ function pasteNames(num,total) {
 		}
 		if ($k > 5) { $k = 5; }
 		if ($k > 0) {
-			$yymain .= qq~<select multiple="multiple" name="moderatorgroups$i" size="$k">$box</select> <span class="small">$admin_txt{'14'}</span>~;
+			$yymain .= qq~<select multiple="multiple" name="moderatorgroups$i" id="moderatorgroups$i" size="$k">$box</select> <label for="moderatorgroups$i"><span class="small">$admin_txt{'14'}</span></label>~;
 		} else {
 			$yymain .= qq~$admin_txt{'15'}~;
 		}
@@ -547,51 +547,51 @@ function pasteNames(num,total) {
 		$yymain .= qq~
 	</td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'44'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><select name="cat$i">$catsel{$i}</td>
+    <td class="windowbg" width="25%" align="left"><label for="cat$i"><b>$admin_txt{'44'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><select name="cat$i" id="cat$i">$catsel{$i}</select></td>
   </tr><tr>
     <td class="catbg"  colspan="4"><b>$admin_txt{'64'}</b> $admin_txt{'64a'} </td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'64b'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" id="pic$i" name="pic$i" value="$boardpic" size="50" maxlength="255"$brdpic /></td>
+    <td class="windowbg" width="25%" align="left"><label for="pic$i"><b>$admin_txt{'64b'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" name="pic$i" id="pic$i" value="$boardpic" size="50" maxlength="255"$brdpic /></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'64c'}</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" name="zero$i" value="1"$zeroch /> $admin_txt{'64d'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="zero$i"><b>$admin_txt{'64c'}</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" name="zero$i" id="zero$i" value="1"$zeroch /> <label for="zero$i">$admin_txt{'64d'}</label></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'64e'}</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" name="show$i" value="1"$showpriv /> $admin_txt{'64f'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="show$i"><b>$admin_txt{'64e'}</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" name="show$i" id="show$i" value="1"$showpriv /> <label for="show$i">$admin_txt{'64f'}</label></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'64k'}</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" name="att$i" value="1"$attch /> $admin_txt{'64l'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="att$i"><b>$admin_txt{'64k'}</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" name="att$i" id="att$i" value="1"$attch /> <label for="att$i">$admin_txt{'64l'}</label></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'64g'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" id="ann$i" name="ann$i" value="1" $annch onclick="javascript: if (this.checked) checkann(true, '$i'); else checkann(false, '$i');" /> $admin_txt{'64h'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="ann$i"><b>$admin_txt{'64g'}</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" id="ann$i" name="ann$i" value="1" $annch onclick="javascript: if (this.checked) checkann(true, '$i'); else checkann(false, '$i');" /> <label for="ann$i">$admin_txt{'64h'}</label></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'64i'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" id="rbin$i" name="rbin$i" value="1" $rbinch onclick="javascript: if (this.checked) checkbin(true, '$i'); else checkbin(false, '$i');" /> $admin_txt{'64j'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="rbin$i"><b>$admin_txt{'64i'}</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="checkbox" id="rbin$i" name="rbin$i" value="1" $rbinch onclick="javascript: if (this.checked) checkbin(true, '$i'); else checkbin(false, '$i');" /> <label for="rbin$i">$admin_txt{'64j'}</label></td>
   </tr><tr>
     <td class="catbg"  colspan="4"><b>$admin_txt{'100'}:</b> $admin_txt{'100a'}</td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'95'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" size="3" name="minage$i" value="$boardminage" /> $admin_txt{'96'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="minage$i"><b>$admin_txt{'95'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" size="3" name="minage$i" id="minage$i" value="$boardminage" /> <label for="minage$i">$admin_txt{'96'}</label></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'95a'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" size="3" name="maxage$i" value="$boardmaxage" /> $admin_txt{'96a'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="maxage$i"><b>$admin_txt{'95a'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left"><input type="text" size="3" name="maxage$i" id="maxage$i" value="$boardmaxage" /> <label for="maxage$i">$admin_txt{'96a'}</label></td>
   </tr><tr>
-    <td class="windowbg" width="25%" align="left"><b>$admin_txt{'97'}:</b></td>
-    <td class="windowbg2" width="75%" colspan="3" align="left">$genselect $admin_txt{'98'}</td>
+    <td class="windowbg" width="25%" align="left"><label for="gender$i"><b>$admin_txt{'97'}:</b></label></td>
+    <td class="windowbg2" width="75%" colspan="3" align="left">$genselect <label for="gender$i">$admin_txt{'98'}</label></td>
   </tr><tr>
     <td class="catbg"  colspan="4"><b>$admin_txt{'65'}:</b> $admin_txt{'65a'} <span class="small">$admin_txt{'14'}</span></td>
   </tr><tr>
-    <td class="titlebg" width="25%" align="center"><b>$admin_txt{'65b'}:</b></td>
-    <td class="titlebg" width="25%" align="center"><b>$admin_txt{'65c'}:</b></td>
-    <td class="titlebg" width="25%" align="center"><b>$admin_txt{'65d'}:</b></td>
-    <td class="titlebg" width="25%" align="center"><b>$admin_txt{'65e'}:</b></td>
+    <td class="titlebg" width="25%" align="center"><label for="topicperms$i"><b>$admin_txt{'65b'}:</b></label></td>
+    <td class="titlebg" width="25%" align="center"><label for="replyperms$i"><b>$admin_txt{'65c'}:</b></label></td>
+    <td class="titlebg" width="25%" align="center"><label for="viewperms$i"><b>$admin_txt{'65d'}:</b></label></td>
+    <td class="titlebg" width="25%" align="center"><label for="pollperms$i"><b>$admin_txt{'65e'}:</b></label></td>
   </tr><tr>
-    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="topicperms$i" size="8">$startperms</select></td>
-    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="replyperms$i" size="8">$replyperms</select></td>
-    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="viewperms$i" size="8">$viewperms</select></td>
-    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="pollperms$i" size="8">$pollperms</select></td>
+    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="topicperms$i" id="topicperms$i" size="8">$startperms</select></td>
+    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="replyperms$i" id="replyperms$i" size="8">$replyperms</select></td>
+    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="viewperms$i" id="viewperms$i" size="8">$viewperms</select></td>
+    <td class="windowbg2" width="25%" align="center"><select multiple="multiple" name="pollperms$i" id="pollperms$i" size="8">$pollperms</select></td>
   </tr>
 </table>
 </div>
@@ -892,7 +892,7 @@ sub ReorderBoards {
 	&ToChars($curcatname);
 
 	# Prepare the list of current boards to be put in the select box
-	$boardslist = qq~<select name="selectboards" size="$bdcnt" style="width: 190px;">~;
+	$boardslist = qq~<select name="selectboards" id="selectboards" size="$bdcnt" style="width: 190px;">~;
 	foreach $board (@bdlist) {
 		chomp $board;
 		($boardname, undef) = split(/\|/, $board{$board}, 2);
@@ -907,7 +907,7 @@ sub ReorderBoards {
 
 	$yymain .= qq~
 <br /><br />
-<form action="$adminurl?action=reorderboards2;item=$INFO{'item'}" method="POST">
+<form action="$adminurl?action=reorderboards2;item=$INFO{'item'}" method="post">
 <table border="0" width="525" cellspacing="1" cellpadding="4" class="bordercolor" align="center">
   <tr>
     <td class="titlebg"><img src="$imagesdir/board.gif" alt="" style="vertical-align: middle;" /> <b>$admin_txt{'832'} ($curcatname)</b></td>
@@ -917,7 +917,7 @@ sub ReorderBoards {
 ~;
 	if ($bdnum) {
 		$yymain .= qq~
-    <div style="float: left; width: 280px; text-align: left; margin-bottom: 4px;" class="small">$admin_txt{'739'}</div>
+    <div style="float: left; width: 280px; text-align: left; margin-bottom: 4px;" class="small"><label for="selectboards">$admin_txt{'739'}</label></div>
     <div style="float: left; width: 230px; text-align: center; margin-bottom: 4px;">$boardslist</div>
     <div style="float: left; width: 280px; text-align: left; margin-bottom: 4px;" class="small">$admin_txt{'739d'}</div>
     <div style="float: left; width: 230px; text-align: center; margin-bottom: 4px;">
@@ -927,9 +927,9 @@ sub ReorderBoards {
 ~;
 		if ($#categoryorder > 0) {
 			$yymain .= qq~
-    <div class="small" style="float: left; width: 280px; text-align: left; margin-bottom: 4px;">$admin_txt{'739c'}</div>
+    <div class="small" style="float: left; width: 280px; text-align: left; margin-bottom: 4px;"><label for="selectcategory">$admin_txt{'739c'}</label></div>
     <div style="float: left; width: 230px; text-align: center; margin-bottom: 4px;">
-	<select name="selectcategory" style="width: 190px;" onchange="submit();">
+	<select name="selectcategory" id="selectcategory" style="width: 190px;" onchange="submit();">
 	$categorylistsel
 	$categorylist
 	</select>

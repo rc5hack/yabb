@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$setstatusplver = 'YaBB 2.4 $Revision: 1.10 $';
+$setstatusplver = 'YaBB 2.5 AE $Revision: 1.11 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub SetStatus {
@@ -30,14 +30,11 @@ sub SetStatus {
 		$currentboard = ${$threadid}{'board'};
 	}
 
-	fopen(BOARDFILE, "$boardsdir/$currentboard.txt") || &fatal_error("cannot_open","$boardsdir/$currentboard.txt", 1);
-	@boardfile = <BOARDFILE>;
-	fclose(BOARDFILE);
-
-	fopen(BOARDFILE, ">$boardsdir/$currentboard.txt") || &fatal_error("cannot_open","$boardsdir/$currentboard.txt", 1);
-	foreach my $line (@boardfile) {
-		if ($line =~ m~\A$threadid\|~) {
-			my ($mnum, $msub, $mname, $memail, $mdate, $mreplies, $musername, $micon, $mstate) = split(/\|/, $line);
+	fopen(BOARDFILE, "+<$boardsdir/$currentboard.txt") || &fatal_error("cannot_open","$boardsdir/$currentboard.txt", 1);
+	my @boardfile = <BOARDFILE>;
+	for (my $line = 0; $line < @boardfile; $line++) {
+		if ($boardfile[$line] =~ m~\A$threadid\|~) {
+			my ($mnum, $msub, $mname, $memail, $mdate, $mreplies, $musername, $micon, $mstate) = split(/\|/, $boardfile[$line]);
 			chomp $mstate;
 
 			$mstate .= 0 if $mstate !~ /0/;
@@ -57,19 +54,20 @@ sub SetStatus {
 			}
 			$thisstatus = $mstate;
 
-			print BOARDFILE "$mnum|$msub|$mname|$memail|$mdate|$mreplies|$musername|$micon|$mstate\n";
+			$boardfile[$line] = "$mnum|$msub|$mname|$memail|$mdate|$mreplies|$musername|$micon|$mstate\n";
 
-		} elsif ($line =~ /\|/) {
-			print BOARDFILE $line;
 		}
 	}
+	truncate BOARDFILE, 0;
+	seek BOARDFILE, 0, 0;
+	print BOARDFILE @boardfile;
 	fclose(BOARDFILE);
 
 	&MessageTotals("load",$threadid);
 	${$threadid}{'threadstatus'} = $thisstatus;
 	&MessageTotals("update",$threadid);
 
-	&BoardSetLastInfo($currentboard);
+	&BoardSetLastInfo($currentboard,\@boardfile);
 	if (!$INFO{'moveit'}) {
 		&redirectexit;
 	}

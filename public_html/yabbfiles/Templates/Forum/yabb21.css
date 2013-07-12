@@ -1,5 +1,5 @@
 /*--------------------------------------------------------*/
-/*                      YaBB 2009                         */
+/*                      YaBB 2010                         */
 /*--------------------------------------------------------*/
 /*      Created by: XIMinc http://www.ximinc.com          */
 /*            YaBB http://www.yabbforum.com               */
@@ -9,7 +9,7 @@
 /*--------------------------------------------------------*/
 /*    This is the css file for YaBB 2.1 style Templates   */
 /*--------------------------------------------------------*/
-/* $Revision: 1.7 $ */
+/* $Revision: 1.8 $ */
 
 
 /* General layout */
@@ -90,6 +90,18 @@ select optgroup {
 	text-align: center;
 	color: #333366;
 }
+
+
+/* News fader fore- and background colors */
+.newsfader {
+	color: #0000ff;
+	background-color: #FEFEFE;
+	font-size: 10px;
+	font-weight: normal;
+	font-style: normal;
+	font-family: Verdana, Sans-Serif;
+	text-decoration: none;
+}
 #fscroller {
 	line-height: 1.3;
 }
@@ -108,14 +120,20 @@ select optgroup {
 
 
 /* YaBB navigation links */
-.nav, a.nav, a.nav:visited {
+.nav {
 	font-weight: bold;
-	font-size: 13px;
+	font-size: 10px;
 	color : #5488C1;
 	text-decoration: none;
 }
-a.nav:hover {
-	color: #cc3333;
+.nav a {
+	font-weight: bold;
+	font-size: 10px;
+	color : #5488C1;
+	text-decoration: none;
+}
+.nav a:hover {
+	color: #5488C1;
 	text-decoration: underline;
 }
 

@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$viewmembersplver = 'YaBB 2.4 $Revision: 1.17.2.1 $';
+$viewmembersplver = 'YaBB 2.5 AE $Revision: 1.18 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('MemberList');
@@ -250,6 +250,10 @@ sub showRows {
 		else { $date1 = $userlastpost; &calcdifference; $userlastpost = $result; $tmpb = $userlastpost; }
 		if ($userlastim eq "") { $userlastim = "-"; }
 		else { $date1 = $userlastim; &calcdifference; $userlastim = $result; $tmpc = $userlastim; }
+		$userlastonline = &NumberFormat($userlastonline);
+		$userlastpost = &NumberFormat($userlastpost);
+		$userlastim = &NumberFormat($userlastim);
+		$userpostcount = &NumberFormat(${$uid.$user}{'postcount'});
 
 		if ($user ne "admin") {
 			$CheckingAll .= qq~"$days_reg|${$uid.$user}{'postcount'}|$tmpa|$tmpb|$tmpc|$user", ~;
@@ -312,7 +316,7 @@ sub showRows {
 
 		$yymain .= qq~
 		<td class="windowbg" width="19%">$memberinfo</td>
-		<td class="windowbg2" width="5%" align="center">${$uid.$user}{'postcount'}</td>
+		<td class="windowbg2" width="5%" align="center">$userpostcount</td>
 		<td class="windowbg" width="14%">$Bar</td>
 		<td class="windowbg" width="19%" >$dr_regdate &nbsp;</td>
 		<td class="windowbg2" width="7%" align="center">$userlastonline</td>
@@ -494,8 +498,8 @@ sub buildIndex {
 			<td width="100%" valign="middle" class="titlebg">
 			<form action="$adminurl?action=ml" method="post" name="selsort" style="display: inline">
 			<span style="float: right;">
-			<b>$ml_txt{'1'}</b>
-			<select name="sortform" style="font-size: 9pt;" onchange="submit()">
+			<label for="sortform"><b>$ml_txt{'1'}</b></label>
+			<select name="sortform" id="sortform" style="font-size: 9pt;" onchange="submit()">
 			<option value="username"$selUser>$ml_txt{'35'}</option>
 			<option value="position"$selPos>$ml_txt{'87'}</option>
 			<option value="posts"$selPost>$ml_txt{'21'}</option>
@@ -504,7 +508,7 @@ sub buildIndex {
 			<option value="lastpost"$selLastPost>$amv_txt{'10'}</option>
 			<option value="lastim"$selLastIm>$amv_txt{'11'}</option>
 			</select>
-			<b>$admintxt{'37'}</b>
+			<label for="reversed"><b>$admintxt{'37'}</b></label>
 			<input type="checkbox" onclick="submit()" name="reversed" id="reversed" class="titlebg" style="border: 0;"$selReversed />
 			</span>
 			</form>
@@ -546,8 +550,8 @@ sub buildIndex {
 			<table border="0" width="100%" cellpadding="3" cellspacing="1" class="bordercolor">
 				<tr>
 					<td class="titlebg" colspan="2" align="right">
-					<b>$amv_txt{'38'}</b> 
-					<select name="field2" onchange="document.adv_memberview.check_all.checked=true;checkAll(1);">
+					<label for="check_all"><b>$amv_txt{'38'}</b></label>
+					<select name="field2" id="field2" onchange="document.adv_memberview.check_all.checked=true;checkAll(1);">
 						<option value="0">$amv_txt{'35'}</option>
 						<option value="1">$amv_txt{'36'}</option>
 						<option value="2" selected="selected">$amv_txt{'37'}</option>
@@ -561,10 +565,10 @@ sub buildIndex {
 						<option value="4">$amv_txt{'34'}</option>
 					</select> 
 					<br />
-					$amv_txt{'45'}: <input type="checkbox" name="del_mail" value="1" class="titlebg" style="border: 0;" />
+					<label for="del_mail">$amv_txt{'45'}:</label> <input type="checkbox" name="del_mail" id="del_mail" value="1" class="titlebg" style="border: 0;" />
 					</td>
 					<td class="titlebg" align="center" width="5%">
-						<input type="checkbox" name="check_all" value="1" class="titlebg" style="border: 0;" onclick="javascript:if(this.checked)checkAll(1);else checkAll(0);" />
+						<input type="checkbox" name="check_all" id="check_all" value="1" class="titlebg" style="border: 0;" onclick="javascript:if(this.checked)checkAll(1);else checkAll(0);" />
 					</td>
 				</tr>
 				<tr>

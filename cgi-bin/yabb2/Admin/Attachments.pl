@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$attachmentsplver = 'YaBB 2.4 $Revision: 1.14 $';
+$attachmentsplver = 'YaBB 2.5 AE $Revision: 1.15 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub Attachments {
@@ -371,11 +371,11 @@ sub Attachments2 {
 		$viewattachments .= qq~
 		<tr>
 		<td class="catbg" align="center">
-		<input type="checkbox" name="checkall" value="" onclick="if(this.checked){checkAll();}else{uncheckAll();}" />
+		<input type="checkbox" name="checkall" id="checkall" value="" onclick="if(this.checked){checkAll();}else{uncheckAll();}" />
 		</td>
 		<td class="catbg" colspan="7">
 		<div class="small" style="float: left; text-align: left;">
-		&lt;= $amv_txt{'38'} &nbsp; <input type="submit" value="$admin_txt{'32'}" class="button" />
+		&lt;= <label for="checkall">$amv_txt{'38'}</label> &nbsp; <input type="submit" value="$admin_txt{'32'}" class="button" />
 		</div>
 		$pageindex
 		</td>

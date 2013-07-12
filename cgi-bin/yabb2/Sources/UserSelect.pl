@@ -3,21 +3,21 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$userselectplver = 'YaBB 2.4 $Revision: 1.54 $';
+$userselectplver = 'YaBB 2.5 AE $Revision: 1.55 $';
 if ($action eq 'detailedversion') { return 1; }
 
-if ($iamguest && $INFO{'toid'} ne "userspec") { &fatal_error("members_only"); }
+if ($iamguest && $INFO{'toid'} ne "userspec" && $action ne "checkavail") { &fatal_error("members_only"); }
 &LoadLanguage('UserSelect');
 
 $MembersPerPage = 10;
@@ -473,7 +473,7 @@ sub buildIndex {
 
 sub buildPages {
 	if ($to_id eq 'groups') { $instructtext = $usersel_txt{'instruct4'}; }
-	else { $instructtext = $usersel_txt{'instruct2'}; }
+	else { $instructtext = qq~<label for="member">$usersel_txt{'instruct2'}</label>~ ; }
 	$TableHeader .= qq~
 		<tr>
 			<td class="titlebg" align="left" valign="middle">
@@ -484,18 +484,20 @@ sub buildPages {
 			~;
 	unless ($to_id eq 'groups') {
 		$TableHeader .= qq~
-			<form action="$scripturl?action=findmember;sort=pmsearch;toid=$to_id" method="post" id="form1" name="form1" enctype="application/x-www-form-urlencoded" style="display:inline">
-			<input type="text" name="member" id="member" style="font-size: 11px; width: 100px" />
-			<input name="submit" type="submit" class="button" style="font-size: 10px;" value="$usersel_txt{'gobutton'}" />
-		</form>~;
+			<form action="$scripturl?action=findmember;sort=pmsearch;toid=$to_id" method="post" id="form1" name="form1" enctype="application/x-www-form-urlencoded" style="display:inline; vertical-align:middle;">
+				<input type="text" name="member" id="member" value="$usersel_txt{'wildcardinfo'}" onfocus="this.value=''" style="font-size: 11px; width: 140px" />
+				<input name="submit" type="submit" class="button" style="font-size: 10px;" value="$usersel_txt{'gobutton'}" />
+			</form>~;
 	}
 	$TableHeader .= qq~
 			</div>
 			</td>
 		</tr>
+	</table>
+	<form method="post" action="" name="selectuser">
+	<table border="0" width="464" cellspacing="1" cellpadding="3" class="bordercolor" style="height: 275px; table-layout: fixed;">
 		<tr>
 			<td class="catbg" align="center">
-			<form method="post" action="" name="selectuser">
 	~;
 	if ($recent_exist && $to_id =~ /toshow/) {
 		$TableHeader .= qq~
@@ -531,19 +533,19 @@ sub buildPages {
 	else { $numshow = qq~($numbegin - $numend $usersel_txt{'of'} $memcount)~; }
 
 	if ($_[0]) {
-	$yymain .= qq~
-	<table border="0" width="464" cellspacing="1" cellpadding="3" class="bordercolor" align="left" style="height: 325px; table-layout: fixed;">
-	$TableHeader
-	<tr>
-	<td class="catbg" width="100%" height="26" align="left" valign="middle">
-	$pageindex
-	</td>
-	</tr>
-	~;
+		$yymain .= qq~
+	<table border="0" width="464" cellspacing="1" cellpadding="3" class="bordercolor" style="table-layout: fixed;">
+		$TableHeader
+		<tr>
+		<td class="catbg" width="100%" height="26" align="left" valign="middle">
+		$pageindex
+		</td>
+		</tr>
+		~;
 	} else {
 		$yymain .= qq~
 		<tr>
-			<td class="windowbg2" height="67" align="left" valign="middle">
+			<td class="windowbg2" height="62" align="left" valign="middle">
 			<span class="small">
 			$instruct_start $instruct_end
 			<br />
@@ -555,10 +557,10 @@ sub buildPages {
 
 		$yymain .= qq~
 			</span>
-			</form>
 			</td>
 		</tr>
 	</table>
+	</form>
 	$pageindexjs
 		~;
 	}
@@ -585,6 +587,10 @@ function copy_option(to_select) {
 	if (to_select == 'userspec') {
 		opener.document.getElementById(to_select).value = document.selectuser.rec_list.options[document.selectuser.rec_list.selectedIndex].value;
 		opener.document.getElementById('userspectext').value = document.selectuser.rec_list.options[document.selectuser.rec_list.selectedIndex].text;
+		opener.document.getElementById('usrsel').style.display = 'none';
+		opener.document.getElementById('usrrem').style.display = 'inline';
+		opener.document.getElementById('searchme').disabled = true;
+		window.close();
 		return;
 	}
 	var to_array = new Array();
@@ -744,10 +750,10 @@ sub quickSearch {
 	<div class="bordercolor" style="width:300px">
 	<table cellpadding="3" cellspacing="1" border="0" width="300">
 		<tr>
-			<td class="titlebg">$usersel_txt{'qsearch'}</td>
+			<td class="titlebg"><label for="letter">$usersel_txt{'qsearch'}</label></td>
 		</tr><tr>
 			<td class="windowbg2">
-				<div style="float:left"><input type="text" name="letter" onkeyup="LetterChange(this.value)" style="width:270px" /></div>
+				<div style="float:left"><input type="text" name="letter" id="letter" onkeyup="LetterChange(this.value)" style="width:270px" /></div>
 				<div style="float:right"><img src="$imagesdir/mozilla_gray.gif" id="load" alt="" /></div>
 			</td>
 		</tr><tr>
@@ -787,6 +793,82 @@ sub doquicksearch {
 	print join(",", @matches);
 
 	CORE::exit; # This is here only to avoid server error log entries!
+}
+
+sub checkUserAvail {
+
+     &LoadLanguage('Register');
+
+     my $taken = "false";
+     
+     fopen(RESERVE, "$vardir/reserve.txt") || &fatal_error("cannot_open","$vardir/reserve.txt", 1);
+     @reserve = <RESERVE>;
+     fclose(RESERVE);
+     fopen(RESERVECFG, "$vardir/reservecfg.txt") || &fatal_error("cannot_open","$vardir/reservecfg.txt", 1);
+     @reservecfg = <RESERVECFG>;
+     fclose(RESERVECFG);
+     for ($a = 0; $a < @reservecfg; $a++) {
+ 	    chomp $reservecfg[$a];
+     }
+     $matchword = $reservecfg[0] eq 'checked';
+     $matchcase = $reservecfg[1] eq 'checked';
+     $matchuser = $reservecfg[2] eq 'checked';
+     $matchname = $reservecfg[3] eq 'checked';
+     $namecheck = $matchcase eq 'checked' ? $INFO{'user'} : lc $INFO{'user'};
+     $realnamecheck = $matchcase eq 'checked' ? $INFO{'display'} : lc $INFO{'display'};
+
+     if ($INFO{'type'} eq "email") {
+ 	    $INFO{'email'} =~ s~\A\s+|\s+\z~~g;
+ 	    $type = $register_txt{'112'};
+ 	    if (lc $INFO{'email'} eq lc &MemberIndex("check_exist", $INFO{'email'})) { $taken = "true"; }
+     } elsif ($INFO{'type'} eq "display") {
+ 	    $INFO{'display'} =~ s~\A\s+|\s+\z~~g;
+ 	    $type = $register_txt{'111'};
+ 	    if (lc $INFO{'display'} eq lc &MemberIndex("check_exist", $INFO{'display'})) {
+ 		    $taken = "true";
+ 	    }
+ 	    if ($matchname) {
+ 		    foreach $reserved (@reserve) {
+ 			    chomp $reserved;
+ 			    $reservecheck = $matchcase ? $reserved : lc $reserved;
+ 			    if ($matchword) {
+ 				    if ($realnamecheck eq $reservecheck) { $taken = "reg"; break; }
+ 			    } else {
+ 				    if ($realnamecheck =~ $reservecheck) { $taken = "reg"; break; }
+ 			    }
+ 		    }
+ 	    }
+     } elsif ($INFO{'type'} eq "user") {
+ 	    $INFO{'user'} =~ s~\A\s+|\s+\z~~g;
+ 	    $INFO{'user'} =~ s/\s/_/g;
+ 	    $type = $register_txt{'110'};
+ 	    if (lc $INFO{'user'} eq lc &MemberIndex("check_exist", $INFO{'user'})) {
+ 		    $taken = "true";
+ 	    }
+ 	    if ($matchuser) {
+ 		    foreach $reserved (@reserve) {
+ 			    chomp $reserved;
+ 			    $reservecheck = $matchcase ? $reserved : lc $reserved;
+ 			    if ($matchword) {
+ 				    if ($namecheck eq $reservecheck) { $taken = "reg"; break; }
+ 			    } else {
+ 				    if ($namecheck =~ $reservecheck) { $taken = "reg"; break; }
+ 			    }
+ 		    }
+ 	    }
+     }
+     
+     if ($taken eq "false") {
+ 	    $avail = qq~<img src="$imagesdir/check.png">&nbsp;&nbsp;<span style="color:#00dd00">$type$register_txt{'114'}</span>~;
+     } elsif ($taken eq "true") {
+ 	    $avail = qq~<img src="$imagesdir/cross.png">&nbsp;&nbsp;<span style="color:#dd0000">$type$register_txt{'113'}</span>~;
+     } else {
+ 	    $avail = qq~<img src="$imagesdir/cross.png">&nbsp;&nbsp;<span style="color:#dd0000">$type$register_txt{'115'}</span>~;
+     }
+
+     print "Content-type: text/plain\n\n$INFO{'type'}|$avail";
+
+     CORE::exit; # This is here only to avoid server error log entries!
 }
 
 1;

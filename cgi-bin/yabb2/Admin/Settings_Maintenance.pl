@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$settings_maintenanceplver = 'YaBB 2.4 $Revision: 1.4 $';
+$settings_maintenanceplver = 'YaBB 2.5 AE $Revision: 1.5 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # List of settings
@@ -25,17 +25,14 @@ if ($action eq 'detailedversion') { return 1; }
 	id    => 'settings', # Javascript ID
 	items => [
 		{
-			header => $admin_txt{'67'},
-		},
-		{
-			description => $admin_txt{'348'},
-			input_html => qq~<input type="checkbox" name="maintenance" value="1" ${ischecked($maintenance)}/>~,
+			description => qq~<label for="maintenance">$admin_txt{'348'}</label>~,
+			input_html => qq~<input type="checkbox" name="maintenance" id="maintenance" value="1" ${ischecked($maintenance)}/>~,
 			name => 'maintenance',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'348Text'},
-			input_html => qq~<textarea cols="30" rows="5" name="maintenancetext" style="width: 98%">$maintenancetext</textarea>~,
+			description => qq~<label for="maintenancetext">$admin_txt{'348Text'}</label>~,
+			input_html => qq~<textarea cols="30" rows="5" name="maintenancetext" id="maintenancetext" style="width: 98%">$maintenancetext</textarea>~,
 			name => 'maintenancetext',
 			validate => 'fulltext,null',
 		},

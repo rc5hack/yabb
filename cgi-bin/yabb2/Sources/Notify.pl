@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$notifyplver = 'YaBB 2.4 $Revision: 1.20 $';
+$notifyplver = 'YaBB 2.5 AE $Revision: 1.21 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Notify');
@@ -472,13 +472,13 @@ sub NotificationAlert {
 			&ManageThreadNotify("delete", $mythread, $username);
 			eval { require "$datadir/movedthreads.cgi" };
 			next if !exists $moved_file{$mythread} || !$moved_file{$mythread};
-			while ($moved_file{$mythread}) {
+			my $newthread;
+			while (exists $moved_file{$mythread}) {
 				$mythread = $moved_file{$mythread};
-				if (-e "$datadir/$mythread.txt") { last; }
-				elsif (!exists $moved_file{$mythread} || !$moved_file{$mythread}) { $mythread = 0; last; }
+				$newthread = $mythread if !exists $moved_file{$mythread} && -e "$datadir/$mythread.txt";
 			}
-			next if !$mythread;
-			&ManageThreadNotify("add", $mythread, $username, ${$uid.$username}{'language'}, 1, 1);
+			next if !$newthread;
+			&ManageThreadNotify("add", $newthread, $username, ${$uid.$username}{'language'}, 1, 1);
 		}
 
 		## load threads hash

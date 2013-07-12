@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$searchplver = 'YaBB 2.4 $Revision: 1.29 $';
+$searchplver = 'YaBB 2.5 AE $Revision: 1.30 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Search');
@@ -58,13 +58,22 @@ sub plushSearch1 {
 <script language="JavaScript1.2" type="text/javascript">
 <!--
 function removeUser() {
-	if (document.getElementById('userspec').value && confirm("$searchselector_txt{'remove'}")) {
+	if (document.getElementById('userspec').value && confirm("$searchselector_txt{'removeconfirm'}")) {
 		document.getElementById('userspec').value = "";
 		document.getElementById('userspectext').value = "";
 		if(document.getElementById('searchme').checked) {
 			document.getElementById('searchme').checked = false;
+			document.getElementById('userkind').disabled=false;
+			document.getElementById('noguests').selected=true;
 		}
+		document.getElementById('usrsel').style.display = 'inline';
+		document.getElementById('usrrem').style.display = 'none';
+		document.getElementById('searchme').disabled = false;
 	}
+}
+
+function addUser() {
+	window.open('$scripturl?action=imlist;sort=username;toid=userspec','','status=no,height=360,width=464,menubar=no,toolbar=no,top=50,left=50,scrollbars=no');
 }
 
 function searchMe(chelem) {
@@ -117,23 +126,21 @@ function searchMe(chelem) {
 	</tr>
 	<tr>
 		<td class="windowbg" align="right" valign="top">
-			<b>$search_txt{'583'}:</b><br />
-			<a href="javascript:void(0);" class="small" onclick="window.open('$scripturl?action=imlist;sort=username;toid=userspec','','status=no,height=345,width=464,menubar=no,toolbar=no,top=50,left=50,scrollbars=no')">$searchselector_txt{'linklabel'}</a>
+			<b>$search_txt{'583'}:</b>
 		</td>
 		<td class="windowbg2">
-			<div style="width: 405px; padding-top: 2px; padding-bottom: 4px;">
-			<input type="text" size="30" name="userspectext" id="userspectext" readonly="readonly" />
+			<div style="padding: 4px 0px 4px 0px;">
+			<input type="text" size="30" style="width: 220px; padding-left: 3px;" name="userspectext" id="userspectext" value="" readonly="readonly" /><input type="button" class="button" id="usrsel" style="border-left: 0px; display: inline;" value="$searchselector_txt{'select'}" onclick="javascript:addUser();" /><input type="button" class="button" id="usrrem" style="border-left: 0px; display: none;" value="$searchselector_txt{'remove'}" onclick="javascript:removeUser();" />
 			~;
-		if(!$iamguest) {
-			$yymain .= qq~<input type="checkbox" name="searchme" id="searchme" onclick="searchMe(this);" /> <label for="searchme">$search_txt{'searchme'}</label><br />~;
-		} else {
-			$yymain .= qq~<br />~;
-		}
-		$yymain .= qq~
-			<a href="javascript:void(0);" class="small" onclick="javascript:removeUser();">$searchselector_txt{'instructions'}</a>
+			if(!$iamguest) {
+				$yymain .= qq~<input type="checkbox" name="searchme" id="searchme" style="margin: 0px; border: 0px; padding: 0px; vertical-align: middle;" onclick="searchMe(this);" /> <label for="searchme" class="lille">$search_txt{'searchme'}</label><br />~;
+			} else {
+				$yymain .= qq~<input type="checkbox" name="searchme" id="searchme" style="visibility: hidden;" /><br />~;
+			}
+			$yymain .= qq~
 			<input type="hidden" size="30" name="userspec" id="userspec" value="" />
 			</div>
-			<div style="padding-top: 2px;">
+			<div style="padding: 4px 0px 4px 0px;">
 			<select name="userkind" id="userkind">
 				<option value="any">$search_txt{'577'}</option>
 				<option value="starter">$search_txt{'186'}</option>
@@ -316,8 +323,6 @@ sub plushSearch2 {
 	if ($search =~ m~\\~) { &fatal_error("no_search_slashes"); }
 	my $searchsubject = $FORM{'subfield'} eq 'on';
 	my $searchmessage = $FORM{'msgfield'} eq 'on';
-	require "$sourcedir/Decoder.pl";
-	&scrambled_eggs($search);
 	&ToHTML($search);
 	$search =~ s/\t/ \&nbsp; \&nbsp; \&nbsp;/g;
 	$search =~ s/\cM//g;
@@ -326,7 +331,7 @@ sub plushSearch2 {
 	else { @search = ($search); }
 	my $case = $FORM{'casesensitiv'};
 
-	my ($curboard, @threads, $curthread, $tnum, $tsub, $tname, $temail, $tdate, $treplies, $tusername, $ticon, $tstate, @messages, $curpost, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $mns, $subfound, $msgfound, $numfound, %data, $i, $board, $curcat, @categories, %catid, %catname, %cataccess, %openmemgr, @membergroups, %cats, @boardinfo, %boardinfo, @boards, $counter, $msgnum);
+	my ($curboard, @threads, $curthread, $tnum, $tsub, $tname, $temail, $tdate, $treplies, $tusername, $ticon, $tstate, @messages, $curpost, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $ns, $subfound, $msgfound, $numfound, %data, $i, $board, $curcat, @categories, %catid, %catname, %cataccess, %openmemgr, @membergroups, %cats, @boardinfo, %boardinfo, @boards, $counter, $msgnum);
 	my $maxtime = $date + (3600 * ${$uid.$username}{'timeoffset'}) - ($maxage * 86400);
 	my $oldestfound = 9999999999;
 
@@ -380,7 +385,7 @@ sub plushSearch2 {
 				$curpost = $messages[$msgnum];
 				chomp $curpost;
 
-				my ($msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $savedmessage, $mns) = split(/\|/, $curpost);
+				my ($msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $savedmessage, $ns) = split(/\|/, $curpost);
 
 				## if either max to display or outside of filter, next
 				if ($mdate < $maxtime || ($numfound >= $display && $mdate <= $oldestfound)) { next postcheck; }
@@ -393,7 +398,7 @@ sub plushSearch2 {
 				if ($FORM{'searchyabbtags'} && $message =~ /\[\w[^\[]*?\]/) {
 					&wrap;
 					($message, undef) = &Split_Splice_Move($message,$tnum);
-					if ($enable_ubbc) { $ns = "NS"; &DoUBBC; }
+					if ($enable_ubbc) { &DoUBBC; }
 					&wrap2;
 					$savedmessage = $message;
 					$message =~ s/<.+?>//g;
@@ -470,7 +475,7 @@ sub plushSearch2 {
 				## blank? try next = else => build list from found mess/sub
 				unless ($msgfound || $subfound) { next postcheck; }
 
-				$data{$mdate} = [$curboard, $tnum, $msgnum, $tusername, $tname, $msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $savedmessage, $mns, $tstate];
+				$data{$mdate} = [$curboard, $tnum, $msgnum, $tusername, $tname, $msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $savedmessage, $ns, $tstate];
 				if ($mdate < $oldestfound) { $oldestfound = $mdate; }
 				$numfound++;
 				if ($one_per_thread) { last postcheck; }
@@ -496,7 +501,7 @@ sub plushSearch2 {
 	@search = grep(!$found{$_}++, @tmpsearch);
 
 	for ($i = 0; $i < @messages; $i++) {
-		($board, $tnum, $msgnum, $tusername, $tname, $msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $message, $mns, $tstate) = @{ $data{ $messages[$i] } };
+		($board, $tnum, $msgnum, $tusername, $tname, $msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $message, $ns, $tstate) = @{ $data{ $messages[$i] } };
 
 		$tname = &addMemberLink($tusername,$tname,$tnum);
 		$mname = &addMemberLink($musername,$mname,$mdate);
@@ -506,7 +511,7 @@ sub plushSearch2 {
 		if (!$FORM{'searchyabbtags'}) {
 			&wrap;
 			($message, undef) = &Split_Splice_Move($message,$tnum);
-			if ($enable_ubbc) { $ns = "NS"; &DoUBBC; }
+			if ($enable_ubbc) { &DoUBBC; }
 			&wrap2;
 		}
 
@@ -514,7 +519,6 @@ sub plushSearch2 {
 		$msub    = &Censor($msub);
 
 		&Highlight(\$msub,\$message,\@search,$case);
-		&MakeSmileys if $enable_ubbc && $mns !~ /NS/;
 
 		&ToChars($catname{$board});
 		&ToChars($boardname{$board});
@@ -539,9 +543,9 @@ sub plushSearch2 {
 			my $notify = '';
 			if (!$iamguest) {
 				if (${$uid.$username}{'thread_notifications'} =~ /\b$tnum\b/) {
-					$notify = qq~$menusep<a href="$scripturl?action=notify3;num=$tnum/$msgnum#$msgnum">$img{'del_notify'}</a>~;
+					$notify = qq~$menusep<a href="$scripturl?action=notify3;oldnotify=1;num=$tnum/$msgnum#$msgnum">$img{'del_notify'}</a>~;
 				} else {
-					$notify = qq~$menusep<a href="$scripturl?action=notify2;num=$tnum/$msgnum#$msgnum">$img{'add_notify'}</a>~;
+					$notify = qq~$menusep<a href="$scripturl?action=notify2;oldnotify=1;num=$tnum/$msgnum#$msgnum">$img{'add_notify'}</a>~;
 				}
 			}
 			$yymain .= qq~<a href="$scripturl?board=$board;action=post;num=$tnum/$msgnum#$msgnum;title=PostReply">$img{'reply'}</a>$menusep<a href="$scripturl?board=$board;action=post;num=$tnum;quote=$msgnum;title=PostReply">$img{'recentquote'}</a>$notify &nbsp;~;
@@ -554,7 +558,7 @@ sub plushSearch2 {
 		</td>
 	</tr>
 	<tr>
-		<td align="left" height="80" colspan="2" class="windowbg2" valign="top"><div style="float: left; width: 99%; overflow: auto;">$message</div></td>
+		<td align="left" height="80" colspan="2" class="windowbg2" valign="top"><div class="message" style="float: left; width: 99%; overflow: auto;">$message</div></td>
 	</tr>
 </table><br />~;
 	}
@@ -616,7 +620,7 @@ sub pmsearch {
 	elsif ($searchtype != 3) { @search = split(/\s+/, lc $search); }
 	else { @search = (lc $search); }
 
-	my ($curboard, @threads, $curthread, $tnum, $tsub, $tname, $temail, $treplies, $tusername, $ticon, $tstate, @messages, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $mns, $userfound, $subfound, $msgfound, $numfound, %data, $i, $board, $curcat, @categories, %catname, %cataccess, %openmemgr, @membergroups, %cats, @boardinfo, %boardinfo, @boards, $counter, $msgnum, @scanthreads);
+	my ($curboard, @threads, $curthread, $tnum, $tsub, $tname, $temail, $treplies, $tusername, $ticon, $tstate, @messages, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $userfound, $subfound, $msgfound, $numfound, %data, $i, $board, $curcat, @categories, %catname, %cataccess, %openmemgr, @membergroups, %cats, @boardinfo, %boardinfo, @boards, $counter, $msgnum, @scanthreads);
 	my $oldestfound = 9999999999;
 
 	if($pmbox eq "!all" || $pmbox eq "1") {
@@ -674,7 +678,7 @@ sub pmsearch {
 			$message = $savedmessage;
 			if ($message =~ /\[\w[^\[]*?\]/) {
 				&wrap;
-				if ($enable_ubbc) { $ns = "NS"; &DoUBBC; }
+				if ($enable_ubbc) { &DoUBBC; }
 				&wrap2;
 				$savedmessage = $message;
 				$message =~ s/<.+?>//g;
@@ -827,7 +831,7 @@ sub pmsearch {
 		</td>
 	</tr>
 	<tr>
-		<td align="left" height="80" colspan="2" class="windowbg2" valign="top"><div style="float: left; width: 99%; overflow: auto;">$message</div></td>
+		<td align="left" height="80" colspan="2" class="windowbg2" valign="top"><div class="message" style="float: left; width: 99%; overflow: auto;">$message</div></td>
 	</tr>
 </table><br />
 ~;

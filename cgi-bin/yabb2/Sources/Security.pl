@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$securityplver = 'YaBB 2.4 $Revision: 1.14 $';
+$securityplver = 'YaBB 2.5 AE $Revision: 1.15 $';
 
 # Updates profile with current IP, if changed from last IP.
 # Will only actually update the file when .vars is being updated anyway to save extra load on server.
@@ -39,10 +39,10 @@ if ($curnum ne '') {
 	if (!-e "$datadir/$curnum.txt") {
 		eval { require "$datadir/movedthreads.cgi" };
 		&fatal_error("not_found","$datadir/$curnum.txt") if !$moved_file{$curnum};
-		while ($moved_file{$curnum}) {
+		while (exists $moved_file{$curnum}) {
 			$curnum = $moved_file{$curnum};
-			if (-e "$datadir/$curnum.txt") { last; }
-			elsif (!$moved_file{$curnum}) { &fatal_error("not_found","$datadir/$curnum.txt"); }
+			next if exists $moved_file{$curnum};
+			if (!-e "$datadir/$curnum.txt") { &fatal_error("not_found","$datadir/$curnum.txt"); }
 		}
 		$INFO{'num'} = $INFO{'thread'} = $FORM{'threadid'} = $curnum;
 	}
@@ -79,7 +79,10 @@ if ($currentboard ne '') {
 		$moderatorgroups{$_} = $_;
 	}
 
-	$iammod = &is_moderator($username,$currentboard);
+	if ($staff) {
+		$iammod = &is_moderator($username,$currentboard);
+		$staff = 0 if !$iammod && !$iamadmin && !$iamgmod;
+	}
 
 	unless ($iamadmin) {
 		my $accesstype = "";
@@ -146,7 +149,7 @@ sub banning {
 			&write_banlog("$_ ($user_ip)") if $ban_email =~ /$_/i;
 		}
 		foreach (split(/,/, $user_banlist)) { # USERNAME BANNING
-			&write_banlog("$_ ($user_ip)") if $ban_user =~ /$_/i;
+			&write_banlog("$_ ($user_ip)") if $ban_user =~ m/^$_$/;
 		}
 	}
 
@@ -157,6 +160,7 @@ sub banning {
 		fclose(LOG);
 		&UpdateCookie("delete", $ban_user);
 		$username = "Guest";
+		$iamguest = 1;
 		&fatal_error("banned","$security_txt{'678'}$security_txt{'430'}!");
 	}
 }

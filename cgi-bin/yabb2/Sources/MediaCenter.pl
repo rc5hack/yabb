@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mediacenterplver = 'YaBB 2.4 $Revision: 1.22 $';
+$mediacenterplver = 'YaBB 2.5 AE $Revision: 1.23 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub embed {
@@ -35,7 +35,7 @@ sub embed {
 	} else {
 		if (!$player_version) {$player_version = 6;}
 		my ($media_url,$play_pars) = @_;
-		if ($media_url !~ m/^http:\/\//){ $media_url = "media://" + $media_url; } else { $media_url =~s~http:~media:~g; }
+		if ($media_url !~ m/^http(s)?:\/\//){ $media_url = "media://" + $media_url; } else { $media_url =~s~http$1:~media:~g; }
 
 		&ToHTML($media_url); ## convert url to html
 
@@ -85,6 +85,52 @@ sub embed {
 			$media_url =~ s~watch\?v=~v\/~g;
 			$video = $embed_flash;
 			$controlheight = 36;
+
+		# added Clipfish video url support
+		} elsif ($media_url =~ m/clipfish\.de/i) {
+			(undef,$temp) = split(/video\//,$media_url);
+			($videoid,undef) = split(/\//,$temp);
+			$media_url = qq~http://www.clipfish.de/cfng/flash/clipfish_player_3.swf?as=0&vid=$videoid&r=1&angebot=extern&c=990000~;
+			$video = $embed_flash;
+			$controlheight = 36;
+
+    # GameTrailers.com START
+		# added Gametrailers.com url support (user video with .html at the end)
+		} elsif ($media_url =~ m/gametrailers\.com/i && $media_url =~ m/user/i && $media_url =~ m/\.html/i) {
+			(undef,$temp) = split(/gametrailers.com\//,$media_url);
+			(undef,undef,$temp) = split(/\//,$temp);
+			($mid,undef) = split(/\./,$temp);
+			$media_url = qq~http://www.gametrailers.com/remote_wrap.php?umid=$mid~;
+			$video = $embed_flash;
+			$controlheight = 36;
+
+		# added GameTrailers.com video url support  (user video without .html at the end)
+		} elsif ($media_url =~ m/gametrailers\.com/i && $media_url =~ m/user/i) {
+			(undef,$temp) = split(/gametrailers.com\//,$media_url);
+			($mid,undef) = split(/\./,$temp);
+			(undef,undef,$mid) = split(/\//,$temp);
+			$media_url = qq~http://www.gametrailers.com/remote_wrap.php?umid=$mid~;
+			$video = $embed_flash;
+			$controlheight = 36;
+
+		# added Gametrailers.com url support (normal video with .html at the end)
+		} elsif ($media_url =~ m/gametrailers\.com/i && $media_url =~ m/\.html/i) {
+			(undef,$temp) = split(/gametrailers.com\//,$media_url);
+			(undef,$temp) = split(/\//,$temp);
+			($mid,undef) = split(/\./,$temp);
+			$media_url = qq~http://www.gametrailers.com/remote_wrap.php?mid=$mid~;
+			$video = $embed_flash;
+			$controlheight = 36;
+
+		# added GameTrailers.com video url support  (normal video without .html at the end)
+		} elsif ($media_url =~ m/gametrailers\.com/i) {
+			(undef,$temp) = split(/gametrailers.com\//,$media_url);
+			($mid,undef) = split(/\./,$temp);
+			(undef,undef,$mid) = split(/\//,$temp);
+			$media_url = qq~http://www.gametrailers.com/remote_wrap.php?mid=$mid~;
+			$video = $embed_flash;
+			$controlheight = 36;
+    # GameTrailers.com END
 
 		# added Google video url support
 		} elsif ($media_url =~ m/video\.google/i) {

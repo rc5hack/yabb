@@ -3,18 +3,44 @@
 //##############################################################################
 //# YaBB: Yet another Bulletin Board                                           #
 //# Open-Source Community Software for Webmasters                              #
-//# Version:        YaBB 2.4                                                   #
-//# Packaged:       April 12, 2009                                             #
+//# Version:        YaBB 2.5 Anniversary Edition                               #
+//# Packaged:       July 04, 2010                                              #
 //# Distributed by: http://www.yabbforum.com                                   #
 //# ===========================================================================#
-//# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.    #
+//# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.    #
 //# Software by:  The YaBB Development Team                                    #
 //#               with assistance from the YaBB community.                     #
 //# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com           #
 //#               Your source for web hosting, web design, and domains.        #
 //##############################################################################
 
-//YaBB 2.4 $Revision: 1.2 $
+//YaBB 2.5 AE $Revision: 1.3 $
+
+// Caps Lock and Not Allowed Characters detection
+function capsLock(eve,ident){
+	keyCode = eve.keyCode ? eve.keyCode : eve.which;
+	shiftKey = eve.shiftKey ? eve.shiftKey : ((keyCode == 16) ? true : false);
+
+	// check for Caps Lock
+	if (((keyCode > 64 && keyCode < 91) && !shiftKey)||((keyCode > 96 && keyCode < 123) && shiftKey)) {
+		document.getElementById(ident + '_char').style.display = 'none';
+		document.getElementById(ident).style.display = 'block';
+
+	} else {
+		document.getElementById(ident).style.display = 'none';
+
+		// check for Not Allowed Characters
+		character = String.fromCharCode(keyCode);
+		if (((keyCode > 31 && keyCode < 127) || keyCode > 159) &&
+		    /[^\s\w!@#$%\^&\*\(\)\+\|`~\-=\\:;'",\.\/\?\[\]\{\}]/.test(character)) {
+			document.getElementById(ident + '_char').style.display = 'block';
+			document.getElementById(ident + '_character').childNodes[0].nodeValue = character;
+		} else {
+			document.getElementById(ident + '_char').style.display = 'none';
+		}
+	}
+}
+
 
 //scroll fix for IE
 window.onload = function () {
@@ -82,7 +108,7 @@ var quote_selection = new Array();
 function quoteSelection(quote_name, quote_topic_id, quote_msg_id, quote_date, quote_message) {
 	if ((quote_selection[quote_msg_id] && quote_selection[quote_msg_id] != '') || quote_message != '') {
 		if (quote_message) quote_selection[quote_msg_id] = quote_message;
-		AddText('[quote author=' + quote_name + ' link=' + quote_topic_id + '/' + quote_msg_id + '#' + quote_msg_id + ' date=' + quote_date + ']' + quote_selection[quote_msg_id] + ' [/quote]\r\n');
+		AddText('[quote author=' + quote_name + ' link=' + quote_topic_id + '/' + quote_msg_id + '#' + quote_msg_id + ' date=' + quote_date + ']' + quote_selection[quote_msg_id] + '[/quote]\r\n');
 		quote_selection[quote_msg_id] = '';
 		quote_message = '';
 	} else {
@@ -98,7 +124,6 @@ function get_selection(msg_id) {
 	}
 	quote_selection[msg_id] = '' + quote_selection[msg_id] + '';
 	// quote_selection[msg_id] = quote_selection[msg_id].replace(/\\r\\n/g, "_caret_");
-	while (quote_selection[msg_id].indexOf("  ") != -1) quote_selection[msg_id] = quote_selection[msg_id].replace(/  /gi, "");
 	// quote_selection[msg_id] = quote_selection[msg_id].replace(/_caret_/g, "\\r\\n");
 }
 

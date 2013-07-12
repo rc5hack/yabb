@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mycenterlngver = 'YaBB 2.4 $Revision: 1.18 $';
+$mycenterlngver = 'YaBB 2.5 AE $Revision: 1.19 $';
 
 ## LEAVE USERLABEL intact. Move within the string for correct language syntax!
 
@@ -23,6 +23,7 @@ $mycenterlngver = 'YaBB 2.4 $Revision: 1.18 $';
 'buddylisttitle' => 'Your Buddies',
 'buddylistnone' => 'Your Buddy List is empty',
 'buddydeleted' => 'This Buddy was deleted. The name is not available any more!',
+'hiddenemail' => 'Hidden Email',
 'currentsettings' => 'Your current Settings:',
 'onoffstatus' => 'Online/Offline Status:', 
 'onoffstatuson' => 'Online/Offline',

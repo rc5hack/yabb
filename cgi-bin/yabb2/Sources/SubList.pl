@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$sublistplver = 'YaBB 2.4 $Revision: 1.27 $';
+$sublistplver = 'YaBB 2.5 AE $Revision: 1.28 $';
 if ($action eq 'detailedversion') { return 1; }
 
 %director=( # in alphabetical Order!
@@ -25,6 +25,7 @@ if ($action eq 'detailedversion') { return 1; }
 'boardnotify',"Notify.pl&BoardNotify",
 'boardnotify2',"MyCenter.pl&mycenter",
 'boardnotify3',"Notify.pl&BoardNotify2",
+'checkavail',"UserSelect.pl&checkUserAvail",
 'collapse_all',"BoardIndex.pl&Collapse_All",
 'collapse_cat',"BoardIndex.pl&Collapse_Cat",
 'deletemultimessages',"MyCenter.pl&Del_Some_IM",

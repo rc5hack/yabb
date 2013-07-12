@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$settings_antispamplver = 'YaBB 2.4 $Revision: 1.10 $';
+$settings_antispamplver = 'YaBB 2.5 AE $Revision: 1.11 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # TSC
@@ -38,26 +38,32 @@ $bdomains =~ s~,~\n~g;
 	id    => 'spam',
 	items => [
 		{
-			description => qq~$admin_txt{'91'}<br /><span class="small">$admin_txt{'91a'}</span>~,
-			input_html => qq~<input type="text" name="post_speed_count" size="5" value="$post_speed_count" />~,
+			description => qq~<label for="post_speed_count">$admin_txt{'91'}<br /><span class="small">$admin_txt{'91a'}</span></label>~,
+			input_html => qq~<input type="text" name="post_speed_count" id="post_speed_count" size="5" value="$post_speed_count" />~,
 			name => 'post_speed_count',
 			validate => 'number',
 		},
 		{
-			description => qq~$admin_txt{'minlinkpost'}<br /><span class="small">$admin_txt{'minlinkpost_exp'}</span>~,
-			input_html => qq~<input type="text" name="minlinkpost" size="5" value="$minlinkpost" />~,
+			description => qq~<label for="minlinkpost">$admin_txt{'minlinkpost'}<br /><span class="small">$admin_txt{'minlinkpost_exp'}</span></label>~,
+			input_html => qq~<input type="text" name="minlinkpost" id="minlinkpost" size="5" value="$minlinkpost" />~,
 			name => 'minlinkpost',
 			validate => 'number',
 		},
 		{
-			description => qq~$admin_txt{'92'}<br /><span class="small">$admin_txt{'93'}</span>~,
-			input_html => qq~<input type="text" name="spd_detention_time" size="5" value="$spd_detention_time" />~,
+			description => qq~<label for="minlinksig">$admin_txt{'minlinksig'}<br /><span class="small">$admin_txt{'minlinksig_exp'}</span></label>~,
+			input_html => qq~<input type="text" name="minlinksig" id="minlinksig" size="5" value="$minlinksig" />~,
+			name => 'minlinksig',
+			validate => 'number',
+		},
+		{
+			description => qq~<label for="spd_detention_time">$admin_txt{'92'}<br /><span class="small">$admin_txt{'93'}</span></label>~,
+			input_html => qq~<input type="text" name="spd_detention_time" id="spd_detention_time" size="5" value="$spd_detention_time" />~,
 			name => 'spd_detention_time',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'408'},
-			input_html => qq~<input type="text" size="4" name="timeout" value="$timeout" />~,
+			description => qq~<label for="timeout">$admin_txt{'408'}</label>~,
+			input_html => qq~<input type="text" name="timeout" id="timeout" size="4" value="$timeout" />~,
 			name => 'timeout',
 			validate => 'number',
 		},
@@ -65,14 +71,14 @@ $bdomains =~ s~,~\n~g;
 			header => $settings_txt{'speedban'},
 		},
 		{
-			description => $admin_txt{'89'},
-			input_html => qq~<input type="checkbox" name="speedpostdetection" value="1" ${ischecked($speedpostdetection)}/>~,
+			description => qq~<label for="speedpostdetection">$admin_txt{'89'}</label>~,
+			input_html => qq~<input type="checkbox" name="speedpostdetection" id="speedpostdetection" value="1" ${ischecked($speedpostdetection)}/>~,
 			name => 'speedpostdetection',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'90'},
-			input_html => qq~<input type="text" name="min_post_speed" size="5" value="$min_post_speed" />~,
+			description => qq~<label for="min_post_speed">$admin_txt{'90'}</label>~,
+			input_html => qq~<input type="text" name="min_post_speed" id="min_post_speed" size="5" value="$min_post_speed" />~,
 			name => 'min_post_speed',
 			validate => 'number',
 			depends_on => ['speedpostdetection'],
@@ -84,8 +90,8 @@ $bdomains =~ s~,~\n~g;
 	id    => 'tsc',
 	items => [
 		{
-			description => qq~<b>$tsc_txt{'4'}</b><br /><span class="small">$tsc_txt{'3'}</span>~,
-			input_html => qq~<textarea cols="60" rows="35" name="spamrules" style="width: 95%">$spamlist</textarea>~,
+			description => qq~<label for="spamrules"><b>$tsc_txt{'4'}</b><br /><span class="small">$tsc_txt{'3'}</span></label>~,
+			input_html => qq~<textarea cols="60" rows="35" name="spamrules" id="spamrules" style="width: 95%">$spamlist</textarea>~,
 			two_rows => 1,
 			name => 'spamrules',
 			validate => 'fulltext,null',
@@ -97,15 +103,15 @@ $bdomains =~ s~,~\n~g;
 	id    => 'emailfilter',
 	items => [
 		{
-			description => qq~<b>$domain_filter_txt{'4'}</b><br /><span class="small">$domain_filter_txt{'3'}</span>~,
-			input_html => qq~<textarea cols="60" rows="35" name="adomains" style="width: 95%">$adomains</textarea>~,
+			description => qq~<label for="adomains"><b>$domain_filter_txt{'4'}</b><br /><span class="small">$domain_filter_txt{'3'}</span></label>~,
+			input_html => qq~<textarea cols="60" rows="35" name="adomains" id="adomains" style="width: 95%">$adomains</textarea>~,
 			two_rows => 1,
 			name => 'adomains',
 			validate => 'fulltext,null',
 		},
 		{
-			description => qq~<b>$domain_filter_txt{'6'}</b><br /><span class="small">$domain_filter_txt{'7'}</span>~,
-			input_html => qq~<textarea cols="60" rows="35" name="bdomains" style="width: 95%">$bdomains</textarea>~,
+			description => qq~<label for="bdomains"><b>$domain_filter_txt{'6'}</b><br /><span class="small">$domain_filter_txt{'7'}</span></label>~,
+			input_html => qq~<textarea cols="60" rows="35" name="bdomains" id="bdomains" style="width: 95%">$bdomains</textarea>~,
 			two_rows => 1,
 			name => 'bdomains',
 			validate => 'fulltext,null',

@@ -3,18 +3,18 @@
 //##############################################################################
 //# YaBB: Yet another Bulletin Board                                           #
 //# Open-Source Community Software for Webmasters                              #
-//# Version:        YaBB 2.4                                                   #
-//# Packaged:       April 12, 2009                                             #
+//# Version:        YaBB 2.5 Anniversary Edition                               #
+//# Packaged:       July 04, 2010                                              #
 //# Distributed by: http://www.yabbforum.com                                   #
 //# ===========================================================================#
-//# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.    #
+//# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.    #
 //# Software by:  The YaBB Development Team                                    #
 //#               with assistance from the YaBB community.                     #
 //# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com           #
 //#               Your source for web hosting, web design, and domains.        #
 //##############################################################################
 
-//YaBB 2.4 $Revision: 1.2 $
+//YaBB 2.5 AE $Revision: 1.3 $
 
 var xmlHttp = null;
 var browser = '';
@@ -309,6 +309,22 @@ function browserAdd(name,value) {
 	}
 }
 // End Member Search
+
+// Check username availability
+function checkAvail(scripturl,val,type) {
+	GetXmlHttpObject();
+	if (xmlHttp == null) { alert("AJAX not supported."); return; }
+	xmlHttp.onreadystatechange=returnAvail;
+	xmlHttp.open("GET", scripturl + "?action=checkavail;type=" + type + ";" + type + "=" + val, true);
+	xmlHttp.send(null);
+}
+
+function returnAvail() {
+     if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete") {
+ 	    var avail = xmlHttp.responseText;
+ 	    var type = avail.split("|");
+ 	    document.getElementById(type[0] + "availability").innerHTML = type[1]; }
+}
 
 function HideAlert() {
 	document.getElementById("ImageAlert").style.visibility = "hidden";

@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$profilelngver = 'YaBB 2.4 $Revision: 1.33.2.1 $';
+$profilelngver = 'YaBB 2.5 AE $Revision: 1.34 $';
 
 %profile_txt = (
 '2' => 'Admin',
@@ -92,12 +92,13 @@ $profilelngver = 'YaBB 2.4 $Revision: 1.33.2.1 $';
 '477' => '<b>Note: Your images may be resized.</b>',
 '479' => 'This selection will make dates throughout this Forum display in this format.',
 '480a' => 'Use my own time format (set below)',
-'480' => "01/31/01 $maintxt{'107'} 13:15:17",
-'481' => "31.01.01 $maintxt{'107'} 13:15:17",
-'482' => "31.01.2001 $maintxt{'107'} 13:15:17",
-'483' => "Jan 12th, 2001 $maintxt{'107'} 1:15pm",
-'484' => "01/31/01 $maintxt{'107'} 1:15pm",
-'485' => "31. Jan $maintxt{'107'} 13:15",
+'480' => "01/31/01 at 13:15:17",
+'481' => "31.01.01 at 13:15:17",
+'482' => "31.01.2001 at 13:15:17",
+'483' => "Jan 12th, 2001 at 1:15pm",
+'483a' => "12th Jan, 2001 at 1:15pm",
+'484' => "01/31/01 at 1:15pm",
+'485' => "31. Jan at 13:15",
 '486' => 'Preset Time Format',
 '486a' => 'Or Custom Time Format',
 '513' => 'ICQ',
@@ -112,8 +113,8 @@ $profilelngver = 'YaBB 2.4 $Revision: 1.33.2.1 $';
 '571' => 'This is your MySpace URL.',
 '572' => 'http://myspace.com/',
 '573' => 'Facebook',
-'574' => 'This is your Facebook profile ID.',
-'575' => 'http://facebook.com/profile.php?id=',
+'574' => 'This is your Facebook profile ID number or your username.',
+'575' => 'http://facebook.com/',
 '592' => 'your personal userpic url or picture name.',
 '598' => 'This must be included if you specify a URL below.',
 '599' => 'This must be a complete URL.',
@@ -185,7 +186,7 @@ $profilelngver = 'YaBB 2.4 $Revision: 1.33.2.1 $';
 '910a' => 'Here you can add yourself to additional member group(s). Hold down Shift or Ctrl key (Apple key on Mac) and click to select more groups (if available).',
 'ignorelistadd' => 'Click here to select or add users to Ignore List',
 'ignoreall' => 'Check this option to ignore all PMs',
-'ignoreexplain' => 'If you do NOT wish to receive (i.e. ignore) PMs from some or all other forum members, either add their usernames to the box using the link, or check the box to block all PMs.<br /><b>Note:</b> This will NOT block PMs or any Broadcast Messages sent to you from the forum Admin.',
+'ignoreexplain' => 'If you do NOT wish to receive (i.e. ignore) PMs from some or all other forum members, either add their usernames to the box using the link, or check the box to block all PMs.<br /><b>Note:</b> This will NOT block PMs or any Broadcast Messages sent to you from the forum Admin and GMod.',
 'showingemail' => 'Your Email address is visible.',
 'notshowingemail' => 'Your Email address is hidden from all members except',
 'notshowingemailend' => '.',
@@ -208,6 +209,9 @@ $profilelngver = 'YaBB 2.4 $Revision: 1.33.2.1 $';
 'isbuddy' => 'in my Buddy List!',
 'sid_expires_1' => 'Your Profile-Session expires in',
 'sid_expires_2' => 'seconds.',
+'usernumbformat' => 'Select your Number Format',
+'capslock' => 'Caps lock is activated.',
+'wrong_char' => 'This character in the Password is invalid',
 );
 
 %mycenter_profile_txt = (

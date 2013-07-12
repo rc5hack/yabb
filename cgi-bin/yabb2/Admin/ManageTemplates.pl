@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$managetemplatesplver = 'YaBB 2.4 $Revision: 1.27 $';
+$managetemplatesplver = 'YaBB 2.5 AE $Revision: 1.28 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Templates');
@@ -124,7 +124,7 @@ sub ModifyTemplate {
 	</tr>
 	<tr valign="middle">
 		<td align="left" class="windowbg2">
-		<div style="float: left; width: 30%; padding: 3px;"><b>$templ_txt{'10'}</b></div>
+		<div style="float: left; width: 30%; padding: 3px;"><label for="templatefile"><b>$templ_txt{'10'}</b></label></div>
 		<div style="float: left; width: 69%;">
 		<form action="$adminurl?action=modtemp" method="post" style="display: inline;">
 		<select name="templatefile" id="templatefile" size="1" onchange="submit()">
@@ -235,7 +235,7 @@ sub ModifyStyle {
 		<div style="float: left; width: 30%; padding: 3px;"><b>$templ_txt{'1'}</b></div>
 		<div style="float: left; width: 69%;">
 		<form action="$adminurl?action=modstyle" name="selcss" method="post" style="display: inline;">
-		<div class="small" style="float: left; width: 25%;">$templ_txt{'forum'}:<br />
+		<div class="small" style="float: left; width: 25%;"><label for="cssfile">$templ_txt{'forum'}:</label><br />
 		  <select name="cssfile" id="cssfile" size="1" style="width: 90%;" onchange="if(this.options[this.selectedIndex].value) { document.aselcss.admcssfile.selectedIndex = '0'; submit(); }">
 			$forumcss
 		  </select><br />
@@ -243,7 +243,7 @@ sub ModifyStyle {
 		</div>
 		</form>
 		<form action="$adminurl?action=modstyle" name="aselcss" method="post" style="display: inline;">
-		<div class="small" style="float: left; width: 25%;">$templ_txt{'admincenter'}:<br />
+		<div class="small" style="float: left; width: 25%;"><label for="admcssfile">$templ_txt{'admincenter'}:</label><br />
 		  <select name="admcssfile" id="admcssfile" size="1" style="width: 90%;" onchange="if(this.options[this.selectedIndex].value) { document.selcss.cssfile.selectedIndex = '0'; submit(); }">
 			$admincss
 		  </select><br />
@@ -535,7 +535,7 @@ sub ModifyCSS {
 <table width="100%" cellspacing="1" cellpadding="4">
 	<tr>
 		<td align="left" class="windowbg2">
-		<div style="float: left; width: 30%; padding: 3px;"><b>$templ_txt{'1'}</b></div>
+		<div style="float: left; width: 30%; padding: 3px;"><label for="cssfile"><b>$templ_txt{'1'}</b></label></div>
 		<div style="float: left; width: 69%;">
 				<input type="hidden" name="button" value="0" />
 				<select name="cssfile" id="cssfile" size="1" onchange="document.allstyles.button.value = '1'; submit();">
@@ -548,7 +548,7 @@ sub ModifyCSS {
 	<tr>
 		<td align="left" class="windowbg2">
 		<div style="float: left; width: 30%; padding: 3px;">
-			<b>$templ_txt{'18'}</b><br /><span class="small">$templ_txt{'19'}<br /><br /></span>
+			<label for="csselement"><b>$templ_txt{'18'}</b><br /><span class="small">$templ_txt{'19'}<br /><br /></span></label>
 		</div>
 		<div style="float: left; width: 69%;">
 		<div style="float: left; text-align: center; margin-left: 0px; margin-right: 6px; vertical-align: middle;">
@@ -559,7 +559,7 @@ sub ModifyCSS {
 		<div style="float: left;">
 			<div class="small" style="float: left; vertical-align: middle;">
 				<span style="width: 70px;">
-				<input type="radio" name="selopt" id="selopt1" value="color" class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="manSelect();" /> <span class="small" style="vertical-align: middle;"><b>$templ_txt{'22'}</b></span>
+				<input type="radio" name="selopt" id="selopt1" value="color" class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="manSelect();" /> <label for="selopt1"><span class="small" style="vertical-align: middle;"><b>$templ_txt{'22'}</b></span></label>
 				</span>
 				<span>
 				<input type="text" size="9" name="textcol" id="textcol" value="$textcol" class="windowbg2" style="font-size: 10px; border: 1px #eef7ff solid; vertical-align: middle;" onchange="previewColor(this.value)" />
@@ -568,13 +568,13 @@ sub ModifyCSS {
 				<img src="$imagesdir/cssitalic.gif" border="0" alt="italic" name="cssitalic" id="cssitalic" style="border: 2px #eeeeee outset; vertical-align: middle;" onclick="previewFontstyle()" />
 				</span><br />
 				<span style="width: 70px;">
-				<input type="radio" name="selopt" id="selopt2" value="background-color" class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="manSelect();" /> <span class="small" style="vertical-align: middle;"><b>$templ_txt{'21'}</b></span>
+				<input type="radio" name="selopt" id="selopt2" value="background-color" class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="manSelect();" /> <label for="selopt2"><span class="small" style="vertical-align: middle;"><b>$templ_txt{'21'}</b></span></label>
 				</span>
 				<span>
 				<input type="text" size="9" name="backcol" id="backcol" value="$backcol" class="windowbg2" style="font-size: 10px; border: 1px #eef7ff solid; vertical-align: middle;" onchange="previewColor(this.value)" />
 				</span><br />
 				<span style="width: 70px;">
-				<input type="radio" name="selopt" id="selopt3" value="border" class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="manSelect();" /> <span class="small" style="vertical-align: middle;"><b>$templ_txt{'23'}</b></span>
+				<input type="radio" name="selopt" id="selopt3" value="border" class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="manSelect();" /> <label for="selopt3"><span class="small" style="vertical-align: middle;"><b>$templ_txt{'23'}</b></span></label>
 				</span>
 				<span>
 				<input type="text" size="9" name="bordcol" id="bordcol" value="$bordcol" class="windowbg2" style="font-size: 10px; border: 1px #eef7ff solid; vertical-align: middle;" onchange="previewBorder()" />
@@ -808,9 +808,9 @@ $viewstyle .= qq~
 		<input type="hidden" name="stylestart" value="$viewstylestart" />
 		<input type="hidden" name="stylelink" value="$stylestr" />
 		<input type="hidden" name="stylebody" value="$viewstyle" />
-		<div style="float: left; width: 30%; padding: 3px;"><b>$templ_txt{'12'}</b></div>
+		<div style="float: left; width: 30%; padding: 3px;"><label for="savecssas"><b>$templ_txt{'12'}</b></label></div>
 		<div style="float: left; width: 69%;">
-			<input type="text" name="savecssas" value="~ . (split(/\./, $cssfile))[0] . qq~" size="30" maxlength="30" />
+			<input type="text" name="savecssas" id="savecssas" value="~ . (split(/\./, $cssfile))[0] . qq~" size="30" maxlength="30" />
 			<input type="submit" value="$templ_txt{'13'}" onclick="document.allstyles.button.value = '2';" class="button" />
 		</div>
 		</td>
@@ -825,7 +825,7 @@ var cssbold;
 var cssitalic;
 var stylesurl = '$forumstylesurl';
 
-function updateStyles() {
+function initStyles() {
 	var thestylestart = document.allstyles.stylestart.value;
 	var thestyles = document.allstyles.stylelink.value;
 	var thestylebody = document.allstyles.stylebody.value;
@@ -840,6 +840,12 @@ function updateStyles() {
 	StyleManager.document.open("text/html");
 	StyleManager.document.write(thestyle);
 	StyleManager.document.close();
+}
+
+function updateStyles() {
+	var currentTop = document.getElementById('StyleManager').contentWindow.document.documentElement.scrollTop;
+	initStyles();
+	document.getElementById('StyleManager').contentWindow.document.documentElement.scrollTop = currentTop;
 }
 
 function previewColor(thecolor) {
@@ -1227,7 +1233,7 @@ function setElement() {
 	manSelect();
 }
 
-updateStyles();
+initStyles();
 setElement();
 
 // Palette
@@ -1560,7 +1566,7 @@ sub ModifySkin {
 <table width="100%" cellspacing="1" cellpadding="4">
 	<tr valign="middle">
 		<td align="left" class="windowbg2">
-		<div style="float: left; width: 30%; padding: 3px;"><b>$templ_txt{'10'}</b></div>
+		<div style="float: left; width: 30%; padding: 3px;"><label for="templateset"><b>$templ_txt{'10'}</b></label></div>
 		
 		<div style="float: left; width: 69%;">
 			<input type="hidden" name="button" value="0" />
@@ -1582,7 +1588,7 @@ sub ModifySkin {
 		</div>
 		<div style="float: left; width: 69%;">
 			<div style="float: left; width: 32%; text-align: left;">
-				<span class="small">$admin_txt{'521'}</span><br />
+				<label for="menutype"><span class="small">$admin_txt{'521'}</span></label><br />
 				<select name="menutype" id="menutype" size="1" style="width: 90%;">
 					<option value="0"$menutype0>$admin_txt{'521a'}</option>
 					<option value="1"$menutype1>$admin_txt{'521b'}</option>
@@ -1591,19 +1597,19 @@ sub ModifySkin {
 			</div>
 			<br /><br /><br />
 			<div style="float: left; width: 32%; text-align: left;">
-				<span class="small">$templ_txt{'1'}</span><br />
+				<label for="cssfile"><span class="small">$templ_txt{'1'}</span></label><br />
 				<select name="cssfile" id="cssfile" size="1" style="width: 90%;">
 				$forumcss
 				</select>
 			</div>
 			<div style="float: left; width: 32%; text-align: left;">
-				<span class="small">$templ_txt{'8'}</span><br />
+				<label for="imgfolder"><span class="small">$templ_txt{'8'}</span></label><br />
 				<select name="imgfolder" id="imgfolder" size="1" style="width: 90%;">
 				$imgdirs
 				</select>
 			</div>
 			<div style="float: left; width: 32%; text-align: left;">
-				<span class="small">$templ_txt{'2'}</span><br />
+				<label for="headfile"><span class="small">$templ_txt{'2'}</span></label><br />
 				<select name="headfile" id="headfile" size="1" style="width: 90%;">
 				$headtemplates
 				</select>
@@ -1637,10 +1643,10 @@ sub ModifySkin {
 	</tr>
 	<tr valign="middle">
 		<td align="left" class="windowbg2">
-		<div style="float: left; width: 30%; padding: 3px;"><b>$templ_txt{'12'}</b></div>
+		<div style="float: left; width: 30%; padding: 3px;"><label for="saveas"><b>$templ_txt{'12'}</b></label></div>
 		<div style="float: left; width: 69%;">
 			<input type="hidden" name="tempname" value="$fulltemplate" />
-			<input type="text" name="saveas" value="$thistemplate" size="30" maxlength="50" />
+			<input type="text" name="saveas" id="saveas" value="$thistemplate" size="30" maxlength="50" />
 			<input type="submit" value="$templ_txt{'13'}" onclick="document.selskin.button.value = '2';" class="button" />
 			<input type="submit" value="$templ_txt{'9'}" onclick="document.selskin.button.value = '1';" class="button" />
 		</div>
@@ -1990,7 +1996,7 @@ sub DisplayTempl {
 	if ($UseMenuType == 0) {
 		$yimimg = qq~$menusep<img src="$_[1]/yim.gif" alt="" border="0" />~;
 		$aimimg = qq~$menusep<img src="$_[1]/aim.gif" alt="" border="0" />~;
-		$msnimg = qq~$menusep<img src="$_[1]/msn3.gif" alt="" border="0" />~;
+		$msnimg = qq~$menusep<img src="$_[1]/msn.gif" alt="" border="0" />~;
 	} elsif ($UseMenuType == 1) {
 		$yimimg = qq~$menusep<span class="imgwindowbg">YIM</span>~;
 		$aimimg = qq~$menusep<span class="imgwindowbg">AIM</span>~;

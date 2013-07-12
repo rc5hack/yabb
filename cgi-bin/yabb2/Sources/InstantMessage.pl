@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$instantmessageplver = 'YaBB 2.4 $Revision: 1.107 $';
+$instantmessageplver = 'YaBB 2.5 AE $Revision: 1.108 $';
 if ($action eq 'detailedversion') { return 1; }
 
 ## create the send IM section of the screen
@@ -151,7 +151,16 @@ sub buildIMsend {
 	&ToHTML($subject);
 
 
+	if ($action eq "modify" || $action eq "modify2") {
+		$displayname = qq~$mename~;
+	} else {
+		$displayname = ${$uid.$username}{'realname'};
+	}
+	require "$sourcedir/ContextHelp.pl";
+	&ContextScript("post");
+
 	$MCGlobalFormStart .= qq~
+	$ctmain
 	<script language="JavaScript1.2" src="$yyhtml_root/yabbc.js" type="text/javascript"></script>
 	<script language="JavaScript1.2" src="$yyhtml_root/ubbc.js" type="text/javascript"></script>
 	<script language="JavaScript1.2" type="text/javascript">
@@ -511,6 +520,7 @@ sub buildIMsend {
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
 			HAND = "style='cursor: pointer;'";
+			HAND += " onmouseover='contextTip(event, this.alt)' onmouseout='contextTip(event, this.alt)' oncontextmenu='if(!showcontexthelp(this.src, this.alt)) return false;'";
 			document.write('<div style="width: 437px; float: left;">');
 			document.write("<img src='$imagesdir/url.gif' onclick='hyperlink();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'257'}' title='$post_txt{'257'}' border='0' />");
 			document.write("<img src='$imagesdir/ftp.gif' onclick='ftp();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'434'}' title='$post_txt{'434'}' border='0' />");
@@ -522,13 +532,13 @@ sub buildIMsend {
 			document.write("<img src='$imagesdir/td.gif' onclick='tcol();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'437'}' title='$post_txt{'437'}' border='0' />");
 			document.write("<img src='$imagesdir/hr.gif' onclick='hr();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'531'}' title='$post_txt{'531'}' border='0' />");
 			document.write("<img src='$imagesdir/tele.gif' onclick='teletype();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'440'}' title='$post_txt{'440'}' border='0' />");
-			document.write("<img src='$imagesdir/code.gif' onclick='showcode();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'259'}' title='$post_txt{'259'}' border='0' />");
+			document.write("<img src='$imagesdir/code.gif' onclick='selcodelang();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'259'}' title='$post_txt{'259'}' border='0' />");
 			document.write("<img src='$imagesdir/quote2.gif' onclick='quote();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'260'}' title='$post_txt{'260'}' border='0' />");
 			document.write("<img src='$imagesdir/edit.gif' onclick='edit();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'603'}' title='$post_txt{'603'}' border='0' />");
 			document.write("<img src='$imagesdir/sup.gif' onclick='superscript();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'447'}' title='$post_txt{'447'}' border='0' />");
 			document.write("<img src='$imagesdir/sub.gif' onclick='subscript();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'448'}' title='$post_txt{'448'}' border='0' />");
 
-			document.write("<img src='$imagesdir/list.gif' onclick='list();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'261'}' title='$post_txt{'261'}' border='0' />");
+			document.write("<img src='$imagesdir/list.gif' onclick='bulletset();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'261'}' title='$post_txt{'261'}' border='0' />");
 			document.write("<img src='$imagesdir/me.gif' onclick='me();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'604'}' title='$post_txt{'604'}' border='0' />");
 			document.write("<img src='$imagesdir/move.gif' onclick='move();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'439'}' title='$post_txt{'439'}' border='0' />");
 			document.write("<img src='$imagesdir/timestamp.gif' onclick='timestamp($date);' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'245'}' title='$post_txt{'245'}' border='0' /><br />");
@@ -573,6 +583,50 @@ sub buildIMsend {
 			document.write('</select>');
 			document.write('</div>');
 
+
+			function selcodelang() {
+				if (document.getElementById("codelang").style.display == "none")
+				document.getElementById("codelang").style.display = "inline-block";
+				else
+				document.getElementById("codelang").style.display = "none";
+				document.getElementById("codelang").style.zIndex = "100";
+
+				var openbox = document.getElementsByTagName("div");
+				for (var i = 0; i < openbox.length; i++) {
+					if (openbox[i].className == "ubboptions" && openbox[i].id != "codelang") {
+						openbox[i].style.display = "none";
+					}
+				}
+			}
+
+			function syntaxlang(lang, optnum) {
+				AddSelText("[code"+lang+"]","[/code]");
+				document.getElementById("codesyntax").options[optnum].selected = false;
+				document.getElementById("codelang").style.display = "none";
+			}
+
+			function bulletset() {
+				if (document.getElementById("bullets").style.display == "none")
+				document.getElementById("bullets").style.display = "block";
+				else
+				document.getElementById("bullets").style.display = "none";
+				document.getElementById("bullets").style.zIndex = "100";
+
+				var openbox = document.getElementsByTagName("div");
+				for (var i = 0; i < openbox.length; i++) {
+					if (openbox[i].className == "ubboptions" && openbox[i].id != "bullets") {
+						openbox[i].style.display = "none";
+					}
+				}
+			}
+		
+			function showbullets(bullet) {
+				AddSelText("[list "+bullet+"][*]", "\\n[/list]");
+			}
+
+			function olist() {
+				AddSelText("[olist][*]", "\\n[/olist]");
+			}
 
 			// Palette
 			var thistask = 'post';
@@ -652,7 +706,8 @@ sub buildIMsend {
 			</div>
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
-			HAND = "style='cursor: pointer; cursor: hand;'";
+			HAND = "style='cursor: pointer;'";
+			HAND += " onmouseover='contextTip(event, this.alt)' onmouseout='contextTip(event, this.alt)' oncontextmenu='if(!showcontexthelp(this.src, this.alt)) return false;'";
 			document.write('<div style="width: 92px; float: left;">');
 			document.write("<img src='$imagesdir/pre.gif' onclick='pre();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'444'}' title='$post_txt{'444'}' border='0' />");
 			document.write("<img src='$imagesdir/left.gif' onclick='left();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'445'}' title='$post_txt{'445'}' border='0' />");
@@ -706,6 +761,29 @@ sub buildIMsend {
 
 		<div id="dragbgh" style="position: absolute; top: 142px; left: 0px; width: $dwidth; height: 3px; border: 0; z-index: 3;">
 		<img id="dragImg2" src="$defaultimagesdir/resize_hb.gif" class="drag" style="position: absolute; top: $draghpos; left: 0px; z-index: 4; width: $dwidth; height: 3px; cursor: n-resize;"  alt="resize_hb" />
+		</div>
+		<div class="ubboptions" id="bullets" style="position: absolute; top: -22px; left: 345px; width: 63px; border: 1px solid #666666; padding: 2px; text-align: center; background-color: #CCCCCC; display: none;">
+			<input type="button" value="$npf_txt{'default'}" style="width: 56px; margin: 3px 0px 0px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="list(), bulletset()" /><br />
+			<input type="button" value="$npf_txt{'ordered'}" style="width: 56px; margin: 3px 0px 3px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="olist(), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redball'), bulletset()" /><img src="$defaultimagesdir/bull-greenball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenball'), bulletset()" /><img src="$defaultimagesdir/bull-blueball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blueball'), bulletset()" /><img src="$defaultimagesdir/bull-blackball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackball'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redsq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redsq'), bulletset()" /><img src="$defaultimagesdir/bull-greensq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greensq'), bulletset()" /><img src="$defaultimagesdir/bull-bluesq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluesq'), bulletset()" /><img src="$defaultimagesdir/bull-blacksq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blacksq'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redpin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redpin'), bulletset()" /><img src="$defaultimagesdir/bull-greenpin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenpin'), bulletset()" /><img src="$defaultimagesdir/bull-bluepin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluepin'), bulletset()" /><img src="$defaultimagesdir/bull-blackpin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackpin'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redcheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redcheck'), bulletset()" /><img src="$defaultimagesdir/bull-greencheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greencheck'), bulletset()" /><img src="$defaultimagesdir/bull-bluecheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluecheck'), bulletset()" /><img src="$defaultimagesdir/bull-blackcheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackcheck'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redarrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redarrow'), bulletset()" /><img src="$defaultimagesdir/bull-greenarrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenarrow'), bulletset()" /><img src="$defaultimagesdir/bull-bluearrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluearrow'), bulletset()" /><img src="$defaultimagesdir/bull-blackarrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackarrow'), bulletset()" /><br />
+		</div>
+		<div class="ubboptions" id="codelang" style="position: absolute; top: -22px; left: 230px; width: 92px; padding: 0px; background-color: #CCCCCC; display: none;">
+			<select size="10" name="codesyntax" id="codesyntax" onchange="syntaxlang(this.options[this.selectedIndex].value, this.selectedIndex);" style="margin:0px; font-size: 9px; width: 92px;">
+			<option value="" title="$npf_txt{'default'}">$npf_txt{'default'}</option>
+			<option value=" c++" title="C++">C++</option>
+			<option value=" css" title="CSS">CSS</option>
+			<option value=" html" title="HTML">HTML</option>
+			<option value=" java" title="Java">Java</option>
+			<option value=" javascript" title="Javascript">Javascript</option>
+			<option value=" pascal" title="Pascal">Pascal</option>
+			<option value=" perl" title="Perl">Perl</option>
+			<option value=" php" title="PHP">PHP</option>
+			<option value=" sql" title="SQL">SQL</option>
+			</select>
 		</div>
 		</div>
 		<div style="float: left; width: 315px; text-align: left;">
@@ -902,7 +980,8 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 					AddText(AddTxt);
 				}
 
-				HAND = "style='cursor: pointer; cursor: hand;'";
+				HAND = "style='cursor: pointer;'"; // non valid css 'cursor: hand;' removed by the ContextHelp mod
+				HAND += " onmouseover='contextTip(event, this.alt)' onmouseout='contextTip(event, this.alt)' oncontextmenu='if(!showcontexthelp(this.src, this.alt)) return false;'";
 				document.write("<img src='$imagesdir/smiley.gif' onclick='smiley();' "+HAND+" align='bottom' alt='$post_txt{'287'}' title='$post_txt{'287'}' border='0'> ");
 				document.write("<img src='$imagesdir/wink.gif' onclick='wink();' "+HAND+" align='bottom' alt='$post_txt{'292'}' title='$post_txt{'292'}' border='0'> ");
 				document.write("<img src='$imagesdir/cheesy.gif' onclick='cheesy();' "+HAND+" align='bottom' alt='$post_txt{'289'}' title='$post_txt{'289'}' border='0'> ");
@@ -1085,7 +1164,7 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 					document.write("<br /><span class='small'>$accesskey{'Browsers_on_Mac'}</span>");
 				} else if (/MSIE [7-9]/.test(navigator.userAgent) || /\\/[3-9]\\.\\d+\\.\\d+ Safari/.test(navigator.userAgent)) {
 					document.write("<br /><span class='small'>$accesskey{'MSIE_Safari'}</span>");
-				} else if (/Firefox\\/[2-9]\\.\\d+\\.\\d+/.test(navigator.userAgent)) {
+				} else if (/Firefox\\/[2-9]/.test(navigator.userAgent) || /Chrome/.test(navigator.userAgent)) {
 					document.write("<br /><span class='small'>$accesskey{'FireFox'}</span>");
 				}
 			}
@@ -1201,6 +1280,7 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 					var ubbstr = vismessage;
 				}
 				document.getElementById("saveframe").innerHTML=ubbstr;
+				sh_highlightDocument();
 				LivePrevImgResize();
 				scrlto += parseInt(document.getElementById("saveframe").scrollTop) + parseInt(document.getElementById("saveframe").offsetHeight);
 				document.getElementById("saveframe").scrollTop = scrlto;
@@ -1390,7 +1470,7 @@ sub IMsendMessage {
 			# Check Ignore-List, unless sender is FA
 			&LoadUser($UserTo);
 			if (!$isBMess) {
-				if (${$uid.$UserTo}{'im_ignorelist'} && $username ne 'admin') {
+				if (${$uid.$UserTo}{'im_ignorelist'} && !$iamadmin && !$iamgmod) {
 					# Build Ignore-List
 					@ignore = split(/\|/, ${$uid.$UserTo}{'im_ignorelist'});
 
@@ -2039,7 +2119,7 @@ sub DoShowIM {
 	$avstyle = '';
 
 	$showIM = qq~
-<table border="0" width="100%" cellspacing="1" cellpadding="1" class="bordercolor">
+<table border="0" width="100%" cellspacing="1" cellpadding="1" class="bordercolor" style="table-layout: fixed">
 <tr>
 	<td class="windowbg" align="left" valign="top" colspan="2">
 		<div style="width: 99%; padding: 2px; margin: 2px;">
@@ -2165,7 +2245,7 @@ sub DoShowIM {
 	</td>
 </tr>
 <tr>
-<td align="right" class="windowbg2">
+<td align="right" class="windowbg2" colspan="2">
 	<div style="float: left; text-align: left; padding: 2px; margin: 2px;"><span class="small">~ . ($notme ? qq~<a href="$scripturl?action=pmsearch;searchtype=user;search=$notme">$inmes_imtxt{'42'} <i>$notme</i></a>~ : "&nbsp;") . qq~</span></div>
 	<div style="float: right; text-align: right; padding: 2px; margin: 2px;"><span class="small">$PMnav</span></div>
 </td>
@@ -2227,7 +2307,7 @@ sub doshowims {
 	<tr>
 	  <td class="windowbg">
 		<table cellspacing="1" cellpadding="0" width="100%" align="center" class="bordercolor"><tr><td>
-			<table class="windowbg" cellspacing="0" cellpadding="2" width="100%" align="center">
+			<table class="windowbg" cellspacing="0" cellpadding="2" width="100%" align="center" style="table-layout:fixed">
 				<tr><td class="titlebg" colspan="2"><b>$inmes_txt{'70'}: $msub</b></td></tr>
 				<tr><td align="left" class="catbg"><span class="small">$inmes_txt{'318'}: $musernameRealName</span></td><td class="catbg" align="right"><span class="small">~ . (($INFO{'id'} && $INFO{'caller'} != 4) ? "$inmes_txt{'30'}: " : ($INFO{'id'} ? "$inmes_txt{'savedraft'} $inmes_txt{'30'}: " : "")) . qq~$tempdate</span></td></tr>
 				<tr><td class="windowbg2" colspan="2"><div class="message" style="float:left; width:100%;">$message</div></td></tr>

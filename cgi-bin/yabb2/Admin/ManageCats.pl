@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$managecatsplver = 'YaBB 2.4 $Revision: 1.10 $';
+$managecatsplver = 'YaBB 2.5 AE $Revision: 1.11 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub DoCats {
@@ -102,26 +102,28 @@ sub AddCats {
     <td class="catbg" colspan="4" align="left"> <b>$cattext</b></td>
   </tr><tr>
     <td class="windowbg" colspan="2">&nbsp;</td>
-    <td class="windowbg" align="center"><b>$admin_txt{'45'}</b></td>
-    <td class="windowbg" align="center"><b>$exptxt{'6'}</b></td>
-  </tr><tr>
-    <td class="windowbg" align="right" valign="middle"><b>$admin_txt{'61a'}:</b></td>
-    <td class="windowbg2" valign="middle">~;
-		if ($INFO{"action"} eq "catscreen") {
-			$yymain .= qq~<br /><input type="hidden" name="theid$i" value="$id" />$id<br /><br />~;
+    <td class="windowbg" align="center"><label for="catperms$i"><b>$admin_txt{'45'}</b></label></td>
+    <td class="windowbg" align="center"><label for="allowcol$i"><b>$exptxt{'6'}</b></label></td>
+  </tr><tr>~;
+		if ($INFO{"action"} eq 'catscreen') {
+			$yymain .= qq~			
+			<td class="windowbg" align="left" valign="middle"><label for="theid$i"><b>$admin_txt{'61a'}</b></label></td>
+			<td class="windowbg2" valign="middle"><br /><input type="hidden" name="theid$i" id="theid$i" value="$id" />$id<br /><br />~;
 		} else {
-			$yymain .= qq~<br /><input type="text" name="theid$i" value="$id" /><br /><br />~;
+			$yymain .= qq~
+			<td class="windowbg" align="left" valign="middle"><label for="theid$i"><b>$admin_txt{'61a'}</b><br />$admin_txt{'61b'}</label></td>
+			<td class="windowbg2" valign="middle"><br /><input type="text" name="theid$i" id="theid$i" value="$id" /><br /><br />~;
 		}
 		$yymain .= qq~
     </td>
-    <td class="windowbg2" align="center" rowspan="3"><select multiple="multiple" name="catperms$i" size="5">$catperms</select><br /><span class="small">$admin_txt{'14'}</span></td>
-    <td class="windowbg2" align="center" rowspan="3"><input type="checkbox" $allowChecked name="allowcol$i" /></td>
+    <td class="windowbg2" align="center" rowspan="3"><select multiple="multiple" name="catperms$i" id="catperms$i" size="5">$catperms</select><br /><label for="catperms$i"><span class="small">$admin_txt{'14'}</span></label></td>
+    <td class="windowbg2" align="center" rowspan="3"><input type="checkbox" $allowChecked name="allowcol$i" id="allowcol$i" /></td>
   </tr><tr>
-    <td class="windowbg" align="right" valign="middle"><b>$admin_txt{'68'}:</b></td>
-    <td class="windowbg2"><br /><input type="text" name="name$i" value="$curcatname" size="40" /><br /><br /></td>
+    <td class="windowbg" align="left" valign="middle"><label for="name$i"><b>$admin_txt{'68'}:</b></label></td>
+    <td class="windowbg2"><br /><input type="text" name="name$i" id="name$i" value="$curcatname" size="40" /><br /><br /></td>
   </tr><tr>
-    <td class="windowbg" align="right" valign="middle"><b>$admin_txt{'64b2'}:</b></td>
-    <td class="windowbg2"><br /><input type="text" name="catimage$i" value="$catimage" size="40" />~ . ($catimage ? qq~<br /><br  /><img src="$catimage" alt="" border="0" />~ : '') . qq~<br /><br /></td>
+    <td class="windowbg" align="left" valign="middle"><label for="catimage$i"><b>$admin_txt{'64b2'}:</b></label></td>
+    <td class="windowbg2"><br /><input type="text" name="catimage$i" id="catimage$i" value="$catimage" size="40" />~ . ($catimage ? qq~<br /><br  /><img src="$catimage" alt="" border="0" />~ : '') . qq~<br /><br /></td>
   </tr>~;
 	}
 	$yymain .= qq~<tr>
@@ -149,7 +151,7 @@ sub AddCats2 {
 			&admin_fatal_error("",$admintxt{'44'}) if $FORM{"catimage$i"} !~ /\.(gif|png|jpe?g)$/;
 		}
 		if ($FORM{"theid$i"} eq "") { next; }
-		$id = lc $FORM{"theid$i"};
+		$id = $FORM{"theid$i"};
 		&admin_fatal_error("invalid_character","$admin_txt{'44'} $admin_txt{'241'}") if ($id !~ /^[0-9A-Za-z#%+-\.@^_]+$/);
 		if ($FORM{'screenornot'} ne "catscreen") {
 			if ($catinfo{"$id"}) { &admin_fatal_error("cat_defined"); }
@@ -181,7 +183,7 @@ sub ReorderCats {
 		$catcnt = @categoryorder;
 		$catnum = $catcnt;
 		if ($catcnt < 4) { $catcnt = 4; }
-		$categorylist = qq~<select name="selectcats" size="$catcnt" style="width: 190px;">~;
+		$categorylist = qq~<select name="selectcats" id="selectcats" size="$catcnt" style="width: 190px;">~;
 		foreach $category (@categoryorder) {
 			chomp $category;
 			($categoryname, undef) = split(/\|/, $catinfo{$category}, 2);
@@ -196,7 +198,7 @@ sub ReorderCats {
 	}
 	$yymain .= qq~
 <br /><br />
-<form action="$adminurl?action=reordercats2" method="POST">
+<form action="$adminurl?action=reordercats2" method="post">
 <table border="0" width="525" cellspacing="1" cellpadding="4" class="bordercolor" align="center">
   <tr>
     <td class="titlebg"><img src="$imagesdir/board.gif" style="vertical-align: middle;" /> <b>$admin_txt{'829'}</b></td>
@@ -206,7 +208,7 @@ sub ReorderCats {
 
 	if ($catnum > 1) {
 		$yymain .= qq~
-      <div style="float: left; width: 280px; text-align: left; margin-bottom: 4px;" class="small">$admin_txt{'738'}</div>
+      <div style="float: left; width: 280px; text-align: left; margin-bottom: 4px;" class="small"><label for="selectcats">$admin_txt{'738'}</label></div>
       <div style="float: left; width: 230px; text-align: center; margin-bottom: 4px;">$categorylist</div>
       <div style="float: left; width: 280px; text-align: left; margin-bottom: 4px;" class="small">$admin_txt{'738a'}</div>
       <div style="float: left; width: 230px; text-align: center; margin-bottom: 4px;">

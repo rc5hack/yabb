@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$errorlogplver = 'YaBB 2.4 $Revision: 1.8 $';
+$errorlogplver = 'YaBB 2.5 AE $Revision: 1.9 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub ErrorLog {
@@ -33,6 +33,7 @@ sub ErrorLog {
 		$date_ref = $result;
 		$tmplist[$i] = qq~$date_ref\|$errors[$i]~;
 	}
+	
 	$sortmode  = $INFO{'sort'};
 	$sortorder = $INFO{'order'};
 	if ($sortmode eq "") {
@@ -153,6 +154,7 @@ function uncheckAll() {
 		} else {
 			$tmp_user = $tmp_username;
 		}
+		$userlist{$tmp_user} = $userlist{$tmp_user} + 1;
 		$tmp_date = &timeformat($tmp_date);
 		&LoadUser($tmp_user);
 		if ($tmp_user eq "$useraccount{$tmp_user}") {
@@ -208,13 +210,27 @@ function uncheckAll() {
 	}
 	$yymain .= qq~
 $print_errorlog
+	~;
+
+	@userlist = sort { $userlist{$b} <=> $userlist{$a} } keys %userlist;
+	foreach $member (@userlist) {
+		$errmember .= qq~$member ($userlist{$member}), ~;
+	}
+	$errmember =~ s/, \Z//;
+
+	$yymain .= qq~
+     <tr valign="middle">
+       <td align="left" class="windowbg2" colspan="5"><br />
+       <strong>$errorlog{'26'}</strong> $errmember<br /><br />
+	   </td>
+     </tr>
      <tr valign="middle">
        <td align="right" class="windowbg" colspan="4">&nbsp;~;
-	if ($errorcount > 0) { $yymain .= qq~<b>$admin_txt{'737'}&nbsp;</b>~; }
+	if ($errorcount > 0) { $yymain .= qq~<label for="checkall"><b>$admin_txt{'737'}</label>&nbsp;</b>~; }
 	$yymain .= qq~
 	   </td>
 	   <td class="windowbg" align="center">&nbsp;~;
-	if ($errorcount > 0) { $yymain .= qq~<input type="checkbox" class="windowbg" style="border: 0px;" onclick="if (this.checked) checkAll(); else uncheckAll();" />~; }
+	if ($errorcount > 0) { $yymain .= qq~<input type="checkbox" name="checkall" id="checkall" class="windowbg" style="border: 0px;" onclick="if (this.checked) checkAll(); else uncheckAll();" />~; }
 	$yymain .= qq~
 	   </td>
      </tr>
@@ -225,6 +241,7 @@ $print_errorlog
 	~;
 
 if ($errorcount > 0) {
+
 	$yymain .= qq~
  <div class="bordercolor" style="padding: 0px; width: 99%; margin-left: 0px; margin-right: auto;">
    <table width="100%" cellspacing="1" cellpadding="4">

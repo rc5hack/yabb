@@ -1,10 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<!-- YaBB 2.4 $Revision: 1.19 $ -->
+<!-- YaBB 2.5 AE $Revision: 1.20 $ -->
 <title>{yabb title}</title>
 <meta http-equiv="Content-Type" content="text/html; charset={yabb charset}" />
 {yabb style}
+{yabb syntax_js}
 <script language="JavaScript1.2" type="text/javascript" src="{yabb html_root}/YaBB.js"></script>
 <script language="JavaScript1.2" type="text/javascript">
 <!--
@@ -17,13 +18,14 @@ if ((navigator.appVersion.substring(0,1) == "5" && navigator.userAgent.indexOf('
 </script>
 </head>
 <body>
+<div id="maincontainer">
+<div id="container">
 <div id="ImageAlert" style="visibility:hidden; position:fixed; background-color:#AAAAAA; width:200px; top:30%; left:41%">
 	<div id="ImageAlertText" style="background-color:#EEEEEE; text-align:center; padding: 3px; margin:1px;"> </div>
 	<div id="ImageAlertPic" style="background-color:#FFFFFF; text-align:center; margin:1px;"> </div>
 </div>
-<a name="pagetop">&nbsp;</a><br />
-<div id="maincontainer">
-<div id="container">
+
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="menutop">
 	<tr>
 		<td class="small" align="left" valign="middle" width="2%" height="23">&nbsp;</td>
@@ -43,36 +45,48 @@ if ((navigator.appVersion.substring(0,1) == "5" && navigator.userAgent.indexOf('
 		<td class="small" align="left" valign="top" height="60">{yabb news}</td>
 	</tr>
 </table>
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td class="menutop" height="22" align="left">&nbsp;</td>
 	</tr>
 </table>
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td class="tabmenuleft" width="40">&nbsp;</td>
 		<td class="tabmenu">{yabb tabmenu}</td>
 		<td class="tabmenu" valign="top">{yabb tabadd}</td>
-		<td class="tabmenu" width="40" valign="top"><div style="float: left; width: 40px; height: 18px; text-align: center; padding-top: 6px; display: inline;">{yabb rss}</div></td>
+		<td class="tabmenu" width="40" valign="top"><div style="float: left; width: 40px; height: 16px; text-align: center; padding-top: 6px; display: inline;">{yabb rss}</div></td>
 		<td class="tabmenuright" width="45">&nbsp;</td>
-		<td class="rightbox" width="160" valign="top"><div style="float: left; width: 160px; height: 21px; text-align: center; padding-top: 3px; display: inline;">{yabb searchbox}</div></td>
+		<td class="rightbox" width="160" valign="top"><div style="float: left; width: 160px; height: 16px; text-align: center; padding-top: 3px; display: inline;">{yabb searchbox}</div></td>
 	</tr>
 </table>
 {yabb addtab}
+
+<a name="pagetop">&nbsp;</a><br />
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td class="nav" height="30" width="2%" align="left">&nbsp;</td>
 		<td class="nav" height="30" align="left">{yabb boardlink} {yabb navigation}</td>
 	</tr>
 </table>
-<div style="width: 96%; margin-left: auto; margin-right: auto; text-align: left;">{yabb main}</div>
-<div style="width: 96%; margin-left: auto; margin-right: auto; text-align: right; padding-top: 10px;">{yabb forumjump}</div>
-
-<div class="mainbottom">
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
-		<td class="nav" height="22" width="2%" align="left">&nbsp;</td>
-		<td class="nav" height="22" align="left">{yabb navback}</td>
+		<td>
+<div style="width: 96%; margin-left: auto; margin-right: auto; text-align: left;">{yabb main}</div>
+ </td>
+		
+	</tr>
+</table>
+
+<div class="menutop">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td class="tabtitle" height="22" width="2%" align="left">&nbsp;</td>
+		<td class="tabtitle" height="22" align="left">{yabb navback}</td>
+                                <td class="tabtitle" height="22" align="right">{yabb forumjump}</td>
 	</tr>
 </table>
 </div>
@@ -91,5 +105,10 @@ if ((navigator.appVersion.substring(0,1) == "5" && navigator.userAgent.indexOf('
 </div>
 
 </div>
+<script language="JavaScript1.2" type="text/javascript">
+<!--
+sh_highlightDocument();
+// -->
+</script>
 </body>
 </html>

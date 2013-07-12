@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$guardianplver = 'YaBB 2.4 $Revision: 1.11 $';
+$guardianplver = 'YaBB 2.5 AE $Revision: 1.12 $';
 
 $not_from   = qq~$webmaster_email~;
 $not_to     = qq~$webmaster_email~;
@@ -436,40 +436,36 @@ sub str_replace {
 }
 
 sub update_htaccess {
-	my ($action, @values) = @_;
+	my ($action, $value) = @_;
 	my ($htheader, $htfooter, @denies, @htout);
 	if (!$action) { return 0; }
 	fopen(HTA, ".htaccess");
-	@htlines = <HTA>;
+	my @htlines = <HTA>;
 	fclose(HTA);
 
 	# header to determine only who has access to the main script, not the admin script
 	$htheader = qq~<Files YaBB*>~;
-	$htfooter .= qq~</Files>~;
+	$htfooter = qq~</Files>~;
 	$start = 0;
 	foreach (@htlines) {
 		chomp $_;
-		if ($_ eq $htheader){$start = 1;}
-		if ($start == 0 && !($_ =~ m/\#/) && $_ ne ""){push(@htout, "$_\n");}
-		if ($_ eq $htfooter){$start = 0;}
-		if ($_ =~ m/Deny from / && $start == 1) {
-			$_ =~ s~Deny from ~~g;
+		if ($_ eq $htheader) { $start = 1; }
+		if ($start == 0 && $_ !~ m/#/ && $_ ne "") { push(@htout, "$_\n"); }
+		if ($_ eq $htfooter) { $start = 0; }
+		if ($start == 1 && $_ =~ s/Deny from //g) {
 			push(@denies, $_);
 		}
 	}
-	if (($action eq "add" || $action eq "remove") && $use_htaccess) {
-		$mylastdate = &timeformat($date, 1);
+	if ($use_htaccess && ($action eq "add" || $action eq "remove")) {
 		fopen(HTA, ">.htaccess");
-		print HTA "# Last modified by The Guardian: $mylastdate GMT #\n\n";
+		print HTA "# Last modified by The Guardian: " . &timeformat($date, 1) . " #\n\n";
 		print HTA @htout;
-		if($values[0] ne ""){
-			print HTA "$htheader\n";
+		if ($value) {
+			print HTA "\n$htheader\n";
 			foreach (@denies) {
-				chomp $_;
-				chomp $values[0];
-				if ($_ ne $values[0]) { print HTA "Deny from $_\n"; }
+				if ($_ ne $value) { print HTA "Deny from $_\n"; }
 			}
-			if ($action eq "add") { print HTA "Deny from $values[0]\n"; }
+			if ($action eq "add") { print HTA "Deny from $value\n"; }
 			print HTA "$htfooter\n";
 		}
 		fclose(HTA);

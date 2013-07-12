@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$registerplver = 'YaBB 2.4 $Revision: 1.58.2.2 $';
+$registerplver = 'YaBB 2.5 AE $Revision: 1.59 $';
 if ($action eq 'detailedversion') { return 1; }
 
 require "$sourcedir/Mailer.pl";
@@ -60,10 +60,11 @@ sub Register {
 		$aedomains .= qq~</select></td></tr></table>~;
 
 	} else {
-		$aedomains .= qq~<input type="text" maxlength="100" name="email" id="email" value="$tmpregemail" size="45" />~;
+		$aedomains .= qq~<input type="text" maxlength="100" onchange="checkAvail('$scripturl',this.value,'email')" name="email" id="email" value="$tmpregemail" size="45" />~;
 	}
 
 	$yymain .= qq~
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/ajax.js"></script>
 <form action="$scripturl?action=register2" method="post" name="creator" onsubmit="return CheckRegFields();">
 <table border="0" width="100%" cellpadding="4" cellspacing="1" class="bordercolor">
 	<colgroup>
@@ -104,7 +105,8 @@ sub Register {
 			<span class="small">$register_txt{'520'}</span></label>
 		</td>
 		<td class="windowbg2" align="left" valign="top">
-			<input type="text" name="regusername" id="regusername" size="30" value="$tmpregname" maxlength="18"$regstyle /> *
+			<input type="text" name="regusername" id="regusername" onchange="checkAvail('$scripturl',this.value,'user')" size="30" value="$tmpregname" maxlength="18"$regstyle /> *
+			<div id="useravailability"></div>
 			<input type="hidden" name="language" id="language" value="$language" />
 		</td>
 	</tr>
@@ -118,7 +120,8 @@ sub Register {
 	$yymain .= qq~</label>
 		</td>
 		<td class="windowbg2" align="left" valign="top">
-			<input type="text" name="regrealname" id="regrealname" size="30" value="$tmprealname" maxlength="30" /> *
+			<input type="text" name="regrealname" id="regrealname" onchange="checkAvail('$scripturl',this.value,'display')" size="30" value="$tmprealname" maxlength="30" /> *
+			<div id="displayavailability"></div>
 		</td>
 	</tr>
 	<tr>
@@ -127,6 +130,7 @@ sub Register {
 		</td>
 		<td class="windowbg2" align="left" valign="top">
 			$aedomains *
+			<div id="emailavailability"></div>
 	~;
 	if ($allow_hide_email == 1) {
 		$yymain .= qq~
@@ -162,6 +166,28 @@ sub Register {
 	</tr>~;
 	}
 
+	if ($gender_on_reg) {
+		if ($gender_on_reg == 1) {
+			$gender_req = qq~<label for="gender"><b>$register_txt{'gender'}: </b></label>~;
+		}
+		else {
+			$gender_req = qq~* <label for="gender"><b>$register_txt{'gender'}: </b></label>~;
+		}
+		$yymain .= qq~
+		<tr>
+			<td class="windowbg" align="right" valign="top">
+				$gender_req
+			</td>
+			<td class="windowbg2" align="left" valign="top">
+				<select name="gender" id="gender" size="1">
+					<option value=""></option>
+					<option value="Male">$register_txt{'gender_male'}</option>
+					<option value="Female">$register_txt{'gender_female'}</option>
+				</select>
+			</td>
+		</tr>
+		~;
+	}
 	unless ($emailpassword) {
 		$yymain .= qq~
 	<tr>
@@ -267,12 +293,14 @@ sub Register {
 				// Password_strength_meter end
 			// -->
 			</script>
-			<div style="float:left;"><input type="password" maxlength="30" name="passwrd1" id="passwrd1" value="$tmpregpasswrd1" size="30" onkeyup="runPassword(this.value);" /> *&nbsp;</div>
+			<div style="float:left;"><input type="password" maxlength="30" name="passwrd1" id="passwrd1" value="$tmpregpasswrd1" size="30" onkeypress="capsLock(event,'cappasswrd1')" onkeyup="runPassword(this.value);" /> *&nbsp;</div>
 			<div style="float:left; width: 150px; height: 20px; text-align:left;">
 				<div id="password-strength-meter" style="background: transparent url($imagesdir/empty_bar.gif) repeat-x center left; height: 4px"></div>
 				<div class="pstrength-bar" id="passwrd1_bar" style="border: 1px solid #FFFFFF; height: 4px"></div>
 				<div class="pstrength-info" id="passwrd1_text">&nbsp;</div>
 			</div>
+			<div style="clear:left; color: red; font-weight: bold; display: none" id="cappasswrd1">$register_txt{'capslock'}</div>
+			<div style="clear:left; color: red; font-weight: bold; display: none" id="cappasswrd1_char">$register_txt{'wrong_char'}: <span id="cappasswrd1_character">&nbsp;</span></div>
 		</td>
 	</tr>
 	<tr>
@@ -280,7 +308,9 @@ sub Register {
 			<label for="passwrd2"><b>$register_txt{'82'}:</b></label>
 		</td>
 		<td class="windowbg2" align="left" valign="top">
-			<input type="password" maxlength="30" name="passwrd2" id="passwrd2" value="$tmpregpasswrd2" size="30" /> *
+			<input type="password" maxlength="30" name="passwrd2" id="passwrd2" value="$tmpregpasswrd2" size="30" onkeypress="capsLock(event,'cappasswrd2')" /> *
+			<div style="color: red; font-weight: bold; display: none" id="cappasswrd2">$register_txt{'capslock'}</div>
+			<div style="color: red; font-weight: bold; display: none" id="cappasswrd2_char">$register_txt{'wrong_char'}: <span id="cappasswrd2_character">&nbsp;</span></div>
 		</td>
 	</tr>~;
 	}
@@ -505,6 +535,11 @@ sub Register {
 			return false;
 		}
 
+		if ($gender_on_reg && document.creator.gender.value < 1) {
+			alert("$register_txt{'error_gender'}");
+			document.creator.gender.focus();
+			return false
+		}
 		return true;
 	}
 
@@ -529,6 +564,7 @@ sub Register2 {
 	}
 	if ($member{'domain'}) { $member{'email'} .= $member{'domain'}; }
 	$member{'regusername'} =~ s/\s/_/g;
+	$member{'regrealname'} =~ s~\t+~\ ~g;
 
 	# Make sure users can't register with banned details
 	&email_domain_check($member{'email'});
@@ -672,6 +708,10 @@ sub Register2 {
 			${$uid.$reguser}{'bday'} = "$member{'birth_month'}/$member{'birth_day'}/$member{'birth_year'}";
 		}
 	}
+	if ($gender_on_reg) {
+		${$uid.$reguser}{'gender'} = $member{'gender'};
+	}
+
 	${$uid.$reguser}{'password'} = &encode_password($member{'passwrd1'});
 	${$uid.$reguser}{'realname'} = $member{'regrealname'};
 	${$uid.$reguser}{'email'} = lc($member{'email'});
@@ -733,11 +773,11 @@ sub Register2 {
 		&UserAccount($reguser, "preregister");
 		if ($do_scramble_id) { $cryptuser = &cloak($reguser); } else { $cryptuser = $reguser; }
 		fopen(INACT, ">>$memberdir/memberlist.inactive", 1);
-		print INACT "$date|$activationcode|$reguser|$member{'passwrd1'}|$member{'email'}|\n";
+		print INACT "$date|$activationcode|$reguser|$member{'passwrd1'}|$member{'email'}|$user_ip\n";
 		fclose(INACT);
 
 		fopen(REGLOG, ">>$vardir/registration.log", 1);
-		print REGLOG "$date|N|$member{'regusername'}|\n";
+		print REGLOG "$date|N|$member{'regusername'}||$user_ip\n";
 		fclose(REGLOG);
 
 		## send an e-mail to the user that registration is pending e-mail validation within the given timespan. ##
@@ -848,7 +888,7 @@ sub user_activation {
 	} else {
 		# add entry to registration log
 		fopen(REGLOG, ">>$vardir/registration.log", 1);
-		print REGLOG "$date|E|$reguser|\n";
+		print REGLOG "$date|E|$reguser||$user_ip\n";
 		fclose(REGLOG);
 		&fatal_error("prereg_expired");
 	}
@@ -868,7 +908,7 @@ sub user_activation {
 			my $templanguage = $language;
 			if ($activationkey ne $testkey) {
 				fopen(REGLOG, ">>$vardir/registration.log", 1);
-				print REGLOG "$date|E|$reguser|\n"; # add entry to registration log
+				print REGLOG "$date|E|$reguser||$user_ip\n"; # add entry to registration log
 				fclose(REGLOG);
 				&fatal_error("wrong_code");
 
@@ -881,7 +921,7 @@ sub user_activation {
 				# add entry to registration log
 				if ($iamadmin || $iamgmod) { $actuser = $username; } else { $actuser = $reguser; }
 				fopen(REGLOG, ">>$vardir/registration.log", 1);
-				print REGLOG "$date|W|$reguser|$actuser\n";
+				print REGLOG "$date|W|$reguser|$actuser|$user_ip\n";
 				fclose(REGLOG);
 
 				&LoadUser($reguser);
@@ -903,7 +943,7 @@ sub user_activation {
 				if ($iamadmin || $iamgmod) { $actuser = $username; } else { $actuser = $reguser; }
 				# add entry to registration log
 				fopen(REGLOG, ">>$vardir/registration.log", 1);
-				print REGLOG "$date|A|$reguser|$actuser\n";
+				print REGLOG "$date|A|$reguser|$actuser|$user_ip\n";
 				fclose(REGLOG);
 
 				if ($emailpassword) {
@@ -956,7 +996,7 @@ sub user_activation {
 	} else {
 		# add entry to registration log
 		fopen(REGLOG, ">>$vardir/registration.log", 1);
-		print REGLOG "$date|E|$reguser|\n";
+		print REGLOG "$date|E|$reguser|$user_ip\n";
 		fclose(REGLOG);
 		&fatal_error("wrong_id");
 	}

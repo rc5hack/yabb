@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$registrationlogplver = 'YaBB 2.4 $Revision: 1.33 $';
+$registrationlogplver = 'YaBB 2.5 AE $Revision: 1.34 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Register');
@@ -47,7 +47,7 @@ sub view_reglog {
 		}
 	} else {
 		$servertime = $date;
-		push(@logentries, "$servertime|LD|$username|$username");
+		push(@logentries, "$servertime|LD|$username|$username|$user_ip");
 	}
 	@memberlist = reverse @memberlist;
 
@@ -89,14 +89,12 @@ sub view_reglog {
 	}
 
 	foreach $logentry (@logentries) {
-		($logtime, $status, $userid, $actid) = split(/\|/, $logentry);
-		chomp $userid;
-		chomp $actid;
+		chomp $logentry;
+		my ($logtime, $status, $userid, $actid, $ipadd) = split(/\|/, $logentry);
 		if($do_scramble_id){
 			$cryptactid = &cloak($actid);
 			$cryptuserid = &cloak($userid);
-		} 
-		else {
+		} else {
 			$cryptactid = $actid; 
 			$cryptuserid = $userid;
 		}
@@ -106,7 +104,7 @@ sub view_reglog {
 		} else {
 			$actadminlink = '';
 		}
-		if ($status eq 'AA'){ 
+		if ($status eq 'AA' && &LoadUser($userid)){
 			&LoadUser($userid);
 			$linkuserid = qq~$userid (<a href="$scripturl?action=viewprofile;username=$cryptuserid">${$uid.$userid}{'realname'}</a>)~; 
 		} else { 
@@ -129,7 +127,7 @@ sub view_reglog {
 		$loglist .= qq~
 		<tr>
 		<td class="windowbg" width="20%" align="center">$reclogtime</td>
-		<td class="windowbg2" width="35%" align="center">$prereg_txt{$status}$actadminlink</td>
+		<td class="windowbg2" width="35%" align="center">$prereg_txt{$status}$actadminlink<br />IP: $ipadd</td>
 		<td class="windowbg" width="25%" align="center">$linkuserid</td>
 		<td class="windowbg2" width="20%" align="center">$delrecord</td>
 		</tr>~;
@@ -230,7 +228,7 @@ sub kill_registration {
 
 			# add entry to registration log
 			fopen(REG, ">>$vardir/registration.log", 1);
-			print REG "$date|D|$regmember|$username\n";
+			print REG "$date|D|$regmember|$username|$user_ip\n";
 			fclose(REG);
 		} else {
 			# update non activate user list
@@ -408,7 +406,7 @@ sub reject_registration {
 
 		## add entry to registration log ##
 		fopen(REG, ">>$vardir/registration.log", 1);
-		print REG "$date|AR|$deluser|$username\n";
+		print REG "$date|AR|$deluser|$username|$user_ip\n";
 		fclose(REG);
 	}
 	$yySetLocation = qq~$adminurl?action=view_reglog~;
@@ -486,7 +484,7 @@ sub approve_registration {
 
 		## add entry to registration log ##
 		fopen(REG, ">>$vardir/registration.log", 1);
-		print REG "$date|AA|$apruser|$username\n";
+		print REG "$date|AA|$apruser|$username|$user_ip\n";
 		fclose(REG);
 	}
 	$yySetLocation = qq~$adminurl?action=view_reglog~;

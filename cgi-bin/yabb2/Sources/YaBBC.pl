@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$yabbcplver = 'YaBB 2.4 $Revision: 1.39 $';
+$yabbcplver = 'YaBB 2.5 AE $Revision: 1.40 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Post');
@@ -22,6 +22,7 @@ if ($action eq 'detailedversion') { return 1; }
 $yyYaBBCloaded = 1;
 
 sub MakeSmileys {
+	my $message = join "", @_;
 	my $i = 0;
 	my @HTMLtags;
 	while ($message =~ s/(<.+?>)/[HTML$i]/s) { push(@HTMLtags, $1); $i++; }
@@ -47,19 +48,21 @@ sub MakeSmileys {
 	$message =~ s/(\W|^):thumb:/$1<img src="$imagesdir\/thumbsup.gif" border="0" alt="$post_txt{'282'}" title="$post_txt{'282'}" \/>/g;
 	$message =~ s/(\W|^)&gt;:-D/$1<img src="$imagesdir\/evil.gif" border="0" alt="$post_txt{'802'}" title="$post_txt{'802'}" \/>/g;
 
-	$count = 0;
+	my $count = 0;
 	while ($SmilieURL[$count]) {
 		if ($SmilieURL[$count] =~ /\//i) { $tmpurl = $SmilieURL[$count]; }
 		else { $tmpurl = qq~$imagesdir/$SmilieURL[$count]~; }
 		$tmpcode = $SmilieCode[$count];
 		$tmpcode =~ s/&#36;/\$/g;
 		$tmpcode =~ s/&#64;/\@/g;
-		$message =~ s~\Q$tmpcode\E~<img src="$tmpurl" border="0" alt="$SmilieDescription[$count]" title="$SmilieDescription[$count]" />$SmilieLinebreak[$count]~g;
+		$message =~ s~\Q$tmpcode\E~<img src="$tmpurl" border="0" alt="$SmilieDescription[$count]" title="$SmilieDescription[$count]" />~g;
 		$count++;
 	}
 
 	$i = 0;
 	while ($message =~ s/\[HTML$i\]/$HTMLtags[$i]/s) { $i++; }
+	
+	return $message;
 }
 
 sub quotemsg {
@@ -94,12 +97,13 @@ sub quotemsg {
 	delete $usernames_life_quote{'temp_quote_autor'};
 
 	$qmessage = &parseimgflash($qmessage);
-	$qdate    = &timeformat($qdate);
-	$_ = $post_txt{'599'};
-	if ($action ne 'imshow' && $action ne 'imsend' && $action ne 'imsend2') { $_ = $post_txt{'600'}; }
+	$qdate    = &timeformat($qdate); # generates also the global variable $daytxt
 	if ($fqauthor eq '' || $qlink eq '' || $qdate eq '') { $_ = $post_txt{'601'}; }
-	if ($qlink eq 'impost') { $_ = $post_txt{'600a'}; $fqauthor2 = qq~$scripturl?action=viewprofile;username=$useraccount{$qauthor}~; }
-	$_ =~ s~AUTHOR2~$fqauthor2~g;
+	elsif ($qlink eq 'impost') {
+		$_ = $daytxt ? $post_txt{'600a_d'} : $post_txt{'600a'};
+		$_ =~ s~AUTHOR2~$scripturl?action=viewprofile;username=$useraccount{$qauthor}~g; }
+	elsif ($GLOBAL::ACTION ne 'imshow' && $GLOBAL::ACTION ne 'imsend' && $GLOBAL::ACTION ne 'imsend2') { $_ = $daytxt ? $post_txt{'600_d'} : $post_txt{'600'}; }
+	else  { $_ = $daytxt ? $post_txt{'599_d'} : $post_txt{'599'}; }
 	$_ =~ s~AUTHOR~$fqauthor~g;
 	$_ =~ s~QUOTELINK~$scripturl?num=$qlink~g;
 	$_ =~ s~DATE~$qdate~g;
@@ -113,8 +117,8 @@ sub parseimgflash {
 	my $char_160  = chr(160);
 	my $hardspace = qq~&nbsp;~;
 	if (!$showimageinquote) {
-		$tmp_message =~ s~\[img\](?:\s|\t|\n|$hardspace|$char_160)*(https?\:\/\/)*(.+?)(?:\s|\t|\n|$hardspace|$char_160)*\[/img\]~$2$3~isg;
-		$tmp_message =~ s~\[img width=(\d+) height=(\d+)\](?:\s|\t|\n|$hardspace|$char_160)*(http\:\/\/)*(.+?)(?:\s|\t|\n|$hardspace|$char_160)*\[\/img\]~$4$5~ig;
+		$tmp_message =~ s~\[img(.+?)\]~[img\]~isg;
+		$tmp_message =~ s~\[img\](?:\s|\t|\n|$hardspace|$char_160)*(http\:\/\/)*(.+?)(?:\s|\t|\n|$hardspace|$char_160)*\[/img\]~\[url\]$1$2\[\/url\]~isg;
 	}
 	$tmp_message;
 }
@@ -149,6 +153,18 @@ sub sizefont {
 
 	sub codemsg {
 		my $code = $_[0];
+		my $class = $_[1];
+		my $prclass = "";
+		if(lc $class eq "c++") { $insclass = "sh_cpp"; $prclass = " (C++)"; }
+		elsif(lc $class eq "css") { $insclass = "sh_css"; $prclass = " (CSS)"; }
+		elsif(lc $class eq "html") { $insclass = "sh_html"; $prclass = " (HTML)"; }
+		elsif(lc $class eq "java") { $insclass = "sh_java"; $prclass = " (Java)"; }
+		elsif(lc $class eq "javascript") { $insclass = "sh_javascript"; $prclass = " (Javascript)"; }
+		elsif(lc $class eq "pascal") { $insclass = "sh_pascal"; $prclass = " (Pascal)"; }
+		elsif(lc $class eq "perl") { $insclass = "sh_perl"; $prclass = " (Perl)"; }
+		elsif(lc $class eq "php") { $insclass = "sh_php"; $prclass = " (PHP)"; }
+		elsif(lc $class eq "sql") { $insclass = "sh_sql"; $prclass = " (SQL)"; }
+		else { $insclass = "code"; }
 		&ToChars($code);
 		if ($code !~ /&\S*;/) { $code =~ s/;/&#059;/g; }
 		$code =~ s~([\(\)\-\:\\\/\?\!\]\[\.\^\.D])~$killhash{$1}~g;
@@ -170,9 +186,16 @@ sub sizefont {
 		$code =~ s~ \&nbsp; \&nbsp; \&nbsp;~\t~ig;
 		$code =~ s~\&nbsp;~ ~ig;
 		$code =~ s~\s*?\n\s*?~\[code_br\]~ig; # we need to keep normal linebreaks inside <pre> tag
-		$code = qq~<pre class="code" style="margin: 0px; width: 90%; $height overflow: scroll;">$code\[code_br][code_br]</pre>~;
+		$code = qq~<pre class="$insclass" style="margin: 0px; width: 90%; $height overflow: scroll;">$code\[code_br][code_br]</pre>~;
+		$_ =~ s~XLANGX~$prclass~g;
 		$_ =~ s~CODE~$code~g;
 		$_;
+	}
+
+	sub noparse {
+		my $noubbc = $_[0];
+		$noubbc =~ s~([\/\]\[\.])~$killhash{$1}~g;
+		$noubbc;
 	}
 }
 
@@ -215,17 +238,37 @@ sub imagemsg {
 }
 
 sub DoUBBC {
+    my $msg = _do_ubbc($message);
+	$message = $msg;
+}
+
+sub _do_ubbc {
+    my $message = join "", @_;
+	return $message if $ns eq "NS" || $message =~ s/#nosmileys//isg;
+
 	my $image_type = $_[0];
+
+	if($message =~ m{(.*?)\[noparse\](.*)}) {
+		my ($beginning, $temp, $middle, $end) = (undef, undef, undef, undef);
+		($beginning, $temp) = ($1, $2);
+		if($temp =~ m{(.*?)\[/noparse\](.*)}) {
+			my ($middle, $end) = ($1, $2);
+			return _do_ubbc($beginning).noparse($middle)._do_ubbc($end);			
+		}
+		else {
+			return _do_ubbc($beginning).noparse($temp);
+		}
+	}
 
 	$message =~ s~\[code\]~ \[code\]~ig;
 	$message =~ s~\[/code\]~ \[/code\]~ig;
-	$message =~ s~\[code\]\n*(.+?)\n*\[/code\]~&codemsg($1)~eisg; # [code] must come at first! At least before image transformation!
 
 	$message =~ s~\[quote\]~ \[quote\]~ig;
 	$message =~ s~\[/quote\]~ \[/quote\]~ig;
 	$message =~ s~\[glow\]~ \[glow\]~ig;
 	$message =~ s~\[/glow\]~ \[/glow\]~ig;
 	$message =~ s~<br>|<br />~\n~ig;
+	$message =~ s~\[code\s*(.*?)\]\n*(.+?)\n*\[/code\]~&codemsg($2,$1)~eisg; # [code] must come at first! At least before image transformation!
 
 	$message =~ s~\[([^\]\[]{0,30})\n([^\]\[]{0,30})\]~\[$1$2\]~g;
 	$message =~ s~\[/([^\]\[]{0,30})\n([^\]\[]{0,30})\]~\[/$1$2\]~g;
@@ -376,9 +419,8 @@ sub DoUBBC {
 		$message =~ s~<img src=".+?>~[oops]~g;
 		$message =~ s~\[oops\]~$oops~g;
 	}
-	
-	if ($message =~ /\#nosmileys/isg || $ns =~ "NS") { $message =~ s/\#nosmileys//isg; }
-	else { &MakeSmileys; }
+
+	$message = MakeSmileys($message);
 
 	$message =~ s~\s*\[\*\]~</li><li>~isg;
 	$message =~ s~\[olist\]~<ol>~isg;
@@ -386,9 +428,12 @@ sub DoUBBC {
 	$message =~ s~</li><ol>~<ol>~isg;
 	$message =~ s~<ol></li>~<ol>~isg;
 	$message =~ s~\[list\]~<ul>~isg;
+	$message =~ s~\[list (.+?)\]~<ul style="list-style-image\: url($defaultimagesdir\/$1\.gif)">~isg;
 	$message =~ s~\s*\[/list\]~</li></ul>~isg;
 	$message =~ s~</li><ul>~<ul>~isg;
 	$message =~ s~<ul></li>~<ul>~isg;
+	$message =~ s~</li><ul (.+?)>~<ul $1>~isg;
+	$message =~ s~<ul (.+?)></li>~<ul $1>~isg;
 
 	$message =~ s~\[pre\](.+?)\[/pre\]~'<pre>' . dopre($1) . '</pre>'~iseg;
 
@@ -417,6 +462,8 @@ sub DoUBBC {
 	$message =~ s~\[/\&table\]~</table>~g;
 	$message =~ s~\n~<br />~ig;
 	$message =~ s~\[code_br\]~\n~ig;
+
+	return $message;
 }
 
 sub DoUBBCTo {

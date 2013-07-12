@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$postlngver = 'YaBB 2.4 $Revision: 1.35 $';
+$postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
 
 %post_txt = (
 '10' => 'Save',
@@ -74,8 +74,8 @@ $postlngver = 'YaBB 2.4 $Revision: 1.35 $';
 '273' => 'Navy',
 '274' => 'Maroon',
 '275' => 'Lime Green',
-'276' => 'Disable Smilies',
-'277' => 'Check this if you\'ll be adding code (or don\'t like smilies).',
+'276' => 'Disable UBBC and Smilies',
+'277' => 'Check this if you wish to disable parsing of ubbc tags and smileys.',
 '279' => 'Posted by',
 '280' => 'Posted on',
 '281' => 'Standard',
@@ -144,11 +144,14 @@ $postlngver = 'YaBB 2.4 $Revision: 1.35 $';
 '537' => 'characters. Please shorten your message.',
 '568' => 'Please shorten your name. It is too long',
 ##### Do no edit any of the words in all capitals!
-'599' => "<b><a class=\"message\" href=\"QUOTELINK\">Quote from AUTHOR</a> on DATE:</b><br /><div class=\"quote\" style=\"width: 90%\">QUOTE</div>",
-'600' => "<b><a class=\"message\" href=\"QUOTELINK\">AUTHOR wrote</a> on DATE:</b><br /><div class=\"quote\" style=\"width: 90%\">QUOTE</div>",
-'600a' => "<b><a class=\"message\" href=\"AUTHOR2\">AUTHOR</a> wrote on DATE:</b><br /><div class=\"quote\" style=\"width: 90%\">QUOTE</div>",
+'599' => '<a class="message" href="QUOTELINK">Quote from AUTHOR</a> on DATE:<br /><div class="quote" style="width: 90%; overflow: auto;">QUOTE</div>',
+'599_d' => '<a class="message" href="QUOTELINK">Quote from AUTHOR</a> DATE:<br /><div class="quote" style="width: 90%; overflow: auto;">QUOTE</div>',
+'600' => '<a class="message" href="QUOTELINK">AUTHOR wrote</a> on DATE:<br /><div class="quote" style="width: 90%; overflow: auto;">QUOTE</div>',
+'600_d' => '<a class="message" href="QUOTELINK">AUTHOR wrote</a> DATE:<br /><div class="quote" style="width: 90%; overflow: auto;">QUOTE</div>',
+'600a' => '<a class="message" href="AUTHOR2">AUTHOR</a> wrote on DATE:<br /><div class="quote" style="width: 90%; overflow: auto;">QUOTE</div>',
+'600a_d' => '<a class="message" href="AUTHOR2">AUTHOR</a> wrote DATE:<br /><div class="quote" style="width: 90%; overflow: auto;">QUOTE</div>',
 '601' => "<b>Quote:</b><br /><div class=\"quote\" style=\"width: 90%; overflow: auto;\">QUOTE</div>",
-'602' => "<b>Code:</b>CODE",
+'602' => '<b>CodeXLANGX:</b>CODE',
 '603' => 'Edited',
 '604' => '/me - my name',
 '750' => 'Check this if you wish to be notified of replies to this topic.',
@@ -164,7 +167,6 @@ $postlngver = 'YaBB 2.4 $Revision: 1.35 $';
 'iecopytext' => 'Enable auto-copy Message',
 'iecopycheck' => 'Check this if you want the message auto-copied to your clipboard before Post or Preview.',
 'sendmessguest' => 'Send Broadcast Message to Forum Administrator(s)',
-'disablesmilies' => 'Disable Smilies',
 'nojs' => 'browser not compatible with these buttons',
 'addsmilies' => 'Add Smilies',
 'yabbc' => 'Add YaBBC tags',
@@ -188,6 +190,8 @@ $postlngver = 'YaBB 2.4 $Revision: 1.35 $';
 '03' => "Max $MaxMessLen characters. Remaining characters: ",
 '04' => 'Live Preview',
 '05' => '<b>Font Family / Size</b>',
+'default' => 'Default',
+'ordered' => 'Ordered',
 'features_text' => 'Collapse/Expand additional features',
 'collapse_features' => 'Collapse additional features',
 'expand_features' => 'Expand additional features',

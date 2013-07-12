@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$newsettingsplver = 'YaBB 2.4 $Revision: 1.63 $';
+$newsettingsplver = 'YaBB 2.5 AE $Revision: 1.64 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Figure out what tabset to use, depending on the page= parameter.
@@ -406,7 +406,7 @@ sub SaveSettingsTo {
 			if (-e "$vardir/ban.txt") {
 				fopen(BAN, "$vardir/ban.txt");
 				foreach (<BAN>) {
-					my ($type, $bannedlist) = split(/\|/, $line, 2);
+					my ($type, $bannedlist) = split(/\|/, $_, 2);
 					chomp($bannedlist);
 					$ip_banlist = $bannedlist if $type =~ /I/i;
 					$email_banlist = $bannedlist if $type =~ /E/i;
@@ -559,6 +559,9 @@ $templateset);						# Forum templates settings
 							# 1: ask for the birthday, no input required
 							# 2: ask for the birthday, input required
 
+\$gender_on_reg = $gender_on_reg;			# 0: don't ask for gender on registration
+							# 1: ask for gender, no input required
+							# 2: ask for gender, input required
 \$lang = "\Q$lang\E";					# Default Forum Language
 \$default_template = "\Q$default_template\E";		# Default Forum Template
 
@@ -625,6 +628,7 @@ $member_groups
 \$NewNotificationAlert = $NewNotificationAlert;		# enable notification alerts (popup) for new notifications
 \$autolinkurls = $autolinkurls;				# Set to 1 to turn URLs into links, or 0 for no auto-linking.
 
+\$forumnumberformat = $forumnumberformat;		# Select your preferred output Format for Numbers
 \$timeselected = $timeselected;				# Select your preferred output Format of Time and Date
 \$timecorrection = $timecorrection;			# Set time correction for server time in seconds
 \$timeoffset = "\Q$timeoffset\E";				# Time Offset to GMT/UTC (0 for GMT/UTC)
@@ -644,6 +648,7 @@ $member_groups
 \$spd_detention_time = $spd_detention_time;		# Time in seconds before a speedposting ban is lifted again
 \$min_post_speed = $min_post_speed;			# Minimum time in seconds between entering a post form and submitting a post
 \$minlinkpost = $minlinkpost;				# Minimum amount of posts a member needs to post links and images
+\$minlinksig = $minlinksig;				# Minimum amount of posts a member needs to create links and images in signature
 \$post_speed_count = $post_speed_count;			# Maximum amount of abuses befor a user gets banned
 \$fontsizemin = $fontsizemin;				# Minimum Allowed Font height in pixels
 \$fontsizemax = $fontsizemax;				# Maximum Allowed Font height in pixels
@@ -655,8 +660,6 @@ $member_groups
 \$stepdelay = $stepdelay;				# Time in miliseconds of a single step
 \$fadelinks = $fadelinks;				# Fade links as well as text?
 
-\$color{'fadertext'} = "\Q$fadertext\E";		# Color of text in the NewsFader (news color)
-\$color{'faderbg'} = "\Q$faderbackground\E";		# Color of background in the NewsFader (news color)
 \$defaultusertxt = "\Q$defaultusertxt\E";		# The dafault usertext visible in users posts
 \$timeout = $timeout;					# Minimum time between 2 postings from the same IP
 \$HotTopic = $HotTopic;					# Number of posts needed in a topic for it to be classed as "Hot"

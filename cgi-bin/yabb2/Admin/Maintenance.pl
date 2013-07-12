@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$maintenanceplver = 'YaBB 2.4 $Revision: 1.2 $';
+$maintenanceplver = 'YaBB 2.5 AE $Revision: 1.3 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub RebuildMessageIndex {
@@ -204,16 +204,27 @@ sub RebuildMessageIndex {
 
 	foreach (keys %board) { &BoardCountTotals($_); }
 
-	# remove from or relink in moved-file if thread does not exist any more
+	# remove from movedthreads.cgi only if it's the final thread
+	# then look backwards to delete the other entries in
+	# the Moved-Info-row if their files were deleted
 	eval { require "$datadir/movedthreads.cgi" };
 	my $save_moved;
-	foreach (keys %moved_file) { &moved_loop($_); }
+	foreach my $th (keys %moved_file) {
+		if (exists $moved_file{$th}) { # 'exists' because may be deleted in &moved_loop
+			while (exists $moved_file{$th}) { # to get the final/last thread
+				$th = $moved_file{$th};
+			}
+			unless (-e "$datadir/$th.txt") { &moved_loop($th); }
+		}
+	}
 	sub moved_loop {
-		my $key = shift;
-		if (exists $moved_file{$key} && !-e "$datadir/$moved_file{$key}.txt") {
-			$save_moved = 1;
-			if (exists $moved_file{$moved_file{$key}}) { $moved_file{$key} = $moved_file{$moved_file{$key}}; &moved_loop($key); }
-			else { delete $moved_file{$key}; }
+		my $th = shift;
+		foreach (keys %moved_file) {
+			if (exists $moved_file{$_} && $moved_file{$_} == $th && !-e "$datadir/$th.txt") {
+				delete $moved_file{$_};
+				$save_moved = 1;
+				&moved_loop($_);
+			}
 		}
 	}
 	&save_moved_file if $save_moved;
@@ -359,9 +370,7 @@ sub AdminBoardRecount {
 
 	# Get the board list from the forum.master file
 	require "$boardsdir/forum.master";
-	foreach (keys %board) {
-		&BoardCountTotals($_);
-	}
+	foreach (keys %board) { &BoardCountTotals($_); }
 
 	$yymain .= qq~<b>$admin_txt{'503'}</b>~;
 	&automaintenance('off');

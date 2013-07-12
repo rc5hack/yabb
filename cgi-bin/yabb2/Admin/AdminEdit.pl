@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$admineditplver = 'YaBB 2.4 $Revision: 1.37 $';
+$admineditplver = 'YaBB 2.5 AE $Revision: 1.38 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Register');
@@ -55,7 +55,7 @@ sub GmodSettings {
 	foreach $actfound (@actfound) {
 		$checked = '';
 		if ($allowed[$a] eq 'on') { $checked = ' checked="checked"'; }
-		$dismenu .= qq~\n<input type="checkbox" name="$actfound"$checked />&nbsp;<img src="$imagesdir/question.gif" align="middle" alt="$reftxt{'1a'} $gmodprivexpl_txt{$actfound}" title="$reftxt{'1a'} $gmodprivexpl_txt{$actfound}" border="0" /> $actfound<br />~;
+		$dismenu .= qq~\n<input type="checkbox" name="$actfound" id="$actfound"$checked />&nbsp;<label for="$actfound"><img src="$imagesdir/question.gif" align="middle" alt="$reftxt{'1a'} $gmodprivexpl_txt{$actfound}" title="$reftxt{'1a'} $gmodprivexpl_txt{$actfound}" border="0" /> $actfound</label><br />~;
 		$counter++;
 		$a++;
 		if ($counter > $column + 1) {
@@ -81,9 +81,9 @@ sub GmodSettings {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2" colspan="2"><br />
-<input type="checkbox" name="allow_gmod_admin"$gmod_selected_a /> $gmod_settings{'2'}<br />
-<input type="checkbox" id="allow_gmod_profile" name="allow_gmod_profile"$gmod_selected_p onclick="depend(this.checked);" /> $gmod_settings{'3'}<br />
-<input type="checkbox" id="allow_gmod_aprofile" name="allow_gmod_aprofile"$gmod_selected_ap /> $gmod_settings{'3a'}<br />
+<input type="checkbox" id="allow_gmod_admin" name="allow_gmod_admin"$gmod_selected_a /> <label for="allow_gmod_admin">$gmod_settings{'2'}</label><br />
+<input type="checkbox" id="allow_gmod_profile" name="allow_gmod_profile"$gmod_selected_p onclick="depend(this.checked);" /> <label for="allow_gmod_profile">$gmod_settings{'3'}</label><br />
+<input type="checkbox" id="allow_gmod_aprofile" name="allow_gmod_aprofile"$gmod_selected_ap /> <label for="allow_gmod_aprofile">$gmod_settings{'3a'}</label><br />
 <br />
        </td>
      </tr>
@@ -221,13 +221,13 @@ sub SetCensor {
    <table width="100%" cellspacing="1" cellpadding="4">
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
-         $admin_txt{'136'}<br /><br />
+         <label for="censored">$admin_txt{'136'}</label><br /><br />
        </td>
      </tr>
      <tr valign="middle">
        <td align="center" class="windowbg2"><br />
 	<input type="hidden" name="censorlanguage" value="$censorlanguage" />
-	<textarea rows="35" cols="15" name="censored" style="width:90%">~;
+	<textarea rows="35" cols="15" name="censored" id="censored" style="width:90%">~;
 	foreach $i (@censored) {
 		unless ($i && $i =~ m/.+[\=~].+/) { next; }
 		$yymain .= "$i\n";
@@ -309,14 +309,14 @@ sub SetReserve {
 	$yymain .= qq~</textarea>
 	</center>
 <br /><br />
-	<input type="checkbox" name="matchword" value="checked"$reservecheck[0] />
-	$admin_txt{'726'}<br />
-	<input type="checkbox" name="matchcase" value="checked"$reservecheck[1] />
-	$admin_txt{'727'}<br />
-	<input type="checkbox" name="matchuser" value="checked"$reservecheck[2] />
-	$admin_txt{'728'}<br />
-	<input type="checkbox" name="matchname" value="checked"$reservecheck[3] />
-	$admin_txt{'729'}<br />
+	<input type="checkbox" name="matchword" id="matchword" value="checked"$reservecheck[0] />
+	<label for="matchword">$admin_txt{'726'}</label><br />
+	<input type="checkbox" name="matchcase" id="matchcase" value="checked"$reservecheck[1] />
+	<label for="matchcase">$admin_txt{'727'}</label><br />
+	<input type="checkbox" name="matchuser" id="matchuser" value="checked"$reservecheck[2] />
+	<label for="matchuser">$admin_txt{'728'}</label><br />
+	<input type="checkbox" name="matchname" id="matchname" value="checked"$reservecheck[3] />
+	<label for="matchname">$admin_txt{'729'}</label><br />
        </td>
      </tr>
      <tr valign="middle">
@@ -356,16 +356,12 @@ sub SetReserve2 {
 
 sub ModifyAgreement {
 	&is_admin_or_gmod;
-	my ($agreementlanguage, $line);
-	if ($FORM{'agreementlanguage'}) {
-		$agreementlanguage = $FORM{'agreementlanguage'};
-	} else {
-		$agreementlanguage = $lang;
-	}
+
 	opendir(LNGDIR, $langdir);
 	my @lfilesanddirs = readdir(LNGDIR);
 	close(LNGDIR);
 
+	my $agreementlanguage = $FORM{'agreementlanguage'} || $INFO{'agreementlanguage'} || $lang;
 	foreach my $fld (sort {lc($a) cmp lc($b)} @lfilesanddirs) {
 		if (-d "$langdir/$fld" && $fld =~ m^\A[0-9a-zA-Z_\#\%\-\:\+\?\$\&\~\,\@/]+\Z^ && -e "$langdir/$fld/Main.lng") {
 			if ($agreementlanguage eq $fld) { $drawnldirs .= qq~<option value="$fld" selected="selected">$fld</option>~; }
@@ -390,7 +386,7 @@ sub ModifyAgreement {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
-		$admin_txt{'765'}<br /><br />
+		<label for="agreement">$admin_txt{'765'}</label><br /><br />
        </td>
      </tr>
      <tr valign="middle">
@@ -407,8 +403,9 @@ sub ModifyAgreement {
      <tr valign="middle">
        <td align="center" class="windowbg2"><br />
 	<form action="$adminurl?action=modagreement2" method="post" enctype="application/x-www-form-urlencoded">
+	<input type="hidden" name="destination" value="$INFO{'destination'}" />
 	<input type="hidden" name="agreementlanguage" value="$agreementlanguage" />
-	<textarea rows="35" cols="95" name="agreement" style="width:95%">$fullagreement</textarea><br /><br />
+	<textarea rows="35" cols="95" name="agreement" id="agreement" style="width:95%">$fullagreement</textarea><br /><br />
        </td>
      </tr>
      <tr valign="middle">
@@ -425,15 +422,31 @@ sub ModifyAgreement {
 
 sub ModifyAgreement2 {
 	&is_admin_or_gmod;
+
 	if ($FORM{'agreementlanguage'}) { $agreementlanguage = $FORM{'agreementlanguage'}; }
 	else { $agreementlanguage = $lang; }
 	$FORM{'agreement'} =~ tr/\r//d;
-	$FORM{'agreement'} =~ s~\A\n~~;
-	$FORM{'agreement'} =~ s~\n\Z~~;
+	$FORM{'agreement'} =~ s~\A\n+~~;
+	$FORM{'agreement'} =~ s~\n+\Z~~;
 	fopen(AGREE, ">$langdir/$agreementlanguage/agreement.txt");
 	print AGREE $FORM{'agreement'};
 	fclose(AGREE);
-	$yySetLocation = qq~$adminurl~;
+
+	$FORM{'agreement'} =~ s/\n/<br \/>\n/g;
+	fopen(HELPAGREE, ">$helpfile/$agreementlanguage/User/user00_agreement.help");
+	print HELPAGREE qq^\$SectionName = "$register_txt{'764a'}";
+
+### Section 1
+#############################################
+\$SectionSub1 = "$register_txt{'764a'}";
+\$SectionBody1 = qq~<p>$FORM{'agreement'}</p>~;
+#############################################
+
+
+1;^;
+	fclose(HELPAGREE);
+
+	$yySetLocation = $FORM{'destination'} ? qq~$adminurl?action=$FORM{'destination'}~ : qq~$adminurl?action=modagreement;agreementlanguage=$FORM{'agreementlanguage'}~;
 	&redirectexit;
 }
 
@@ -684,123 +697,123 @@ sub EditPaths {
      <tr valign="middle">
        <td align="left" class="windowbg2">
 		<div class="setting_cell">
-			$edit_paths_txt{'4'}
+			<label for="boarddir">$edit_paths_txt{'4'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="boarddir" size="50" value="$boarddir" />
+			<input type="text" name="boarddir" id="boarddir" size="50" value="$boarddir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'9'}
+			<label for="admindir">$edit_paths_txt{'9'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="admindir" size="50" value="$admindir" />
+			<input type="text" name="admindir" id="admindir" size="50" value="$admindir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'5'}
+			<label for="boardsdir">$edit_paths_txt{'5'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="boardsdir" size="50" value="$boardsdir" />
+			<input type="text" name="boardsdir" id="boardsdir" size="50" value="$boardsdir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'12'}
+			<label for="helpfile">$edit_paths_txt{'12'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="helpfile" size="50" value="$helpfile" />
+			<input type="text" name="helpfile" id="helpfile" size="50" value="$helpfile" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'11'}
+			<label for="langdir">$edit_paths_txt{'11'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="langdir" size="50" value="$langdir" />
+			<input type="text" name="langdir" id="langdir" size="50" value="$langdir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'7'}
+			<label for="memberdir">$edit_paths_txt{'7'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="memberdir" size="50" value="$memberdir" />
+			<input type="text" name="memberdir" id="memberdir" size="50" value="$memberdir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'6'}
+			<label for="datadir">$edit_paths_txt{'6'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="datadir" size="50" value="$datadir" />
+			<input type="text" name="datadir" id="datadir" size="50" value="$datadir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'8'}
+			<label for="sourcedir">$edit_paths_txt{'8'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="sourcedir" size="50" value="$sourcedir" />
+			<input type="text" name="sourcedir" id="sourcedir" size="50" value="$sourcedir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'13'}
+			<label for="templatesdir">$edit_paths_txt{'13'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="templatesdir" size="50" value="$templatesdir" />
+			<input type="text" name="templatesdir" id="templatesdir" size="50" value="$templatesdir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'10'}
+			<label for="vardir">$edit_paths_txt{'10'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="vardir" size="50" value="$vardir" />
+			<input type="text" name="vardir" id="vardir" size="50" value="$vardir" />
 		</div>
 		<br />
 	<!--	<div class="setting_cell">
-			$edit_paths_txt{'14'}
+			<label for="forumstylesdir">$edit_paths_txt{'14'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="forumstylesdir" size="50" value="$forumstylesdir" />
+			<input type="text" name="forumstylesdir" id="forumstylesdir" size="50" value="$forumstylesdir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'15'}
+			<label for="adminstylesdir">$edit_paths_txt{'15'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="adminstylesdir" size="50" value="$adminstylesdir" />
+			<input type="text" name="adminstylesdir" id="adminstylesdir" size="50" value="$adminstylesdir" />
 		</div>
 		<br />
 	-->	<div>&nbsp;</div>
 		<div class="setting_cell">
-			$edit_paths_txt{'16'}
+			<label for="htmldir">$edit_paths_txt{'16'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="htmldir" size="50" value="$htmldir" />
+			<input type="text" name="htmldir" id="htmldir" size="50" value="$htmldir" />
 		</div>
 		<br />
 	<!--	<div class="setting_cell">
-			$edit_paths_txt{'18'}
+			<label for="smiliesdir">$edit_paths_txt{'18'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="smiliesdir" size="50" value="$smiliesdir" />
+			<input type="text" name="smiliesdir" id="smiliesdir" size="50" value="$smiliesdir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'19'}
+			<label for="modimgdir">$edit_paths_txt{'19'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="modimgdir" size="50" value="$modimgdir" />
+			<input type="text" name="modimgdir" id="modimgdir" size="50" value="$modimgdir" />
 		</div>
 		<br />
 	-->	<div class="setting_cell">
-			$edit_paths_txt{'20'}
+			<label for="uploaddir">$edit_paths_txt{'20'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="uploaddir" size="50" value="$uploaddir" />
+			<input type="text" name="uploaddir" id="uploaddir" size="50" value="$uploaddir" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'17'}
+			<label for="facesdir">$edit_paths_txt{'17'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="facesdir" size="50" value="$facesdir" />
+			<input type="text" name="facesdir" id="facesdir" size="50" value="$facesdir" />
 		</div>
        </td>
      </tr>
@@ -810,59 +823,59 @@ sub EditPaths {
      <tr valign="middle">
        <td align="left" class="windowbg2">
 		<div class="setting_cell">
-			$edit_paths_txt{'3'}
+			<label for="boardurl">$edit_paths_txt{'3'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="boardurl" size="50" value="$boardurl" />
+			<input type="text" name="boardurl" id="boardurl" size="50" value="$boardurl" />
 		</div>
 		<div>&nbsp;</div>
 	<!--	<div class="setting_cell">
-			$edit_paths_txt{'22'}
+			<label for="forumstylesurl">$edit_paths_txt{'22'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="forumstylesurl" size="50" value="$forumstylesurl" />
+			<input type="text" name="forumstylesurl" id="forumstylesurl" size="50" value="$forumstylesurl" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'23'}
+			<label for="adminstylesurl">$edit_paths_txt{'23'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="adminstylesurl" size="50" value="$adminstylesurl" />
+			<input type="text" name="adminstylesurl" id="adminstylesurl" size="50" value="$adminstylesurl" />
 		</div>
 		<br />
 	-->	<div class="setting_cell">
-			$edit_paths_txt{'28'}
+			<label for="yyhtml_root">$edit_paths_txt{'28'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="yyhtml_root" size="50" value="$yyhtml_root" />
+			<input type="text" name="yyhtml_root" id="yyhtml_root" size="50" value="$yyhtml_root" />
 		</div>
 		<br />
 	<!--	<div class="setting_cell">
-			$edit_paths_txt{'30'}
+			<label for="smiliesurl">$edit_paths_txt{'30'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="smiliesurl" size="50" value="$smiliesurl" />
+			<input type="text" name="smiliesurl" id="smiliesurl" size="50" value="$smiliesurl" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'31'}
+			<label for="modimgurl">$edit_paths_txt{'31'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="modimgurl" size="50" value="$modimgurl" />
+			<input type="text" name="modimgurl" id="modimgurl" size="50" value="$modimgurl" />
 		</div>
 		<br />
 	-->	<div class="setting_cell">
-			$edit_paths_txt{'32'}
+			<label for="uploadurl">$edit_paths_txt{'32'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="uploadurl" size="50" value="$uploadurl" />
+			<input type="text" name="uploadurl" id="uploadurl" size="50" value="$uploadurl" />
 		</div>
 		<br />
 		<div class="setting_cell">
-			$edit_paths_txt{'29'}
+			<label for="facesurl">$edit_paths_txt{'29'}</label>
 		</div>
 		<div class="setting_cell2">
-			<input type="text" name="facesurl" size="50" value="$facesurl" />
+			<input type="text" name="facesurl" id="facesurl" size="50" value="$facesurl" />
 		</div>
        </td>
      </tr>
@@ -922,11 +935,11 @@ sub EditPaths2 {
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #

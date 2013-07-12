@@ -5,18 +5,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$setupplver = 'YaBB 2.4 $Revision: 1.35.2.2 $';
+$setupplver = 'YaBB 2.5 AE $Revision: 1.36 $';
 
 # use CGI::Carp qw(fatalsToBrowser); # used only for tests
 
@@ -917,9 +917,6 @@ EOF
 			$forumstarttext = qq~The Forum Start date was set to $setforumstart but the first member was registered $firstmember. So we changed the Forum Start Date to $firstmember.~;
 		}
 
-		# End of conversion  ;)
-		&automaintenance('off');
-
 		$yytabmenu = $NavLink1 . $NavLink2 . $NavLink3 . $NavLink4 . $NavLink5 . $NavLink6a;
 
 		$formsession = &cloak("$mbname$username");
@@ -1315,7 +1312,7 @@ sub IllegalUser {
 		'im_popup'      => ($pmpopup ? 1 : 0),
 		'im_imspop'     => ($pmspop ? 1 : 0),
 		'cathide'       => "$settings[30]",
-		'postlayout'    => "$settings[31]|0",
+		'postlayout'    => ($settings[31] ? "$settings[31]|0" : ''),
 		'dsttimeoffset' => "$dstoffset",
 		'pageindex'     => "1|1|1",
 		'lastips'       => "$c_ip_one|$c_ip_two|$c_ip_three",
@@ -2011,8 +2008,8 @@ sub MyReCountTotals {
 		&BoardTotals("load", $cntboard);
 		${ $uid . $cntboard }{'threadcount'}  = $threadcount;
 		${ $uid . $cntboard }{'messagecount'} = $messagecount;
-		&BoardTotals("update", $cntboard);
-		&BoardSetLastInfo($cntboard);
+		# &BoardTotals("update", ...) is done in &BoardSetLastInfo
+		&BoardSetLastInfo($cntboard,\@threads);
 
 		if (time() > $time_to_jump && ($j + 1) < $totalboards) {
 			$yySetLocation = qq~$set_cgi?action=cleanup2;st=~ . int($INFO{'st'} + time() - $time_to_jump + $max_process_time) . qq~;starttime=$time_to_jump;clean=1;total_boards=$INFO{'total_boards'};total_re_tot=$totalboards;my_re_tot=~ . ($j + 1);
@@ -2390,15 +2387,15 @@ sub adminlogin {
 	<table width="100%" border="0" bgcolor= "$windowbg" cellspacing="1" cellpadding="3">
 	<tr>
 		<td width="100%" align="center">
-		<span style="font-family: Arial; font-size: 13px; color: #000000;">
+		<label for="password"><span style="font-family: Arial; font-size: 13px; color: #000000;">
 		Enter the password for user <b>admin</b><br />to gain access to the Setup Utility
-		</span>
+		</span></label>
 		</td>
 	</tr>
 	<tr>
 		<td width="100%" align="center">
 		<span style="font-family: Arial; font-size: 13px; color: #000000;">
-		<input type="password" size="30" name="password" />
+		<input type="password" name="password" id="password" size="30" />
 		<input type="hidden" name="username" value="admin" />
 		<input type="hidden" name="cookielength" value="1500" />
 		</span>
@@ -2723,54 +2720,54 @@ function autofill() {
 	</tr>
 	<tr>
 		<td width="43%" bgcolor= "$windowbg2" align="left">
-			<span style="font-family: Arial; font-size: 13px; color: #000000;">
+			<label for="preboarddir"><span style="font-family: Arial; font-size: 13px; color: #000000;">
 			Main Script Directory:
 			</span><br />
 			<span style="font-family: Arial; font-size: 11px; color: #000000;">
 			The server path to the board's folder (usually can be left as '.')
-			</span>
+			</span></label>
 		</td>
 		<td width="57%" bgcolor= "$windowbg" align="left">
-			<input type="text" size="60" name ="preboarddir" value="$boarddir" />
+			<input type="text" size="60" name ="preboarddir" id ="preboarddir" value="$boarddir" />
 		</td>
 	</tr>
 	<tr>
 		<td width="43%" bgcolor= "$windowbg2" align="left">
-			<span style="font-family: Arial; font-size: 13px; color: #000000;">
+			<label for="preboardurl"><span style="font-family: Arial; font-size: 13px; color: #000000;">
 			Board URL:
 			</span><br />
 			<span style="font-family: Arial; font-size: 11px; color: #000000;">
 			URL of your board's folder (without trailing '/')
-			</span>
+			</span></label>
 		</td>
 		<td width="57%" bgcolor= "$windowbg" align="left">
-			<input type="text" size="60" name ="preboardurl" value="$boardurl" />
+			<input type="text" size="60" name ="preboardurl" id ="preboardurl" value="$boardurl" />
 		</td>
 	</tr>
 	<tr>
 		<td width="43%" bgcolor= "$windowbg2" align="left">
-			<span style="font-family: Arial; font-size: 13px; color: #000000;">
+			<label for="prehtmldir"><span style="font-family: Arial; font-size: 13px; color: #000000;">
 			HTML Root Directory:
 			</span><br />
 			<span style="font-family: Arial; font-size: 11px; color: #000000;">
 			Base Path for all /html/css files and folders
-			</span>
+			</span></label>
 		</td>
 		<td width="57%" bgcolor= "$windowbg" align="left">
-			<input type="text" size="60" name ="prehtmldir" value="$htmldir" />
+			<input type="text" size="60" name ="prehtmldir" id ="prehtmldir" value="$htmldir" />
 		</td>
 	</tr>
 	<tr>
 		<td width="43%" bgcolor= "$windowbg2" align="left">
-			<span style="font-family: Arial; font-size: 13px; color: #000000;">
+			<label for="prehtml_root"><span style="font-family: Arial; font-size: 13px; color: #000000;">
 			HTML Root URL:
 			</span><br />
 			<span style="font-family: Arial; font-size: 11px; color: #000000;">
 			Base URL for all /html/css files and folders
-			</span>
+			</span></label>
 		</td>
 		<td width="57%" bgcolor= "$windowbg" align="left">
-			<input type="text" size="60" name ="prehtml_root" value="$yyhtml_root" />
+			<input type="text" size="60" name ="prehtml_root" id ="prehtml_root" value="$yyhtml_root" />
 		</td>
 	</tr>
 	<tr>
@@ -2786,8 +2783,8 @@ function autofill() {
 <table width="80%" bgcolor="#000000" border="0" cellspacing="1" cellpadding="3" align="center">
 	<tr>
 		<td colspan="4" bgcolor= "$header" width="100%" align="left">
-		<input type="hidden" name="lastsaved" value="${$uid.$username}{'realname'}">
-		<input type="hidden" name="lastdate" value="$date">
+		<input type="hidden" name="lastsaved" value="${$uid.$username}{'realname'}" />
+		<input type="hidden" name="lastdate" value="$date" />
 		<span style="font-family: Arial; font-size: 13px; color: #fefefe;">&nbsp;<b>These are the settings detected on your server and the last saved settings.</b></span>
 		</td>
 	</tr>
@@ -3015,11 +3012,11 @@ sub save_paths {
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
@@ -3473,34 +3470,35 @@ sub SetInstall {
 	</tr><tr valign="middle">
 		<td width="100%" class="windowbg2" align="left">
 		<div style="float: left; font-family: verdana; width: 45%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		Message Board Name
+		<label for="mbname">Message Board Name</label>
 		</div>
 		<div style="float: left; font-family: verdana; width: 55%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		<input type="text" name="mbname" size="35" value="My Perl YaBB Forum" />
+		<input type="text" name="mbname" id="mbname" size="35" value="My Perl YaBB Forum" />
 		</div>
 	<br />
 		<div style="float: left; font-family: verdana; width: 45%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		Webmaster E-mail Address
+		<label for="webmaster_email">Webmaster E-mail Address</label>
 		</div>
 		<div style="float: left; font-family: verdana; width: 55%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		<input type="text" name="webmaster_email" size="35" value="webmaster\@mysite.com" />
+		<input type="text" name="webmaster_email" id="webmaster_email" size="35" value="webmaster\@mysite.com" />
 		</div>
 	<br />
 		<div style="float: left; font-family: verdana; width: 45%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		Admin Language / Forum Default Language
+		<label for="defaultlanguage">Admin Language / Forum Default Language</label>
 		</div>
 		<div style="float: left; font-family: verdana; width: 55%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		<select name="defaultlanguage">$drawnldirs</select>
+		<select name="defaultlanguage" id="defaultlanguage">$drawnldirs</select>
 		</div>
 	<br />
 		<div style="float: left; font-family: verdana; width: 45%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		Default Time Format
+		<label for="timeselect">Default Time Format</label>
 		</div>
 		<div style="float: left; font-family: verdana; width: 55%; text-align: left; font-size: 12px; padding-top: 2px; padding-bottom: 2px;">
-		<select name="timeselect" size="1">
+		<select name="timeselect" id="timeselect" size="1">
 			<option value="1">01/31/01 at 13:15:17</option>
 			<option value="5">01/31/01 at 1:15pm</option>
 			<option value="4" selected="selected">Jan 12th, 2001 at 1:15pm</option>
+			<option value="8"> 12th Jan, 2001 at 1:15pm</option>
 			<option value="2">31.01.01 at 13:15:17</option>
 			<option value="3">31.01.2001 at 13:15:17</option>
 			<option value="6">31. Jan at 13:15</option>
@@ -3548,7 +3546,7 @@ sub SetInstall {
 sub SetInstall2 {
 	if ($action eq "checkmodules" || $action eq "setinstall2") {
 		$settings_file_version = "YaBB 0.0.0";
-		$maintenance = 0;
+		$maintenance = 1;
 		$rememberbackup = 0;
 		$guestaccess = 1;
 		$mbname = $FORM{'mbname'} || 'My Perl YaBB Forum';
@@ -3563,6 +3561,7 @@ sub SetInstall2 {
 		$emailnewpass = 0;
 		$emailwelcome = 0;
 		$name_cannot_be_userid = 1;
+		$gender_on_reg = 0;
 		$lang = $FORM{'defaultlanguage'} || 'English';
 		$default_template = 'Forum default';
 		$mailprog = '/usr/sbin/sendmail';
@@ -3612,6 +3611,7 @@ sub SetInstall2 {
 		$enable_notifications = 0;
 		$NewNotificationAlert = 0;
 		$autolinkurls = 1;
+		$forumnumberformat = $FORM{'forumnumberformat'} || 1;
 		$timeselected = $FORM{'timeselect'} || 0;
 		$timecorrection = 0;
 		$timeoffset = "$FORM{'usertimesign'}$FORM{'usertimehour'}.$FORM{'usertimemin'}";
@@ -3631,9 +3631,7 @@ sub SetInstall2 {
 		$ClickLogTime = 100;
 		$max_log_days_old = 90;
 		$fadertime = 1000;
-		$color{'fadertext'} = '#000000';
-		$color{'faderbg'} = '#FFFFFF';
-		$defaultusertxt = 'I Love YaBB 2.4!';
+		$defaultusertxt = 'I Love YaBB 2.5 AE!';
 		$timeout = 5;
 		$HotTopic = 10;
 		$VeryHotTopic = 25;
@@ -3675,6 +3673,7 @@ sub SetInstall2 {
 		$min_post_speed = 2;
 		$post_speed_count = 3;
 		$minlinkpost = 0;
+		$minlinksig = 0;
 
 		$maxsteps = 40;
 		$stepdelay = 75;
@@ -3696,11 +3695,11 @@ sub SetInstall2 {
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
@@ -3713,8 +3712,8 @@ sub SetInstall2 {
 \$settings_file_version = "$settings_file_version"; # If not equal actual YaBBversion then the updating process is run through
 
 \%templateset = (
-'Old YaBB 2.1 style' => "yabb21|yabb21|yabb21|yabb21|yabb21|yabb21|yabb21|",
 'Forum default' => "default|default|default|default|default|default|default|",
+'Old YaBB 2.1 style' => "yabb21|yabb21|yabb21|yabb21|yabb21|yabb21|yabb21|",
 );                                                  # Forum templates settings
 
 \$maintenance = $maintenance;                       # Set to 1 to enable Maintenance mode
@@ -3745,6 +3744,9 @@ sub SetInstall2 {
                                                     # when you have mail password turned off
 \$name_cannot_be_userid = $name_cannot_be_userid;   # Set to 1 to require users to have different usernames and display names
 
+\$gender_on_reg = $gender_on_reg;                   # 0: don't ask for gender on registration
+                                                    # 1: ask for gender, no input required
+                                                    # 2: ask for gender, input required
 \$lang = "$lang";                                   # Default Forum Language
 \$default_template = "$default_template";           # Default Forum Template
 
@@ -3825,6 +3827,7 @@ sub SetInstall2 {
 \$NewNotificationAlert = $NewNotificationAlert;     # enable notification alerts (popup) for new notifications
 \$autolinkurls = $autolinkurls;                     # Set to 1 to turn URLs into links, or 0 for no auto-linking.
 
+\$forumnumberformat = $forumnumberformat;			# Select your preferred output Format for Numbers
 \$timeselected = $timeselected;                     # Select your preferred output Format of Time and Date
 \$timecorrection = $timecorrection;                 # Set time correction for server time in seconds
 \$timeoffset = "$timeoffset";                       # Time Offset to GMT/UTC (0 for GMT/UTC)
@@ -3846,6 +3849,7 @@ sub SetInstall2 {
 \$spd_detention_time = $spd_detention_time;         # Time in seconds before a speedposting ban is lifted again
 \$min_post_speed = $min_post_speed;                 # Minimum time in seconds between entering a post form and submitting a post
 \$minlinkpost = $minlinkpost;                       # Minimum amount of posts a member needs to post links and images
+\$minlinksig = $minlinksig;							# Minimum amount of posts a member needs to create links and images in signature
 \$post_speed_count = $post_speed_count;             # Maximum amount of abuses befor a user gets banned
 \$MaxSigLen = $MaxSigLen;                           # Maximum Allowed Characters in Signatures
 \$MaxAwayLen = $MaxAwayLen;                         # Maximum Allowed Characters in Away message
@@ -3857,8 +3861,6 @@ sub SetInstall2 {
 \$stepdelay = $stepdelay;                           # Time in miliseconds of a single step
 \$fadelinks = $fadelinks;                           # Fade links as well as text?
 
-\$color{'fadertext'}  = "$color{'fadertext'}";      # Color of text in the NewsFader (news color)
-\$color{'faderbg'}  = "$color{'faderbg'}";          # Color of background in the NewsFader (news color)
 \$defaultusertxt = qq~$defaultusertxt~;             # The dafault usertext visible in users posts
 \$timeout = $timeout;                               # Minimum time between 2 postings from the same IP
 \$HotTopic = $HotTopic;                             # Number of posts needed in a topic for it to be classed as "Hot"
@@ -4135,8 +4137,14 @@ EOF
 	fclose(SETTING);
 	if ($action eq "setinstall2") {
 		&LoadUser('admin');
-		${$uid.'admin'}{'language'} = $lang;
+        ${$uid.'admin'}{'email'} = $webmaster_email;
+        ${$uid.'admin'}{'timeoffset'} = $timeoffset; # must set before &timetostring($date)	 
+        ${$uid.'admin'}{'regdate'} = &timetostring($date);	 
+        ${$uid.'admin'}{'regtime'} = $date;	 
+        ${$uid.'admin'}{'timeselect'} = $timeselected;
+        ${$uid.'admin'}{'language'} = $lang;
 		&UserAccount('admin', "update");
+		 &ManageMemberinfo('update', 'admin', $date, '', $webmaster_email);
 		$yySetLocation = qq~$set_cgi?action=setup3~;
 		&redirectexit;
 	}
@@ -4146,7 +4154,7 @@ EOF
 sub tempstarter {
 	return if !-e "$vardir/Settings.pl";
 
-	$YaBBversion = 'YaBB 2.4';
+	$YaBBversion = 'YaBB 2.5 AE';
 
 	# Make sure the module path is present
 	push(@INC, "./Modules");
@@ -4164,9 +4172,6 @@ sub tempstarter {
 	require "$vardir/Settings.pl";
 	if (-e "$vardir/ConvSettings.txt") { require "$vardir/ConvSettings.txt"; }
 	else { $convertdir = "./Convert"; }
-	require "$sourcedir/Subs.pl";
-	require "$sourcedir/DateTime.pl";
-	require "$sourcedir/Load.pl";
 
 	&LoadCookie; # Load the user's cookie (or set to guest)
 	&LoadUserSettings;
@@ -4677,7 +4682,7 @@ sub SimpleOutput {
 
 <!-- Main Content -->
 <div style="height: 40px;">&nbsp;</div>
-<center><b>$yymain</b><center>
+<center>$yymain</center>
 </body>
 </html>
 	~;

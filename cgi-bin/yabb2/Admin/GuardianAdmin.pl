@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$guardianadminplver = 'YaBB 2.4 $Revision: 1.6 $';
+$guardianadminplver = 'YaBB 2.5 AE $Revision: 1.7 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Guardian');
@@ -96,22 +96,37 @@ sub setup_guardian {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
-		 <div class="setting_cell3">
-			$guardian_txt{'use_guardian'}
-			<input type="checkbox" name="use_guardian" value="1"$guardian_checked />
-		 </div>
-	   <br />
-		 <div class="setting_cell3">
-			$guardian_txt{'use_htaccess'}
-			<input type="checkbox" name="use_htaccess" value="1"$htaccess_checked /><br />$guardian_txt{'htaccess_support'}
-		 </div>
-	   <br />
-		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_list'}
-		 </div>
-		 <div class="setting_cell4">
-			<textarea cols="40" rows="8" name="access_denied" style="width:98%">$acc_denied</textarea>
-		 </div>
+		<div class="setting_cell3">
+			<label for="use_guardian">$guardian_txt{'use_guardian'}</label>
+			<input type="checkbox" name="use_guardian" id="use_guardian" value="1"$guardian_checked />
+		</div>
+		<br />
+		<div class="setting_cell3">
+			<label for="use_htaccess">$guardian_txt{'use_htaccess'}
+			<input type="checkbox" name="use_htaccess" id="use_htaccess" value="1"$htaccess_checked onmouseup="remove_htaccess();" /><br />$guardian_txt{'use_htaccess_support'}</label>
+		</div>
+		<script type="text/javascript" language="JavaScript">
+		 <!--
+			var old_htaccess = '';
+			function remove_htaccess() {
+				if (document.getElementById("use_htaccess").checked) {
+					old_htaccess = document.getElementById("access_denied").value;
+					document.getElementById("access_denied").value = '';
+					document.getElementById("access_denied").disabled = "disabled";
+				} else {
+					document.getElementById("access_denied").value = old_htaccess;
+					document.getElementById("access_denied").disabled = "";
+				}
+			}
+		 // -->
+		</script>
+		<br />
+		<div class="setting_cell3">
+			<label for="access_denied">$guardian_txt{'htaccess_list'}</label>
+		</div>
+		<div class="setting_cell4">
+			<textarea cols="40" rows="8" name="access_denied" id="access_denied" style="width:98%"~ . ($use_htaccess ? '' : ' disabled="disabled"') . qq~>$acc_denied</textarea>
+		</div>
 	   </td>
      </tr>
    </table>
@@ -129,25 +144,25 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'proxy_on'}
-			<input type="checkbox" name="disallow_proxy_on" value="1"$proxy_on_checked />
+			<label for="disallow_proxy_on">$guardian_txt{'proxy_on'}</label>
+			<input type="checkbox" name="disallow_proxy_on" id="disallow_proxy_on" value="1"$proxy_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'white_list'}
+			<label for="whitelist">$guardian_txt{'white_list'}</label>
 		 </div>
 		 <div class="setting_cell4">
-			<textarea cols="40" rows="8" name="whitelist" style="width:98%">$whitelist</textarea>
+			<textarea cols="40" rows="8" name="whitelist" id="whitelist" style="width:98%">$whitelist</textarea>
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="disallow_proxy_notify" value="1"$proxy_notify_checked />
+			<label for="disallow_proxy_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="disallow_proxy_notify" id="disallow_proxy_notify" value="1"$proxy_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="disallow_proxy_htaccess" value="1"$proxy_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="disallow_proxy_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="disallow_proxy_htaccess" id="disallow_proxy_htaccess" value="1"$proxy_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -166,25 +181,25 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'referer_on'}
-			<input type="checkbox" name="referer_on" value="1"$referer_on_checked />
+			<label for="referer_on">$guardian_txt{'referer_on'}</label>
+			<input type="checkbox" name="referer_on" id="referer_on" value="1"$referer_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'referer_list'}
+			<label for="banned_referers">$guardian_txt{'referer_list'}</label>
 		 </div>
 		 <div class="setting_cell4">
-			<textarea cols="40" rows="8" name="banned_referers" style="width:98%">$banned_referers</textarea>
+			<textarea cols="40" rows="8" name="banned_referers" id="banned_referers" style="width:98%">$banned_referers</textarea>
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="referer_notify" value="1"$referer_notify_checked />
+			<label for="referer_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="referer_notify" id="referer_notify" value="1"$referer_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="referer_htaccess" value="1"$referer_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="referer_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="referer_htaccess" id="referer_htaccess" value="1"$referer_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -203,25 +218,25 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'harvester_on'}
-			<input type="checkbox" name="harvester_on" value="1"$harvester_on_checked />
+			<label for="harvester_on">$guardian_txt{'harvester_on'}</label>
+			<input type="checkbox" name="harvester_on" id="harvester_on" value="1"$harvester_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'harvester_list'}
+			<label for="banned_harvesters">$guardian_txt{'harvester_list'}</label>
 		 </div>
 		 <div class="setting_cell4">
-			<textarea cols="40" rows="8" name="banned_harvesters" style="width:98%">$banned_harvesters</textarea>
+			<textarea cols="40" rows="8" name="banned_harvesters" id="banned_harvesters" style="width:98%">$banned_harvesters</textarea>
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="harvester_notify" value="1"$harvester_notify_checked />
+			<label for="harvester_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="harvester_notify" id="harvester_notify" value="1"$harvester_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="harvester_htaccess" value="1"$harvester_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="harvester_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="harvester_htaccess" id="harvester_htaccess" value="1"$harvester_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -240,25 +255,25 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'request_on'}
-			<input type="checkbox" name="request_on" value="1"$request_on_checked />
+			<label for="request_on">$guardian_txt{'request_on'}</label>
+			<input type="checkbox" name="request_on" id="request_on" value="1"$request_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'request_list'}
+			<label for="banned_requests">$guardian_txt{'request_list'}</label>
 		 </div>
 		 <div class="setting_cell4">
-			<textarea cols="40" rows="8" name="banned_requests" style="width:98%">$banned_requests</textarea>
+			<textarea cols="40" rows="8" name="banned_requests" id="banned_requests" style="width:98%">$banned_requests</textarea>
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="request_notify" value="1"$request_notify_checked />
+			<label for="request_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="request_notify" id="request_notify" value="1"$request_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="request_htaccess" value="1"$request_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="request_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="request_htaccess" id="request_htaccess" value="1"$request_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -277,25 +292,25 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'string_on'}
-			<input type="checkbox" name="string_on" value="1"$string_on_checked />
+			<label for="string_on">$guardian_txt{'string_on'}</label>
+			<input type="checkbox" name="string_on" id="string_on" value="1"$string_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'string_list'}
+			<label for="banned_strings">$guardian_txt{'string_list'}</label>
 		 </div>
 		 <div class="setting_cell4">
-			<textarea cols="40" rows="8" name="banned_strings" style="width:98%">$banned_strings</textarea>
+			<textarea cols="40" rows="8" name="banned_strings" id="banned_strings" style="width:98%">$banned_strings</textarea>
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="string_notify" value="1"$string_notify_checked />
+			<label for="string_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="string_notify" id="string_notify" value="1"$string_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="string_htaccess" value="1"$string_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="string_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="string_htaccess" id="string_htaccess" value="1"$string_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -314,18 +329,18 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'script_on'}
-			<input type="checkbox" name="script_on" value="1"$script_on_checked />
+			<label for="script_on">$guardian_txt{'script_on'}</label>
+			<input type="checkbox" name="script_on" id="script_on" value="1"$script_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="script_notify" value="1"$script_notify_checked />
+			<label for="script_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="script_notify" id="script_notify" value="1"$script_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="script_htaccess" value="1"$script_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="script_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="script_htaccess" id="script_htaccess" value="1"$script_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -344,18 +359,18 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'union_on'}
-			<input type="checkbox" name="union_on" value="1"$union_on_checked />
+			<label for="union_on">$guardian_txt{'union_on'}</label>
+			<input type="checkbox" name="union_on" id="union_on" value="1"$union_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="union_notify" value="1"$union_notify_checked />
+			<label for="union_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="union_notify" id="union_notify" value="1"$union_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="union_htaccess" value="1"$union_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="union_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="union_htaccess" id="union_htaccess" value="1"$union_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -374,18 +389,18 @@ sub setup_guardian {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 		 <div class="setting_cell3">
-			$guardian_txt{'clike_on'}
-			<input type="checkbox" name="clike_on" value="1"$clike_on_checked />
+			<label for="clike_on">$guardian_txt{'clike_on'}</label>
+			<input type="checkbox" name="clike_on" id="clike_on" value="1"$clike_on_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'notify'}
-			<input type="checkbox" name="clike_notify" value="1"$clike_notify_checked />
+			<label for="clike_notify">$guardian_txt{'notify'}</label>
+			<input type="checkbox" name="clike_notify" id="clike_notify" value="1"$clike_notify_checked />
 		 </div>
 	   <br />
 		 <div class="setting_cell3">
-			$guardian_txt{'htaccess_add'}
-			<input type="checkbox" name="clike_htaccess" value="1"$clike_htaccess_checked /><br />$guardian_txt{'htaccess_support'}
+			<label for="clike_htaccess">$guardian_txt{'htaccess_add'}
+			<input type="checkbox" name="clike_htaccess" id="clike_htaccess" value="1"$clike_htaccess_checked /><br />$guardian_txt{'htaccess_support'}</label>
 		 </div>
 	   </td>
      </tr>
@@ -455,7 +470,7 @@ sub setup_guardian2 {
 	@access_denied = split(/\,/, $access_denied);
 	&update_htaccess("save", @access_denied);
 
-	$yySetLocation = qq~$adminurl~;
+	$yySetLocation = qq~$adminurl?action=setup_guardian~;
 	&redirectexit;
 }
 
@@ -473,23 +488,21 @@ sub update_htaccess {
 	$start = 0;
 	foreach (@htlines) {
 		chomp $_;
-		if ($_ eq $htheader){$start = 1;}
-		if ($start == 0 && !($_ =~ m/\#/) && $_ ne ""){push(@htout, "$_\n");}
-		if ($_ eq $htfooter){$start = 0;}
-		if ($_ =~ m/Deny from / && $start == 1) {
-			$_ =~ s~Deny from ~~g;
+		if ($_ eq $htheader) { $start = 1; }
+		if ($start == 0 && $_ !~ m/#/ && $_ ne "") { push(@htout, "$_\n"); }
+		if ($_ eq $htfooter) { $start = 0; }
+		if ($start == 1 && $_ =~ s/Deny from //g) {
 			push(@denies, $_);
 		}
 	}
 	if ($action eq "load") {
 		return @denies;
-	} elsif ($action eq "save" && $use_htaccess) {
-		$mylastdate = &timeformat($date, 1);
+	} elsif ($action eq "save") {
 		fopen(HTA, ">.htaccess");
-		print HTA "# Last modified by The Guardian: $mylastdate GMT #\n\n";
+		print HTA "# Last modified by The Guardian: " . &timeformat($date, 1) . " #\n\n";
 		print HTA @htout;
-		if(@values){
-			print HTA "$htheader\n";
+		if (@values){
+			print HTA "\n$htheader\n";
 			foreach (@values) {
 				chomp $_;
 				if ($_ ne "") { print HTA "Deny from $_\n"; }

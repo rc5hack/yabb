@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$datetimeplver = 'YaBB 2.4 $Revision: 1.12 $';
+$datetimeplver = 'YaBB 2.5 AE $Revision: 1.13 $';
 
 sub calcdifference { # Input: $date1 $date2
 	$result = int($date2 / 86400) - int($date1 / 86400);
@@ -137,7 +137,7 @@ sub timeformat {
 	$newmonth = sprintf("%02d", $newmonth);
 	$newshortyear = ($newyear % 100);
 	$newshortyear = sprintf("%02d", $newshortyear);
-	if ($mytimeselected != 4) { $newday = sprintf("%02d", $newday); }
+	if ($mytimeselected != 4 && $mytimeselected != 8) { $newday = sprintf("%02d", $newday); }
 	$newhour   = sprintf("%02d", $newhour);
 	$newminute = sprintf("%02d", $newminute);
 	$newsecond = sprintf("%02d", $newsecond);
@@ -147,7 +147,7 @@ sub timeformat {
 	(undef, undef, undef, undef, undef, $yy, undef, $yd, undef) = gmtime($date + (3600 * $toffs));
 	$yy += 1900;
 
-	my $daytxt;
+	$daytxt = undef; # must be a global variable
 	unless ($dontusetoday) {
 		if ($yd == $newyearday && $yy == $newyear) {
 			# today
@@ -237,7 +237,7 @@ sub timeformat {
 		$newformat = $daytxt ? qq~$daytxt $maintxt{'107'} $newtime~ : qq~$newday.$newmonth.$newshortyear $maintxt{'107'} $newtime~;
 	} elsif ($mytimeselected == 3) {
 		$newformat = $daytxt ? qq~$daytxt $maintxt{'107'} $newtime~ : qq~$newday.$newmonth.$newyear $maintxt{'107'} $newtime~;
-	} elsif ($mytimeselected == 4) {
+	} elsif ($mytimeselected == 4 || $mytimeselected == 8) {
 		$ampm = $newhour > 11 ? 'pm' : 'am';
 		$newhour2 = $newhour % 12 || 12;
 		if ($use_rfc) { $newmonth2 = $months_rfc[$newmonth - 1]; }
@@ -253,7 +253,11 @@ sub timeformat {
 		} else {
 			$newday2 = "<sup>$timetxt{'4'}</sup>";
 		}
-		$newformat = $daytxt ? qq~$daytxt $maintxt{'107'} $newhour2:$newminute$ampm~ : qq~$newmonth2 $newday$newday2, $newyear $maintxt{'107'} $newhour2:$newminute$ampm~;
+		if ($mytimeselected == 4) {
+			$newformat = $daytxt ? qq~$daytxt $maintxt{'107'} $newhour2:$newminute$ampm~ : qq~$newmonth2 $newday$newday2, $newyear $maintxt{'107'} $newhour2:$newminute$ampm~;
+		} else {
+			$newformat = $daytxt ? qq~$daytxt $maintxt{'107'} $newhour2:$newminute$ampm~ : qq~$newday$newday2 $newmonth2, $newyear $maintxt{'107'} $newhour2:$newminute$ampm~;
+		}
 	} elsif ($mytimeselected == 5) {
 		$ampm = $newhour > 11 ? 'pm' : 'am';
 		$newhour2 = $newhour % 12 || 12;
@@ -295,6 +299,39 @@ sub CalcAge {
 		$age    = "";
 		$isbday = "";
 	}
+}
+
+sub NumberFormat {
+	my ($decimal, $fraction) = split(/\./, $_[0]);
+	my $tmpforumformat = $forumnumberformat || 1;
+	my $numberformat = ${$uid.$username}{'numberformat'} || $tmpforumformat;
+	if ($numberformat == 1) {
+		$separator = "";
+		$decimalpt = ".";
+	} elsif ($numberformat == 2) {
+		$separator = "";
+		$decimalpt = ",";
+	} elsif ($numberformat == 3) {
+		$separator = ",";
+		$decimalpt = ".";
+	} elsif ($numberformat == 4) {
+		$separator = ".";
+		$decimalpt = ",";
+	} elsif ($numberformat == 5) {
+		$separator = " ";
+		$decimalpt = ",";
+	}
+	if($decimal =~ m/\d{4,}/) {
+		$decimal = reverse $decimal;
+		$decimal =~ s/(\d{3})/$1$separator/g;
+		$decimal = reverse $decimal;
+		$decimal =~ s/^(\.|\,| )//;
+	}
+	$newnumber = $decimal;
+	if($fraction) {
+		$newnumber .= "$decimalpt$fraction";
+	}
+	return $newnumber;
 }
 
 1;

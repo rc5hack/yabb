@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$favoritesplver = 'YaBB 2.4 $Revision: 1.26 $';
+$favoritesplver = 'YaBB 2.5 AE $Revision: 1.27 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub Favorites {
@@ -27,19 +27,32 @@ sub Favorites {
 	# grab all relevant info on the favorite thread for this user and check access to them
 	if (!$maxfavs) { $maxfavs = 10; }
 	my @favboards;
+	eval { require "$datadir/movedthreads.cgi" };
 	foreach my $myfav (split(/,/, ${$uid.$username}{'favorites'})) {
 		# see if thread exists and search for it if moved
-		if (!-e "$datadir/$myfav.ctb") {
-			&RemFav($myfav, "nonexist");
-			eval { require "$datadir/movedthreads.cgi" };
-			next if !exists $moved_file{$myfav} || !$moved_file{$myfav};
-			while ($moved_file{$myfav}) {
+		if (exists $moved_file{$myfav}) {
+			my @moved = ($myfav);
+			while (exists $moved_file{$myfav}) {
 				$myfav = $moved_file{$myfav};
-				if (-e "$datadir/$myfav.txt") { last; }
-				elsif (!exists $moved_file{$myfav} || !$moved_file{$myfav}) { $myfav = 0; last; }
+				unshift(@moved, $myfav);
+			}
+			foreach (@moved) {
+				$myfav = $_;
+				if ($myfav ne $moved[$#moved]) {
+					if (-e "$datadir/$myfav.ctb") {
+						&RemFav($moved[$#moved], "nonexist");
+						&AddFav($myfav,0,1);
+						last;
+					}
+				} elsif (!-e "$datadir/$myfav.ctb") {
+					&RemFav($myfav, "nonexist");
+					$myfav = 0;
+				}
 			}
 			next if !$myfav;
-			&AddFav($myfav,0,1);
+		} elsif (!-e "$datadir/$myfav.ctb") {
+			&RemFav($myfav, "nonexist");
+			next;
 		}
 		&MessageTotals("load", $myfav);
 		$favoboard = ${$myfav}{'board'};
@@ -229,6 +242,8 @@ sub Favorites {
 			$msublink = qq~<a href="$scripturl?virboard=$currentboard;num=$mnum">$msub</a>~;
 		}
 		my $lastpostlink = qq~<a href="$scripturl?num=$mnum/$mreplies#$mreplies">$img{'lastpost'}$mydate</a>~;
+		my $fmreplies = &NumberFormat($mreplies);
+		$views = &NumberFormat($views);
 		my $tempbar = $threadbar;
 		if ($movedFlag) { $tempbar = $threadbarMoved; }
 
@@ -246,7 +261,7 @@ sub Favorites {
 		$tempbar =~ s/({|<)yabb attachmenticon(}|>)/$temp_attachment/g;
 		$tempbar =~ s/({|<)yabb pages(}|>)/$pages/g;
 		$tempbar =~ s/({|<)yabb starter(}|>)/$mname/g;
-		$tempbar =~ s/({|<)yabb replies(}|>)/$mreplies/g;
+		$tempbar =~ s/({|<)yabb replies(}|>)/$fmreplies/g;
 		$tempbar =~ s/({|<)yabb views(}|>)/$views/g;
 		$tempbar =~ s/({|<)yabb lastpostlink(}|>)/$lastpostlink/g;
 		$tempbar =~ s/({|<)yabb lastposter(}|>)/$lastpostername/g;
@@ -318,6 +333,8 @@ sub Favorites {
 	$messageindex_template =~ s/({|<)yabb board(}|>)/$favboard/g;
 	$messageindex_template =~ s/({|<)yabb moderators(}|>)//g;
 	$bdescrip = qq~$messageindex_txt{'75'}<br />$messageindex_txt{'76'} $curfav $messageindex_txt{'77'} $maxfavs $messageindex_txt{'78'}~;
+	$curfav = &NumberFormat($curfav);
+	$treplies = &NumberFormat($treplies);
 
 	&ToChars($bdescrip);
 	$boarddescription      =~ s/({|<)yabb boarddescription(}|>)/$bdescrip/g;

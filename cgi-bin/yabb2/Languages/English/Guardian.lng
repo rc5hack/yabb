@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$guardianlngver = 'YaBB 2.4 $Revision: 1.7 $';
+$guardianlngver = 'YaBB 2.5 AE $Revision: 1.8 $';
 
 %guardian_txt = (
 'main' => 'The Guardian&trade;',
@@ -26,7 +26,8 @@ $guardianlngver = 'YaBB 2.4 $Revision: 1.7 $';
 'general' => 'Global and Server Settings',
 'use_guardian' => 'Use The Guardian&trade; to protect your board?',
 'use_htaccess' => 'Activate .htaccess to add IP blocks on server level?',
-'htaccess_support' => '<span class="small"><i>(only works if your server supports it)</i></span>',
+'use_htaccess_support' => '<span class="small"><i>(Only works if your server supports /.htaccess files.)</i></span>',
+'htaccess_support' => '<span class="small"><i>(Only works if your server supports it and "Activate .htaccess to add IP blocks on server level?" from first item above is enabled!)</i></span>',
 'htaccess_add' => 'Auto add abusing IP addresses to .htaccess?',
 'htaccess_added' => 'Auto added abusing IP address to .htaccess file. (You can remove it from the list manually from the Guardian Admin)',
 'proxy' => 'Proxy Blocking',

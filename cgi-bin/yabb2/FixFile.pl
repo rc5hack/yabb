@@ -5,11 +5,11 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
@@ -60,7 +60,7 @@ if (!$action) {
 	&tempstarter;
 	$yytabmenu = qq~$tabsep<span onclick="location.href='$set_cgi?action=members2';"><a href="$set_cgi?action=members2" title="Update file structure">$tabfill Update file structure $tabfill</a></span>$tabsep~;
 	$yyim = 'Update file structure';
-	$yytitle = 'YaBB 2.4';
+	$yytitle = 'YaBB 2.5 AE';
 	&FixFileTemplate;
 }
 
@@ -69,7 +69,7 @@ if ($action eq 'members2') {
 	&FixNopost;
 	$yytabmenu = qq~$tabsep<span onclick="location.href='$scripturl?action=login';"><a href="$scripturl?action=login" title="$img_txt{'34'}">$tabfill$img_txt{'34'}$tabfill</a></span>$tabsep~;
 	$yyim = 'File structure updated!';
-	$yytitle = 'YaBB 2.4';
+	$yytitle = 'YaBB 2.5 AE';
 	&FixFileTemplate;
 }
 
@@ -246,7 +246,7 @@ sub FixNopost {
 sub tempstarter {
 	require "Paths.pl";
 
-	$YaBBversion = 'YaBB 2.4';
+	$YaBBversion = 'YaBB 2.5 AE';
 
 	# Make sure the module path is present
 	# Some servers need all the subdirs in @INC too.

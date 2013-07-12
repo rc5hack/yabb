@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$postplver = 'YaBB 2.4 $Revision: 1.143 $';
+$postplver = 'YaBB 2.5 AE $Revision: 1.144 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Post');
@@ -108,9 +108,9 @@ sub Post {
 		~
 		: qq~~;
 	}
+
 	$sub = '';
 	$settofield = 'subject';
-
 	if ($threadid ne '') {
 		unless (ref($thread_arrayref{$threadid})) {
 			fopen(FILE, "$datadir/$threadid.txt") || &fatal_error("cannot_open","$datadir/$threadid.txt", 1);
@@ -123,8 +123,7 @@ sub Post {
 			$message =~ s~<br.*?>~\n~ig;
 			$message =~ s/ \&nbsp; \&nbsp; \&nbsp;/\t/ig;
 			if (!$nestedquotes) {
-				$message =~ s~\n{0,1}\[quote([^\]]*)\](.*?)\[/quote\]\n{0,1}~\n~isg;
-				$message =~ s~\n*\[/*quote([^\]]*)\]\n*~~ig;
+				$message =~ s~\n{0,1}\[quote([^\]]*)\](.*?)\[/quote([^\]]*)\]\n{0,1}~\n~isg;
 			}
 			$mname ||= $musername || $post_txt{'470'};
 			my $hidename = $musername;
@@ -197,6 +196,15 @@ sub Postpage {
 	$message = &Censor($message);
 	&ToChars($sub);
 	$sub = &Censor($sub);
+
+	if ($action eq "modify" || $action eq "modify2") {
+		$displayname = qq~$mename~;
+	} else {
+		$displayname = ${$uid.$username}{'realname'};
+	}
+	require "$sourcedir/ContextHelp.pl";
+	&ContextScript("post");
+	$yymain .= $ctmain;
 
 	# this defines what the top area of the post box will look like: option 1 ) IM area
 	# option 2) all other post areas
@@ -406,7 +414,7 @@ function checkForm(theForm) {
 		while ($SmilieURL[$i]) {
 			if ($SmilieURL[$i] =~ /\//i) { $tmpurl = $SmilieURL[$i]; }
 			else { $tmpurl = qq~$imagesdir/$SmilieURL[$i]~; }
-			$moresmilieslist .= qq~				document.write('<img src="$tmpurl" align="bottom" alt="$SmilieDescription[$i]" border="0" onclick="javascript: MoreSmilies($i);" style="cursor: pointer;" />$SmilieLinebreak[$i] ');\n~;
+			$moresmilieslist .= qq~				document.write('<img src="$tmpurl" align="bottom" alt="$SmilieDescription[$i]" title="$SmilieDescription[$i]" border="0" onclick="javascript: MoreSmilies($i);" style="cursor: pointer;" />$SmilieLinebreak[$i] ');\n~;
 			$tmpcode = $SmilieCode[$i];
 			$tmpcode =~ s/\&quot;/"+'"'+"/g;    #" Adding that because if not it screws up my syntax view'
 			&FromHTML($tmpcode);
@@ -425,7 +433,7 @@ function checkForm(theForm) {
 			($name, $extension) = split(/\./, $line);
 			if ($extension =~ /gif/i || $extension =~ /jpg/i || $extension =~ /jpeg/i || $extension =~ /png/i) {
 				if ($line !~ /banner/i) {
-					$moresmilieslist .= qq~				document.write('<img src="$smiliesurl/$line" align="bottom" alt="$name" border="0" onclick="javascript: MoreSmilies($i);" style="cursor: hand;" />$SmilieLinebreak[$i] ');\n~;
+					$moresmilieslist .= qq~				document.write('<img src="$smiliesurl/$line" align="bottom" alt="$name" title="$name" border="0" onclick="javascript: MoreSmilies($i);" style="cursor: hand;" />$SmilieLinebreak[$i] ');\n~;
 					$more_smilie_array .= qq~" [smiley=$line]", ~;
 					$i++;
 				}
@@ -810,6 +818,7 @@ function checkForm(theForm) {
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
 			HAND = "style='cursor: pointer;'";
+			HAND += " onmouseover='contextTip(event, this.alt)' onmouseout='contextTip(event, this.alt)' oncontextmenu='if(!showcontexthelp(this.src, this.alt)) return false;'";
 			document.write('<div style="width: 437px; float: left;">');
 			document.write("<img src='$imagesdir/url.gif' onclick='hyperlink();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'257'}' title='$post_txt{'257'}' border='0' />");
 			document.write("<img src='$imagesdir/ftp.gif' onclick='ftp();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'434'}' title='$post_txt{'434'}' border='0' />");
@@ -821,12 +830,12 @@ function checkForm(theForm) {
 			document.write("<img src='$imagesdir/td.gif' onclick='tcol();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'437'}' title='$post_txt{'437'}' border='0' />");
 			document.write("<img src='$imagesdir/hr.gif' onclick='hr();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'531'}' title='$post_txt{'531'}' border='0' />");
 			document.write("<img src='$imagesdir/tele.gif' onclick='teletype();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'440'}' title='$post_txt{'440'}' border='0' />");
-			document.write("<img src='$imagesdir/code.gif' onclick='showcode();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'259'}' title='$post_txt{'259'}' border='0' />");
+			document.write("<img src='$imagesdir/code.gif' onclick='selcodelang();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'259'}' title='$post_txt{'259'}' border='0' />");
 			document.write("<img src='$imagesdir/quote2.gif' onclick='quote();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'260'}' title='$post_txt{'260'}' border='0' />");
 			document.write("<img src='$imagesdir/edit.gif' onclick='edit();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'603'}' title='$post_txt{'603'}' border='0' />");
 			document.write("<img src='$imagesdir/sup.gif' onclick='superscript();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'447'}' title='$post_txt{'447'}' border='0' />");
 			document.write("<img src='$imagesdir/sub.gif' onclick='subscript();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'448'}' title='$post_txt{'448'}' border='0' />");
-			document.write("<img src='$imagesdir/list.gif' onclick='list();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'261'}' title='$post_txt{'261'}' border='0' />");
+			document.write("<img src='$imagesdir/list.gif' onclick='bulletset();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'261'}' title='$post_txt{'261'}' border='0' />");
 			document.write("<img src='$imagesdir/me.gif' onclick='me();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'604'}' title='$post_txt{'604'}' border='0' />");
 			document.write("<img src='$imagesdir/move.gif' onclick='move();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'439'}' title='$post_txt{'439'}' border='0' />");
 			document.write("<img src='$imagesdir/timestamp.gif' onclick='timestamp($date);' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'245'}' title='$post_txt{'245'}' border='0' /><br />");
@@ -871,6 +880,50 @@ function checkForm(theForm) {
 			document.write('</select>');
 			document.write('</div>');
 
+
+			function selcodelang() {
+				if (document.getElementById("codelang").style.display == "none")
+				document.getElementById("codelang").style.display = "inline-block";
+				else
+				document.getElementById("codelang").style.display = "none";
+				document.getElementById("codelang").style.zIndex = "100";
+
+				var openbox = document.getElementsByTagName("div");
+				for (var i = 0; i < openbox.length; i++) {
+					if (openbox[i].className == "ubboptions" && openbox[i].id != "codelang") {
+						openbox[i].style.display = "none";
+					}
+				}
+			}
+
+			function syntaxlang(lang, optnum) {
+				AddSelText("[code"+lang+"]","[/code]");
+				document.getElementById("codesyntax").options[optnum].selected = false;
+				document.getElementById("codelang").style.display = "none";
+			}
+
+			function bulletset() {
+				if (document.getElementById("bullets").style.display == "none")
+				document.getElementById("bullets").style.display = "block";
+				else
+				document.getElementById("bullets").style.display = "none";
+				document.getElementById("bullets").style.zIndex = "100";
+
+				var openbox = document.getElementsByTagName("div");
+				for (var i = 0; i < openbox.length; i++) {
+					if (openbox[i].className == "ubboptions" && openbox[i].id != "bullets") {
+						openbox[i].style.display = "none";
+					}
+				}
+			}
+		
+			function showbullets(bullet) {
+				AddSelText("[list "+bullet+"][*]", "\\n[/list]");
+			}
+
+			function olist() {
+				AddSelText("[olist][*]", "\\n[/olist]");
+			}
 
 			// Palette
 			var thistask = 'post';
@@ -950,7 +1003,8 @@ function checkForm(theForm) {
 			</div>
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
-			HAND = "style='cursor: pointer; cursor: hand;'";
+			HAND = "style='cursor: pointer;'";
+			HAND += " onmouseover='contextTip(event, this.alt)' onmouseout='contextTip(event, this.alt)' oncontextmenu='if(!showcontexthelp(this.src, this.alt)) return false;'";
 			document.write('<div style="width: 92px; float: left;">');
 			document.write("<img src='$imagesdir/pre.gif' onclick='pre();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'444'}' title='$post_txt{'444'}' border='0' />");
 			document.write("<img src='$imagesdir/left.gif' onclick='left();' "+HAND+" align='top' width='23' height='22' alt='$post_txt{'445'}' title='$post_txt{'445'}' border='0' />");
@@ -1000,6 +1054,29 @@ function checkForm(theForm) {
 			</div>
 			<div id="dragbgh" style="position: absolute; top: 142px; left: 0px; width: $dwidth; height: 3px; border: 0; z-index: 3;">
 			<img id="dragImg2" src="$defaultimagesdir/resize_hb.gif" class="drag" style="position: absolute; top: $draghpos; left: 0px; z-index: 4; width: $dwidth; height: 3px; cursor: n-resize;" alt= "" />
+			</div>
+			<div class="ubboptions" id="bullets" style="position: absolute; top: -22px; left: 345px; width: 63px; border: 1px solid #666666; padding: 2px; text-align: center; background-color: #CCCCCC; display: none;">
+			<input type="button" value="$npf_txt{'default'}" style="width: 56px; margin: 3px 0px 0px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="list(), bulletset()" /><br />
+			<input type="button" value="$npf_txt{'ordered'}" style="width: 56px; margin: 3px 0px 3px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="olist(), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redball'), bulletset()" /><img src="$defaultimagesdir/bull-greenball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenball'), bulletset()" /><img src="$defaultimagesdir/bull-blueball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blueball'), bulletset()" /><img src="$defaultimagesdir/bull-blackball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackball'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redsq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redsq'), bulletset()" /><img src="$defaultimagesdir/bull-greensq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greensq'), bulletset()" /><img src="$defaultimagesdir/bull-bluesq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluesq'), bulletset()" /><img src="$defaultimagesdir/bull-blacksq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blacksq'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redpin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redpin'), bulletset()" /><img src="$defaultimagesdir/bull-greenpin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenpin'), bulletset()" /><img src="$defaultimagesdir/bull-bluepin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluepin'), bulletset()" /><img src="$defaultimagesdir/bull-blackpin.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackpin'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redcheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redcheck'), bulletset()" /><img src="$defaultimagesdir/bull-greencheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greencheck'), bulletset()" /><img src="$defaultimagesdir/bull-bluecheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluecheck'), bulletset()" /><img src="$defaultimagesdir/bull-blackcheck.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackcheck'), bulletset()" /><br />
+			<img src="$defaultimagesdir/bull-redarrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redarrow'), bulletset()" /><img src="$defaultimagesdir/bull-greenarrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenarrow'), bulletset()" /><img src="$defaultimagesdir/bull-bluearrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluearrow'), bulletset()" /><img src="$defaultimagesdir/bull-blackarrow.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackarrow'), bulletset()" /><br />
+			</div>
+			<div class="ubboptions" id="codelang" style="position: absolute; top: -22px; left: 230px; width: 92px; padding: 0px; background-color: #CCCCCC; display: none;">
+				<select size="10" name="codesyntax" id="codesyntax" onchange="syntaxlang(this.options[this.selectedIndex].value, this.selectedIndex);" style="margin:0px; font-size: 9px; width: 92px;">
+				<option value="" title="$npf_txt{'default'}">$npf_txt{'default'}</option>
+				<option value=" c++" title="C++">C++</option>
+				<option value=" css" title="CSS">CSS</option>
+				<option value=" html" title="HTML">HTML</option>
+				<option value=" java" title="Java">Java</option>
+				<option value=" javascript" title="Javascript">Javascript</option>
+				<option value=" pascal" title="Pascal">Pascal</option>
+				<option value=" perl" title="Perl">Perl</option>
+				<option value=" php" title="PHP">PHP</option>
+				<option value=" sql" title="SQL">SQL</option>
+				</select>
 			</div>
 			</div>
 			<div style="float: left; width: 315px; text-align: left;"> 
@@ -1127,7 +1204,8 @@ function checkForm(theForm) {
 		<td width="77%" valign="middle" class="windowbg2">
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
-			HAND = "style='cursor: pointer; cursor: hand;'";
+			HAND = "style='cursor: pointer;'";
+			document.write("<div style='float: left; width: 440px;'>");
 			document.write("<img src='$imagesdir/smiley.gif' onclick='smiley();' "+HAND+" align='bottom' alt='$post_txt{'287'}' title='$post_txt{'287'}' border='0'> ");
 			document.write("<img src='$imagesdir/wink.gif' onclick='wink();' "+HAND+" align='bottom' alt='$post_txt{'292'}' title='$post_txt{'292'}' border='0'> ");
 			document.write("<img src='$imagesdir/cheesy.gif' onclick='cheesy();' "+HAND+" align='bottom' alt='$post_txt{'289'}' title='$post_txt{'289'}' border='0'> ");
@@ -1144,6 +1222,7 @@ function checkForm(theForm) {
 			document.write("<img src='$imagesdir/undecided.gif' onclick='undecided();' "+HAND+" align='bottom' alt='$post_txt{'528'}' title='$post_txt{'528'}' border='0'> ");
 			document.write("<img src='$imagesdir/kiss.gif' onclick='kiss();' "+HAND+" align='bottom' alt='$post_txt{'529'}' title='$post_txt{'529'}' border='0'> ");
 			document.write("<img src='$imagesdir/cry.gif' onclick='cry();' "+HAND+" align='bottom' alt='$post_txt{'530'}' title='$post_txt{'530'}' border='0'> ");$moresmilieslist
+			document.write("</div>");
 			//-->
 			</script>\n~ if !$removenormalsmilies;
 
@@ -1305,7 +1384,7 @@ $lastmod
 					document.write("<br /><span class='small'>~ . ($postid ne 'Poll' ? $post_txt{'331'} : $post_txt{'331a'}) . qq~</span>");
 				} else if (/MSIE [7-9]/.test(navigator.userAgent) || /\\/[3-9]\\.\\d+\\.\\d+ Safari/.test(navigator.userAgent)) {
 					document.write("<br /><span class='small'>~ . ($postid ne 'Poll' ? $post_txt{'329'} : $post_txt{'329a'}) . qq~</span>");
-				} else if (/Firefox\\/[2-9]\\.\\d+\\.\\d+/.test(navigator.userAgent)) {
+				} else if (/Firefox\\/[2-9]/.test(navigator.userAgent) || /Chrome/.test(navigator.userAgent)) {
 					document.write("<br /><span class='small'>~ . ($postid ne 'Poll' ? $post_txt{'330'} : $post_txt{'330a'}) . qq~</span>");
 				}
 			}\n~;
@@ -1654,6 +1733,7 @@ function autoPreview() {
 		var ubbstr = vismessage;
 	}
 	document.getElementById("saveframe").innerHTML=ubbstr;
+	sh_highlightDocument();
 	LivePrevImgResize();
 	scrlto += parseInt(document.getElementById("saveframe").scrollTop) + parseInt(document.getElementById("saveframe").offsetHeight);
 	document.getElementById("saveframe").scrollTop = scrlto;
@@ -1875,21 +1955,14 @@ sub Preview {
 		$usename = substr($date,1,length($date)-4);
 		$sesname = substr($date,0,length($date)-4);
 		$verification = $FORM{'verification'};
-		$sessionid = $FORM{$sesname};
-		$regdate = $FORM{$usename};
-		my $prvpepper = &scramble($username, $masterkey);
-		my $prvsessionid = &scramble($verification,$masterkey);
-		my $prvsesname = &encode_password("A$FORM{'base'}");
-		my $prvses2name = &encode_password("B$FORM{'base'}");
+		$sessionid = $FORM{'sessionid'};
 		$verification_field = $verification ne ''
 		? qq~
 			<tr>
 				<td class="windowbg" width="23%" valign="top"><label for="verification"><b>$floodtxt{'3'}:</b></label></td>
 				<td class="windowbg" width="77%">$verification
 				<input type="hidden" name="verification" id="verification" value="$verification" />
-				<input type="hidden" name="base" id="base" value="$FORM{'base'}" />
-				<input type="hidden" name="$prvsesname" id="$prvsesname" value="$prvsessionid" />
-				<input type="hidden" name="$prvses2name" id="$prvses2name" value="$prvpepper" />
+				<input type="hidden" name="sessionid" id="sessionid" value="$sessionid" />
 				</td>
 			</tr>
 		~
@@ -2321,7 +2394,7 @@ sub Post2 {
 			}
 
 			$fixext  =~ s/\.(pl|pm|cgi|php)/._$1/i;
-			$fixname =~ s/\./_/g;
+			$fixname =~ s/\.(?!tar$)/_/g;
 			$fixfile = qq~$fixname$fixext~;
 
 			if (!$overwrite) { $fixfile = &check_existence($uploaddir, $fixfile); }
@@ -2686,7 +2759,6 @@ sub NewNotify {
 	&ToChars($boardname);
 
 	$thissubject .= " ($boardname)";
-	$thissubject =~ s/\[.*?\]//g;
 	$thissubject =~ s/<.*?>//g;
 	&FromHTML($thissubject);
 
@@ -2725,7 +2797,6 @@ sub ReplyNotify {
 	&ToChars($boardname);
 
 	$thissubject .= " ($boardname)";
-	$thissubject =~ s/\[.*?\]//g;
 	$thissubject =~ s/<.*?>//g;
 	&FromHTML($thissubject);
 
@@ -3122,8 +3193,7 @@ sub modAlert {
 			$message =~ s~<br.*?>~\n~ig;
 			$message =~ s/ \&nbsp; \&nbsp; \&nbsp;/\t/ig;
 			if (!$nestedquotes) {
-				$message =~ s~\n{0,1}\[quote([^\]]*)\](.*?)\[/quote\]\n{0,1}~\n~isg;
-				$message =~ s~\n*\[/*quote([^\]]*)\]\n*~~ig;
+				$message =~ s~\n{0,1}\[quote([^\]]*)\](.*?)\[/quote([^\]]*)\]\n{0,1}~\n~isg;
 			}
 			$mname ||= $musername || $post_txt{'470'};
 			my $hidename = $musername;

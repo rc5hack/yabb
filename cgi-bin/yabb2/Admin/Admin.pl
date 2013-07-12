@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$adminplver  = 'YaBB 2.4 $Revision: 1.81 $';
+$adminplver  = 'YaBB 2.5 AE $Revision: 1.82 $';
 
 sub Admin {
 	&is_admin_or_gmod;
@@ -264,8 +264,9 @@ sub FullStats {
 		@log = <LOG>;
 		fclose(LOG);
 		$yyclicks    = @log;
+		$yyclicks = &NumberFormat($yyclicks);
 		$yyclicktext = $admin_txt{'692'};
-		$yyclicklink = qq~$yyclicks&nbsp;(<a href="$adminurl?action=showclicks">$admin_txt{'693'}</a>)~;
+		$yyclicklink = qq~&nbsp;(<a href="$adminurl?action=showclicks">$admin_txt{'693'}</a>)~;
 	} else {
 		$yyclicktext = $admin_txt{'692a'};
 		$yyclicklink = "";
@@ -275,6 +276,11 @@ sub FullStats {
 	@elog = <ELOG>;
 	fclose(ELOG);
 	$errorslog = @elog;
+	$memcount = &NumberFormat($memcount);
+	$totalt = &NumberFormat($totalt);
+	$totalm = &NumberFormat($totalm);
+	$avgm = &NumberFormat($avgm);
+	$errorslog = &NumberFormat($errorslog);
 
 	$yymain .= qq~
  <div class="bordercolor" style="padding: 0px; width: 99%; margin-left: 0px; margin-right: auto;">
@@ -292,28 +298,29 @@ sub FullStats {
      <tr valign="middle">
       <td align="left" class="windowbg2"><br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'488'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$memcount</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$memcount</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'490'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$totalt</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$totalt</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'489'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$totalm</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$totalm</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admintxt{'39'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$avgm</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$avgm</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'658'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$numcats</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$numcats</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'665'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$numboards</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$numboards</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$errorlog{'3'}</div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$errorslog</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$errorslog</div>
        <br />
        <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'691'}&nbsp;<span class="small">($yyclicktext)</span></div>
-       <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$yyclicklink</div>
+       <div style="float: left; width: 10%; text-align: right; padding-top: 2px; padding-bottom: 2px;">$yyclicks</div>
+       <div style="float: left; width: 55%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$yyclicklink</div>
        <br />&nbsp;<br />
       </td>
      </tr>
@@ -691,8 +698,8 @@ sub DeleteOldMessages {
     </tr>
     <tr valign="middle">
      <td align="left" class="windowbg2"><br />
-      $admin_txt{'4'}: <input type="checkbox" name="keep_them" value="1" /><br />
-      $admin_txt{'124'} <input type=text name="maxdays" size="4" value="$maxdays" /> $admin_txt{'579'} $admin_txt{'2'}:<br /><br />
+      <label for="keep_them">$admin_txt{'4'}</label> <input type="checkbox" name="keep_them" id="keep_them" value="1" /><br />
+      <label for="maxdays">$admin_txt{'124'} <input type=text name="maxdays" id="maxdays" size="4" value="$maxdays" /> $admin_txt{'579'} $admin_txt{'2'}:</label><br /><br />
       <div align="left" style="margin-left: 25px; margin-right: auto;">~;
 
 	unless ($mloaded == 1) { require "$boardsdir/forum.master"; }
@@ -707,7 +714,7 @@ sub DeleteOldMessages {
 
 			$selectname = $curboard . 'check';
 			$yymain .= qq~
-		<input type="checkbox" name="$selectname" value="1" />&nbsp;$boardname<br />~;
+		<input type="checkbox" name="$selectname" id="$selectname" value="1" />&nbsp;<label for="$selectname">$boardname</label><br />~;
 		}
 	}
 	$yymain .= qq~
@@ -828,32 +835,32 @@ sub ipban {
     </tr>
     <tr valign="middle">
      <td align="left" class="catbg">
-      <span class="small">$admin_txt{'724'}</span>
+      <label for="ban"><span class="small">$admin_txt{'724'}</span></label>
      </td>
     </tr>
     <tr valign="middle">
      <td align="center" class="windowbg2"><br />
-      <textarea cols="60" rows="10" name="ban" style="width: 95%">$iban</textarea><br /><br />
+      <textarea cols="60" rows="10" name="ban" id="ban" style="width: 95%">$iban</textarea><br /><br />
      </td>
     </tr>
     <tr valign="middle">
      <td align="left" class="catbg">
-      <span class="small">$admin_txt{'725'}</span>
+      <label for="ban_email"><span class="small">$admin_txt{'725'}</span></label>
      </td>
     </tr>
     <tr valign="middle">
      <td align="center" class="windowbg2"><br />
-      <textarea cols="60" rows="10" name="ban_email" style="width: 95%">$eban</textarea><br /><br />
+      <textarea cols="60" rows="10" name="ban_email" id="ban_email" style="width: 95%">$eban</textarea><br /><br />
      </td>
     </tr>
     <tr valign="middle">
      <td align="left" class="catbg">
-      <span class="small">$admin_txt{'725a'}</span>
+      <label for="ban_memname"><span class="small">$admin_txt{'725a'}</span></label>
      </td>
     </tr>
     <tr valign="middle">
      <td align="center" class="windowbg2"><br />
-      <textarea cols="60" rows="10" name="ban_memname" style="width: 95%">$uban</textarea><br /><br />
+      <textarea cols="60" rows="10" name="ban_memname" id="ban_memname" style="width: 95%">$uban</textarea><br /><br />
      </td>
     </tr>
     <tr valign="middle">
@@ -1074,7 +1081,7 @@ sub Refcontrol {
 			if ($actfound eq $allow) { $selected = ' checked="checked"'; last; }
 		}
 		$refexpl_txt{$actfound} =~ s/"/'/g; # XHTML Validation
-		$dismenu .= qq~<input type="checkbox" name="$actfound"$selected />&nbsp;<img src="$imagesdir/question.gif" align="middle" alt="$reftxt{'1a'} $refexpl_txt{$actfound}" title="$reftxt{'1a'} $refexpl_txt{$actfound}" border="0" /> $actfound<br />\n~;
+		$dismenu .= qq~<input type="checkbox" name="$actfound" id="$actfound"$selected />&nbsp;<label for="$actfound"><img src="$imagesdir/question.gif" align="middle" alt="$reftxt{'1a'} $refexpl_txt{$actfound}" title="$reftxt{'1a'} $refexpl_txt{$actfound}" border="0" /> $actfound</label ><br />\n~;
 		$counter++;
 		if ($counter > $column + 1) {
 			$dismenu .= qq~</td><td align="left" class="windowbg2" valign="top" width="33%">~;
@@ -1155,7 +1162,9 @@ sub AddMember {
 		require "$sourcedir/Decoder.pl";
 		&validation_code;
 	}
+
 	$yymain .= qq~
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/ajax.js"></script>
 <form action="$adminurl?action=addmember2" method="post" name="creator"> 
    <table align="center" border="0" cellspacing="1" cellpadding="3" class="bordercolor">
     <tr>
@@ -1164,30 +1173,30 @@ sub AddMember {
      </td>
     </tr>
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'98'}:</b></td>
-     <td width="70%" class="windowbg"><input type="text" name="regusername" size="30" maxlength="18" /><input type="hidden" name="_session_id_" id="_session_id_" value="$sessionid" /><input type="hidden" name="regdate" id="regdate" value="$regdate" /></td>
+     <td width="30%" class="windowbg"><label for="regusername"><b>$register_txt{'98'}:</b></label></td>
+     <td width="70%" class="windowbg"><input type="text" name="regusername" id="regusername" onchange="checkAvail('$scripturl',this.value,'user')" size="30" maxlength="18" /><input type="hidden" name="_session_id_" id="_session_id_" value="$sessionid" /><input type="hidden" name="regdate" id="regdate" value="$regdate" /><div id="useravailability"></div></td>
     </tr>
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'98a'}:</b></td>
-     <td width="70%" class="windowbg"><input type="text" name="regrealname" size="30" maxlength="30" /></td>
+     <td width="30%" class="windowbg"><label for="regrealname"><b>$register_txt{'98a'}:</b></label></td>
+     <td width="70%" class="windowbg"><input type="text" name="regrealname" id="regrealname" onchange="checkAvail('$scripturl',this.value,'display')" size="30" maxlength="30" /><div id="displayavailability"></div></td>
     </tr>
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'69'}:</b></td>
-     <td width="70%" class="windowbg"><input type="text" maxlength="100" name="email" size="50" /></td>
+     <td width="30%" class="windowbg"><label for="email"><b>$register_txt{'69'}:</b></label></td>
+     <td width="70%" class="windowbg"><input type="text" maxlength="100" name="email" id="email" onchange="checkAvail('$scripturl',this.value,'email')" size="50" /><div id="emailavailability"></div></td>
     </tr>~;
 	if ($allow_hide_email == 1) {
 		$yymain .= qq~
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'721'}</b></td>
-     <td width="70%" class="windowbg"><input type="checkbox" name="hideemail" value="1" checked="checked" /></td>
+     <td width="30%" class="windowbg"><label for="hideemail"><b>$register_txt{'721'}</b></label></td>
+     <td width="70%" class="windowbg"><input type="checkbox" name="hideemail" id="hideemail" value="1" checked="checked" /></td>
     </tr>~;
 	}
 
 	# Language selector
 	$yymain .= qq~
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'101'}</b></td>
-     <td width="70%" class="windowbg"><select name="userlang">~;
+     <td width="30%" class="windowbg"><label for="userlang"><b>$register_txt{'101'}</b></label></td>
+     <td width="70%" class="windowbg"><select name="userlang" id="userlang">~;
 	opendir(LNGDIR, $langdir);
 	foreach (sort {lc($a) cmp lc($b)} readdir(LNGDIR)) {
 		if (-e "$langdir/$_/Main.lng") { $yymain .= qq~<option value="$_"~ . ($_ eq $language ? ' selected="selected"' : '') . qq~>$_</option>~; }
@@ -1199,30 +1208,37 @@ sub AddMember {
 	unless ($emailpassword) {
 		$yymain .= qq~
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'81'}:</b></td>
+     <td width="30%" class="windowbg"><label for="passwrd1"><b>$register_txt{'81'}:</b></label></td>
      <td width="70%" class="windowbg">
-     	<div style="float:left;"><input type="password" maxlength="30" name="passwrd1" id="passwrd1" size="30" onkeyup="runPassword(this.value);" /> &nbsp; </div>
-     	<div style="float:left; width: 150px; height: 20px;">
-     	<div id="password-strength-meter" style="background: transparent url($imagesdir/empty_bar.gif) repeat-x center left; height: 4px"></div>
-     	<div class="pstrength-bar" id="passwrd1_bar" style="border: 1px solid #FFFFFF; height: 4px"></div>
-     	<div class="pstrength-info" id="passwrd1_text">&nbsp;</div>
-     	</div>
+	<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/YaBB.js"></script>
+	<div style="float:left;"><input type="password" maxlength="30" name="passwrd1" id="passwrd1" size="30" onkeyup="runPassword(this.value);" onkeypress="capsLock(event,'cappasswrd1')" /> &nbsp; </div>
+	<div style="float:left; width: 150px; height: 20px;">
+	<div id="password-strength-meter" style="background: transparent url($imagesdir/empty_bar.gif) repeat-x center left; height: 4px"></div>
+	<div class="pstrength-bar" id="passwrd1_bar" style="border: 1px solid #FFFFFF; height: 4px"></div>
+	<div class="pstrength-info" id="passwrd1_text">&nbsp;</div>
+	</div>
+	<div style="clear:left; color: red; font-weight: bold; display: none" id="cappasswrd1">$register_txt{'capslock'}</div>
+	<div style="clear:left; color: red; font-weight: bold; display: none" id="cappasswrd1_char">$register_txt{'wrong_char'}: <span id="cappasswrd1_character">&nbsp;</span></div>
      </td>
     </tr>
     <tr>
-     <td width="30%" class="windowbg"><b>$register_txt{'82'}:</b></td>
-     <td width="70%" class="windowbg"><input type="password" maxlength="30" name="passwrd2" size="30" /></td>
+     <td width="30%" class="windowbg"><label for="passwrd2"><b>$register_txt{'82'}:</b></label></td>
+     <td width="70%" class="windowbg">
+	<input type="password" maxlength="30" name="passwrd2" id="passwrd2" size="30" onkeypress="capsLock(event,'cappasswrd2')" />
+	<div style="color: red; font-weight: bold; display: none" id="cappasswrd2">$register_txt{'capslock'}</div>
+	<div style="color: red; font-weight: bold; display: none" id="cappasswrd1_char">$register_txt{'wrong_char'}: <span id="cappasswrd1_character">&nbsp;</span></div>
+     </td>
     </tr>~;
 	}
 
 	if ($regcheck) {
 		$yymain .= qq~
     <tr>
-     <td width="30%" class="windowbg"><b>$floodtxt{'1'}:</b></td>
-     <td width="70%" class="windowbg">$showcheck<br /><span class="small">$floodtxt{'casewarning'}</span></td>
+     <td width="30%" class="windowbg"><label for="verification"><b>$floodtxt{'1'}:</b></label></td>
+     <td width="70%" class="windowbg">$showcheck<br /><label for="verification"><span class="small">$floodtxt{'casewarning'}</span></label></td>
     </tr>
     <tr>
-     <td width="30%" class="windowbg"><b>$floodtxt{'3'}:</b></td>
+     <td width="30%" class="windowbg"><label for="verification"><b>$floodtxt{'3'}:</b></label></td>
      <td width="70%" class="windowbg"><input type="text" maxlength="30" name="verification" id="verification" size="30" /></td>
     </tr>~;
 	}

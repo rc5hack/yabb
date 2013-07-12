@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$emaillngver = 'YaBB 2.4 $Revision: 1.27 $';
+$emaillngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 
 $emailcharset = 'ISO-8859-1';
 
@@ -40,8 +40,8 @@ $emailcharset = 'ISO-8859-1';
 'start', "The number of the Message in the Topic (for URL purposes)",
 
 # Registration/Password
-'activationcode', "The Activation Code sent in a Register Email.",
-'remindercode', "The code sent in a Reminder Email.",
+'activationcode', "The Activation Link sent in a Register Email.",
+'remindercode', "The Password Link sent in a Reminder Email.",
 'preregspan', "The time allowed before the Pre-Registration expires. Current value: $preregspan",
 'reason', "Admin reason behind a descision made on a registering User while in register with Admin Approval mode",
 
@@ -68,9 +68,9 @@ $emailcharset = 'ISO-8859-1';
 );
 
 $yabbtags{'preregemail'} = qq~displayname preregspan cryptusername activationcode~;
-$emaildesc{'preregemail'} = qq~The Registration Email that is sent out when using Pre-Registration Codes~;
+$emaildesc{'preregemail'} = qq~The Registration Email that is sent out when using Activation link~;
 $preregemail = qq~Welcome, {yabb displayname}!
-Here is your account validation code {yabb displayname}.
+Here is your account validation link.
 
 You have been successfully pre-registered at {yabb mbname}.
 Please validate your account within {yabb preregspan} hours!
@@ -85,7 +85,7 @@ Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'approveregemail'} = qq~username displayname~;
-$emaildesc{'approveregemail'} = qq~The Pending Approval Email when not sending a password or Pre-Registration Code~;
+$emaildesc{'approveregemail'} = qq~The Pending Approval Email when not sending a password or Activation link~;
 $approveregemail = qq~Hello, {yabb displayname}!
 
 Your application with login ID: "{yabb username}" is pending approval of the {yabb mbname} administration.
@@ -97,7 +97,7 @@ Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'instantapprovedemail'} = qq~username displayname reviewer~;
-$emaildesc{'instantapprovedemail'} = qq~The Instant Approval Email when not sending a password or Pre-Registration Code~;
+$emaildesc{'instantapprovedemail'} = qq~The Instant Approval Email when not sending a password or Activation link~;
 $instantapprovedemail = qq~Hello, {yabb displayname}!
 
 Congratulations and welcome.
@@ -106,13 +106,13 @@ Your membership application has been instantly approved by {yabb reviewer} from 
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'pwinstantapprovedemail'} = qq~username displayname reviewer password~;
-$emaildesc{'pwinstantapprovedemail'} = qq~The Instant Approval Email when a password~;
+$emaildesc{'pwinstantapprovedemail'} = qq~The Instant Approval Email when sending a password~;
 $pwinstantapprovedemail = qq~Hello, {yabb displayname}!
 
 Congratulations and welcome.
@@ -122,13 +122,13 @@ Your membership application has been instantly approved by {yabb reviewer} from 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 Your current password is : {yabb password}
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'instantrejectedemail'} = qq~username displayname reviewer~;
-$emaildesc{'instantrejectedemail'} = qq~The Instant Decline Email when not sending a password or Pre-Registration Code~;
+$emaildesc{'instantrejectedemail'} = qq~The Instant Decline Email when not sending a password or Activation link~;
 $instantrejectedemail = qq~Hello, {yabb displayname}!
 
 We regret to inform you that your membership application has been instantly rejected by {yabb reviewer} from the {yabb mbname} administration.
@@ -140,7 +140,7 @@ Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'reviewapprovedemail'} = qq~username displayname reviewer~;
-$emaildesc{'reviewapprovedemail'} = qq~The Reviewed Approval Email when not sending a password or Pre-Registration Code~;
+$emaildesc{'reviewapprovedemail'} = qq~The Reviewed Approval Email when not sending a password or Activation link~;
 $reviewapprovedemail = qq~Hello, {yabb displayname}!
 
 Congratulations and welcome.
@@ -148,11 +148,11 @@ Congratulations and welcome.
 Your membership application has been reviewed and approved by {yabb reviewer} from the {yabb mbname} administration.
 The following reason was given by {yabb reviewer}:
 
-{yabb reason} 
+{yabb reason}
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
@@ -166,24 +166,24 @@ Congratulations and welcome.
 Your membership application has been reviewed and approved by {yabb reviewer} from the {yabb mbname} administration.
 The following reason was given by {yabb reviewer}:
 
-{yabb reason} 
+{yabb reason}
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 Your current password is : {yabb password}
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'reviewrejectedemail'} = qq~username displayname reviewer reason~;
-$emaildesc{'reviewrejectedemail'} = qq~The Reviewed Decline Email when not sending a password or Pre-Registration Code~;
+$emaildesc{'reviewrejectedemail'} = qq~The Reviewed Decline Email when not sending a password or Activation link~;
 $reviewrejectedemail = qq~Hello, {yabb displayname}!
 
 We regret to inform you that your membership application has been reviewed and rejected by {yabb reviewer} from the {yabb mbname} administration.
 The following reason was given by {yabb reviewer}:
 
-{yabb reason} 
+{yabb reason}
 
 If you feel this is all a big mistake, you are of course free to apply for membership again using different credentials for review.
 
@@ -198,20 +198,20 @@ Your user ID is {yabb username}, and your password is {yabb password}.
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
 
 $yabbtags{'welcomeregemail'} = qq~username password displayname~;
-$emaildesc{'welcomeregemail'} = qq~The Registration Email when not sending a password or Pre-Registration Code~;
+$emaildesc{'welcomeregemail'} = qq~The Registration Email when not sending a password or Activation link~;
 $welcomeregemail = qq~Welcome, {yabb displayname}!
 
 Your user ID is {yabb username}, and your password is {yabb password}.
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
@@ -224,7 +224,7 @@ Your user ID is {yabb username}, and your password is {yabb password}.
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
@@ -237,7 +237,7 @@ Your user ID is {yabb username}, and your password is {yabb password}.
 
 You can log in using your displayname ({yabb displayname}), your Email address, or your user ID ({yabb username}).
 
-You may change your password after you log in by going to the User CP page. Click the Profile tab at the top of the {yabb mbname} main page: {yabb scripturl} and click Edit Profile (you will need to enter your password as a security measure).
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
@@ -251,12 +251,12 @@ User Name: {yabb username}
 IP-Adress: {yabb userip}
 User Email: {yabb useremail}
 
-To verifying the registration and the profile of the new member please login to your forum and click on the link below.
+To verify the registration of the new member please login to your forum and click on the link below.
 {yabb adminurl}?action=view_reglog
 
-If the link does not work (or if you use AOL or a browser-based Email program), copy the link and insert it  in the address bar of your Web browser and confirm with enter.
+If the link does not work (or if you use AOL or a browser-based Email program), copy the link and insert it in the address bar of your Web browser and confirm with enter.
 
-To the profile of the new member to examine please log in to your Forum.
+To examine the profile of the new member please log in to your Forum.
 
 Regards,
 The {yabb mbname} team~;
@@ -307,7 +307,7 @@ $profilenewpasswordemail = qq~Dear {yabb displayname},
 
 Your password has been changed. It is now {yabb password}.
 
-You may change it after you log in by going to the profile page.
+You may change your password after you login by clicking on the User CP tab at the top of the {yabb mbname} main page: {yabb scripturl} and then click the Profile tab, click on Edit Profile (you will need to enter your password as a security measure).
 
 Regards,
 The {yabb mbname} team~;
@@ -333,7 +333,7 @@ Message: {yabb message}
 
 This message is also in your personal message inbox at {yabb mbname}\: {yabb scripturl}~;
 
-## for online alert pms. 
+## for online alert pms.
 %online_alert = (
 newnotify => "New post alert!",
 replynotify => "Reply alert!",

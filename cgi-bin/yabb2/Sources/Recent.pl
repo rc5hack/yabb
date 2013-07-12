@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$recentplver = 'YaBB 2.4 $Revision: 1.18 $';
+$recentplver = 'YaBB 2.5 AE $Revision: 1.19 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Sub RecentTopics shows all the most recently posted topics
@@ -103,9 +103,9 @@ sub RecentTopics {
 			$registrationdate = $date;
 		}
 
-		if (${$uid.$tusername}{'regdate'} && $mtime > $registrationdate) {
+		if (${$uid.$tusername}{'regdate'} && $trstart > $registrationdate) {
 			$tname = qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$tusername}">${$uid.$tusername}{'realname'}</a>~;
-		} elsif ($tusername !~ m~Guest~ && $mtime < $registrationdate) {
+		} elsif ($tusername !~ m~Guest~ && $trstart < $registrationdate) {
 			$tname = qq~$tname - $maintxt{'470a'}~;
 		} else {
 			$tname = "$tname ($maintxt{'28'})";
@@ -118,7 +118,7 @@ sub RecentTopics {
 			$registrationdate = $date;
 		}
 
-		if (${$uid.$musername}{'regdate'} && $trstart > $registrationdate) {
+		if (${$uid.$musername}{'regdate'} && $mdate > $registrationdate) {
 			$mname = qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$musername}">${$uid.$musername}{'realname'}</a>~;
 		} elsif ($musername !~ m~Guest~ && $mdate < $registrationdate) {
 			$mname = qq~$mname - $maintxt{'470a'}~;
@@ -178,15 +178,15 @@ sub RecentTopics {
 		</td>
 	</tr>
 	<tr>
-		<td align="left" height="80" colspan="2" class="windowbg2" valign="top"><div style="float: left; width: 99%; overflow: auto;">$message</div></td>
+		<td align="left" height="80" colspan="2" class="windowbg2" valign="top"><div class="message" style="float: left; width: 99%; overflow: auto;">$message</div></td>
 	</tr>
 </table><br />
 ~;
 		++$counter;
 	}
 
-	$yynavigation = qq~&rsaquo; $maintxt{'214'}~;
-	$yytitle = $maintxt{'214'};
+	$yynavigation = qq~&rsaquo; $maintxt{'215'}~;
+	$yytitle = $maintxt{'215'};
 	&template;
 }
 

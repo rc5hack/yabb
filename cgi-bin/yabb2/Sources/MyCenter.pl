@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mycenterplver = 'YaBB 2.4 $Revision: 1.124 $';
+$mycenterplver = 'YaBB 2.5 AE $Revision: 1.125 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('InstantMessage');
@@ -409,7 +409,7 @@ sub Del_Some_IM {
 		my %CountStore;
 		if ($INFO{'caller'} == 2)    { ${$username}{'PMmoutnum'} = 0; }
 		elsif ($INFO{'caller'} == 4) { ${$username}{'PMdraftnum'} = 0; }
-		elsif ($INFO{'caller'} != 3) { ${$username}{'PMmnum'} = 0; ${$username}{'PMimnewcount'} = 0; }
+		elsif ($INFO{'caller'} != 3 && $INFO{'caller'} != 5) { ${$username}{'PMmnum'} = 0; ${$username}{'PMimnewcount'} = 0; }
 
 		if ($INFO{'deleteid'}) { $FORM{"message" . $INFO{'deleteid'}} = 1; } # singel delete
 
@@ -421,7 +421,7 @@ sub Del_Some_IM {
 				if ($INFO{'caller'} == 2)    { ${$username}{'PMmoutnum'}++; }
 				elsif ($INFO{'caller'} == 3) { $CountStore{$m[13]}++; }
 				elsif ($INFO{'caller'} == 4) { ${$username}{'PMdraftnum'}++; }
-				else { ${$username}{'PMmnum'}++; ${$username}{'PMimnewcount'}++ if $m[12] =~ /u/; }
+				elsif ($INFO{'caller'} != 5) { ${$username}{'PMmnum'}++; ${$username}{'PMimnewcount'}++ if $m[12] =~ /u/; }
 			} else {
 				if ($INFO{'caller'} == 3) {
 					$INFO{'viewfolder'} = $m[13];
@@ -598,8 +598,7 @@ sub IMPost {
 			$message =~ s~<br.*?>~\n~gi;
 			$message =~ s/ \&nbsp; \&nbsp; \&nbsp;/\t/ig;
 			if (!$nestedquotes) {
-				$message =~ s~\n{0,1}\[quote([^\]]*)\](.*?)\[/quote\]\n{0,1}~\n~isg;
-				$message =~ s~\n*\[/*quote([^\]]*)\]\n*~~ig;
+				$message =~ s~\n{0,1}\[quote([^\]]*)\](.*?)\[/quote([^\]]*)\]\n{0,1}~\n~isg;
 			}
 			if ($mfrom ne "" && $do_scramble_id) { $cloakedAuthor = &cloak($mfrom); }
 			else { $cloakedAuthor = $mfrom; }
@@ -1156,9 +1155,21 @@ function insert_user (oElement,username,userid) {
 	if ($view eq 'mycenter') {
 		&LoadUserDisplay($username);
 
+		my $onOffStatus = ${$uid.$username}{'offlinestatus'} eq "away" ? $mycenter_txt{'onoffstatusaway'} : $mycenter_txt{'onoffstatuson'};
+
+		my $stealthstatus = '';
+		if (($iamadmin || $iamgmod) && $enable_MCstatusStealth) {
+			$stealthstatus = $mycenter_txt{'stealth_off'};
+			if (${$uid.$username}{'stealth'}) { $stealthstatus = $mycenter_txt{'stealth_on'}; }
+			$stealthstatus = qq~		<tr>
+					<td class="windowbg2">$mycenter_txt{'stealth'}</td>
+					<td class="windowbg2">'$stealthstatus'</td>
+				</tr>~;
+		}
+
 		my $memberinfo = "$memberinfo{$username}$addmembergroup{$username}";
 		my $userOnline = &userOnLineStatus($username) . "<br />";
-		my $template_postinfo = qq~$mycenter_txt{'posts'}: ${$uid.$username}{'postcount'}<br />~;
+		my $template_postinfo = qq~$mycenter_txt{'posts'}: ~ . &NumberFormat(${$uid.$username}{'postcount'}) . qq~<br />~;
 		my $userlocation;
 		if (${$uid.$username}{'location'}) {
 			$userlocation = ${$uid.$username}{'location'} . "<br />";
@@ -1210,21 +1221,8 @@ function insert_user (oElement,username,userid) {
 						$mycenter_txt{'onoffstatus'}<br />
 					</td>
 					<td class="windowbg2">
-		~;
 
-		my $onOffStatus = ${$uid.$username}{'offlinestatus'} eq 'away' ? $mycenter_txt{'onoffstatusaway'} : $mycenter_txt{'onoffstatuson'};
-
-		my $stealthstatus = '';
-		if (($iamadmin || $iamgmod) && $enable_MCstatusStealth) {
-			$stealthstatus = $mycenter_txt{'stealth_off'};
-			if (${$uid.$username}{'stealth'}) { $stealthstatus = $mycenter_txt{'stealth_on'}; }
-			$stealthstatus = qq~		<tr>
-					<td class="windowbg2">$mycenter_txt{'stealth'}</td>
-					<td class="windowbg2">'$stealthstatus'</td>
-				</tr>~;
-		}
-
-		$MCContent .= qq~'$onOffStatus'</td>
+		'$onOffStatus'</td>
 				</tr>
 		$stealthstatus
 		</table>
@@ -1477,7 +1475,7 @@ function insert_user (oElement,username,userid) {
 				<hr width="100%" class="hr" />
 					<form action="$scripturl?action=newpmfolder" method="post" name="newpmfolder" id="newpmfolder" enctype="application/x-www-form-urlencoded" style="display:inline;"  onsubmit="return submitproc()">
 					<label for="newfolder">$inmes_imtxt{'newstorefolder'}</label><br />
-					<input type="text" name="newfolder" id="newfolder" size="15" value="$mc_folders{'foldername'}" onclick="this.value='';" />
+					<input type="text" name="newfolder" id="newfolder" size="15" value="$mc_folders{'foldername'}" onfocus="txtInFields(this, '$mc_folders{'foldername'}');" onblur="txtInFields(this, '$mc_folders{'foldername'}')" />
 					<input type="submit" name="addimfolder" id="addimfolder" value="$inmes_txt{'addfolder'}" class="button" /> 
 					</form>
 				</td>
@@ -1569,7 +1567,7 @@ sub drawPMView {
 		## drop in the 'no messages' text
 		$MCContent .= qq~
 	  <tr>
-	    <td class="windowbg" colspan="6" height="21">$inmes_txt{'151'}</td>
+	    <td class="windowbg" colspan="3" height="21">$inmes_txt{'151'}</td>
 	  </tr>
 	</table>
 	<br clear="all" /><br />
@@ -2105,9 +2103,9 @@ sub drawPMView {
 					$quoteimg = qq~<img src="$imagesdir\/quote.gif" alt="$inmes_imtxt{'69'}" title="$inmes_imtxt{'69'}" \/>&nbsp;~;
 					$immessage =~ s/\[quote(.*?)\](.+?)\[\/quote\]//ig;
 				}
-				if ($immessage =~ /\[code\]/isg) {
+				if ($immessage =~ /\[code\s*(.*?)\]/isg) {
 					$codeimg = qq~<img src="$imagesdir\/code1.gif" alt="$inmes_imtxt{'84'}" title="$inmes_imtxt{'84'}" \/>&nbsp;~;
-					$immessage =~ s/\[code\](.+?)\[\/code\]//ig;
+					$immessage =~ s/\[code\s*(.*?)\](.+?)\[\/code\]//ig;
 				}
 				$immessage =~ s~<br.*?>~&nbsp;~gi;
 				$immessage =~ s~&nbsp;&nbsp;~ ~g;
@@ -2122,8 +2120,12 @@ sub drawPMView {
 				if ($cliped) { $immessage .= "..."; }
 				$immessage = qq~$quoteimg$codeimg $immessage~;
 				$immessage = &Censor($immessage);
-				if ($immessage =~ /\#nosmileys/isg || $ns =~ "NS") { $immessage =~ s/\#nosmileys//isg; }
-				else {$message = $immessage; if (!$yyYaBBCloaded) { require "$sourcedir/YaBBC.pl"; } &MakeSmileys; $immessage = $message; }
+				unless ($immessage =~ s/#nosmileys//isg) {
+					$message = $immessage;
+					if (!$yyYaBBCloaded) { require "$sourcedir/YaBBC.pl"; }
+					&MakeSmileys;
+					$immessage = $message;
+				}
 				$MCContent .= qq~
 		$immessage<br /><br />
 		<hr width="100%" class="hr" />
@@ -2265,7 +2267,7 @@ sub LoadBuddyList {
 			$usernamelink = $link{$buddyname};
 
 			if (${$uid.$buddyname}{'hidemail'} && !$iamadmin && $allow_hide_email == 1) {
-				$buddyemail = qq~<img src="$imagesdir/lockmail.gif" alt="Hidden Email" title="Hidden Email" />~;
+				$buddyemail = qq~<img src="$imagesdir/lockmail.gif" alt="$mycenter_txt{'hiddenemail'}" title="$mycenter_txt{'hiddenemail'}" />~;
 			} else {
 				$buddyemail = qq~<a href="mailto:${$uid.$buddyname}{'email'}"><img src="$imagesdir/email.gif" border="0" alt="$profile_txt{'889'} ${$uid.$buddyname}{'email'}" title="$profile_txt{'889'} ${$uid.$buddyname}{'email'}" /></a>~;
 			}
@@ -2312,15 +2314,15 @@ sub mcMenu {
 
 	# pm link
 	if ($PM_level == 1 || ($PM_level == 2 && ($iamadmin || $iamgmod || $iammod)) || ($PM_level == 3 && ($iamadmin || $iamgmod))) {
-		$yymcmenu .= qq~<span onclick="changeToTab('pm'); return false;"$pmclass id="menu_pm"><a href="$scripturl?action=mycenter" onclick="changeToTab('pm'); return false;">$tabfill$mc_menus{'messages'}$tabfill</a></span>$tabsep
+		$yymcmenu .= qq~<span onclick="changeToTab('pm'); return false;"$pmclass id="menu_pm"><a href="$scripturl?action=mycenter" onclick="changeToTab('pm'); return false;" style="padding: 3px 0 4px 0; ">$tabfill$mc_menus{'messages'}$tabfill</a></span>$tabsep
 		~;
 	}
 	# profile link
-	$yymcmenu .= qq~<span onclick="changeToTab('prof'); return false;"$profclass id="menu_prof"><a href="$scripturl?action=myviewprofile;username=$useraccount{$username}" onclick="changeToTab('prof'); return false;">$tabfill$mc_menus{'profile'}$tabfill</a></span>
+	$yymcmenu .= qq~<span onclick="changeToTab('prof'); return false;"$profclass id="menu_prof"><a href="$scripturl?action=myviewprofile;username=$useraccount{$username}" onclick="changeToTab('prof'); return false;" style="padding: 3px 0 4px 0; ">$tabfill$mc_menus{'profile'}$tabfill</a></span>
 	~;
 
 	# posts link
-	$yymcmenu .= qq~$tabsep<span onclick="changeToTab('posts'); return false;"$postclass  id="menu_posts"><a href="$scripturl?action=favorites" onclick="changeToTab('posts'); return false;">$tabfill$mc_menus{'posts'}$tabfill</a></span>
+	$yymcmenu .= qq~$tabsep<span onclick="changeToTab('posts'); return false;"$postclass  id="menu_posts"><a href="$scripturl?action=favorites" onclick="changeToTab('posts'); return false;" style="padding: 3px 0 4px 0; ">$tabfill$mc_menus{'posts'}$tabfill</a></span>
 	~;
 
 	$yymcmenu .= qq~$tabsep~;

@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$modifymessageplver = 'YaBB 2.4 $Revision: 1.32 $';
+$modifymessageplver = 'YaBB 2.5 AE $Revision: 1.33 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if (!$post_txt_loaded) {
@@ -415,6 +415,7 @@ sub ModifyMessage2 {
 		if (!$icanbypass) { &fatal_error('topic_locked');}
 	}
 	if ($iammod || $iamgmod || $iamadmin) {
+		$thestatus =~ s/0//g;
 		$tstate = $tstate =~ /a/i ? "0a$thestatus" : "0$thestatus";
 		&MessageTotals("load", $tnum);
 		${$tnum}{'threadstatus'} = $tstate;
@@ -579,23 +580,25 @@ sub ModifyMessage2 {
 	fclose(FILE);
 
 	if ($postid == 0 || $iammod || $iamgmod || $iamadmin) {
-		# Save the current board. icon, status or subject may have changed
-		fopen(FILE, "+<$boardsdir/$currentboard.txt") || &fatal_error("cannot_open","$boardsdir/$currentboard.txt",1);
-		seek FILE, 0, 0;
-		my @buffer = <FILE>;
-		truncate FILE, 0;
-		seek FILE, 0, 0;
-		for (my $a = 0; $a < @buffer; $a++) {
-			if ($buffer[$a] =~ m~\A$threadid\|~o) { $buffer[$a] = "$yyThreadLine\n"; last; }
+		# Save the current board. icon, status or subject may have changed -> update board info
+		fopen(BOARD, "+<$boardsdir/$currentboard.txt") || &fatal_error("cannot_open","$boardsdir/$currentboard.txt",1);
+		my @board = <BOARD>;
+		for (my $a = 0; $a < @board; $a++) {
+			if ($board[$a] =~ m~\A$threadid\|~o) { $board[$a] = "$yyThreadLine\n"; last; }
 		}
-		print FILE @buffer;
-		fclose(FILE);
+		truncate BOARD, 0;
+		seek BOARD, 0, 0;
+		print BOARD @board;
+		fclose(BOARD);
 
-		&BoardSetLastInfo($currentboard); # -> update board info
+		&BoardSetLastInfo($currentboard,\@board);
 
 	} elsif ($postid == $#{$thread_arrayref{$threadid}}) {
 		# maybe last message changed subject and/or icon -> update board info
-		&BoardSetLastInfo($currentboard);
+		fopen(BOARD, "$boardsdir/$currentboard.txt") || &fatal_error('cannot_open', "$boardsdir/$currentboard.txt", 1);
+		my @board = <BOARD>;
+		fclose(BOARD);
+		&BoardSetLastInfo($currentboard,\@board);
 	}
 
 	require "$sourcedir/Notify.pl";
@@ -710,14 +713,11 @@ sub MultiDel { # deletes singel- or multi-Posts
 	# update the current board.
 	&BoardTotals("load", $currentboard);
 	${$uid.$currentboard}{'messagecount'} -= $kill;
-	&BoardTotals("update", $currentboard);
+	 # &BoardTotals("update", ...) is done later in &BoardSetLastInfo
 
 	my $threadline = '';
 	fopen(BOARDFILE, "+<$boardsdir/$currentboard.txt") || &fatal_error("cannot_open","$boardsdir/$currentboard.txt",1);
-	seek BOARDFILE, 0, 0;
-	@buffer = <BOARDFILE>;
-	truncate BOARDFILE, 0;
-	seek BOARDFILE, 0, 0;
+	my @buffer = <BOARDFILE>;
 
 	my $a;
 	for ($a = 0; $a < @buffer; $a++) {
@@ -729,29 +729,28 @@ sub MultiDel { # deletes singel- or multi-Posts
 	}
 
 	chomp $threadline;
-
 	my @newthreadline = split(/\|/, $threadline);
-
 	$newthreadline[1] = $firstmessage[0];         # subject of first message
 	$newthreadline[7] = $firstmessage[5];         # icon of first message
 	$newthreadline[4] = $lastmessage[3];          # date of last message
 	$newthreadline[5] = ${$thread}{'replies'};    # replay number
-	$NewThreadLine = join("|", @newthreadline) . "\n";
 
 	my $inserted = 0;
 	for ($a = 0; $a < @buffer; $a++) {
-		if (!$inserted && (split(/\|/, $buffer[$a], 6))[4] < $newthreadline[4]) {
-			print BOARDFILE $NewThreadLine;
+		if ((split(/\|/, $buffer[$a], 6))[4] < $newthreadline[4]) {
+			splice(@buffer,$a,0,join("|", @newthreadline) . "\n");
 			$inserted = 1;
+			last;
 		}
-		print BOARDFILE $buffer[$a];
 	}
-	if (!$inserted) {
-		print BOARDFILE $NewThreadLine;
-	}
+	if (!$inserted) { push(@buffer, join("|", @newthreadline) . "\n"); }
+
+	truncate BOARDFILE, 0;
+	seek BOARDFILE, 0, 0;
+	print BOARDFILE @buffer;
 	fclose(BOARDFILE);
 
-	&BoardSetLastInfo($currentboard);
+	&BoardSetLastInfo($currentboard,\@buffer);
 
 	$postid = $postid > ${$thread}{'replies'} ? ${$thread}{'replies'} : ($postid - 1);
 	my $start = !$ttsreverse ? (int($postid / $maxmessagedisplay) * $maxmessagedisplay) : ${$thread}{'replies'} - (int((${$thread}{'replies'} - $postid) / $maxmessagedisplay) * $maxmessagedisplay);

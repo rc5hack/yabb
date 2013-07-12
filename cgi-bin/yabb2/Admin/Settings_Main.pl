@@ -3,48 +3,48 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$settings_mainplver = 'YaBB 2.4 $Revision: 1.58 $';
+$settings_mainplver = 'YaBB 2.5 AE $Revision: 1.59 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Language requirements
 &LoadLanguage('Register');
 
 # Date/Time selector
-my($forumstart_month, $forumstart_day, $forumstart_year, $forumstart_hour, $forumstart_minute, $forumstart_secund) = $forumstart =~ m~(\d{2})\/(\d{2})\/(\d{2,4}).*?(\d{2})\:(\d{2})\:(\d{2})~s;
+my ($forumstart_month, $forumstart_day, $forumstart_year, $forumstart_hour, $forumstart_minute, $forumstart_secund) = $forumstart =~ m~(\d{2})\/(\d{2})\/(\d{2,4}).*?(\d{2})\:(\d{2})\:(\d{2})~s;
 
-if($forumstart_month > 12) { $forumstart_month = 12; }
-if($forumstart_month < 1) { $forumstart_month = 1; }
-if($forumstart_day > 31) { $forumstart_day = 31; }
-if($forumstart_day < 1) { $forumstart_day = 1; }
-if(length($forumstart_year) > 2) { $forumstart_year = substr($forumstart_year , length($forumstart_year) - 2, 2); }
-if($forumstart_year < 90 && $forumstart_year > 20) { $forumstart_year = 90; }
-if($forumstart_year > 20 && $forumstart_year < 90) { $forumstart_year = 20; }
-if($forumstart_hour > 23) { $forumstart_hour = 23; }
-if($forumstart_minute > 59) { $forumstart_minute = 59; }
-if($forumstart_secund > 59) { $forumstart_secund = 59; }
+if ($forumstart_month > 12) { $forumstart_month = 12; }
+if ($forumstart_month < 1) { $forumstart_month = 1; }
+if ($forumstart_day > 31) { $forumstart_day = 31; }
+if ($forumstart_day < 1) { $forumstart_day = 1; }
+if (length($forumstart_year) > 2) { $forumstart_year = substr($forumstart_year , length($forumstart_year) - 2, 2); }
+if ($forumstart_year < 90 && $forumstart_year > 20) { $forumstart_year = 90; }
+if ($forumstart_year > 20 && $forumstart_year < 90) { $forumstart_year = 20; }
+if ($forumstart_hour > 23) { $forumstart_hour = 23; }
+if ($forumstart_minute > 59) { $forumstart_minute = 59; }
+if ($forumstart_secund > 59) { $forumstart_secund = 59; }
 
 my $sel_day = qq~
-<select name="forumstart_day">\n~;
-for($i = 1; $i <= 31; $i++) {
+<select name="forumstart_day"~ . (($timeselected == 1 || $timeselected == 4 || $timeselected == 5) ? '' : ' id="fd_fm"') . qq~>\n~;
+for ($i = 1; $i <= 31; $i++) {
 	$day_val = sprintf("%02d", $i);
 	$sel_day .= qq~<option value="$day_val" ${isselected($forumstart_day == $i)}>$i</option>\n~;
 }
 $sel_day .= qq~</select>\n~;
 
 my $sel_month = qq~
-<select name="forumstart_month">\n~;
-for($i = 0; $i < 12; $i++) {
+<select name="forumstart_month"~ . (($timeselected == 1 || $timeselected == 4 || $timeselected == 5) ? ' id="fd_fm"' : '') . qq~>\n~;
+for ($i = 0; $i < 12; $i++) {
 	$z = $i+1;
 	$month_val = sprintf("%02d", $z);
 	$sel_month .= qq~<option value="$month_val" ${isselected($forumstart_month == $z)}>$months[$i]</option>\n~;
@@ -53,15 +53,14 @@ $sel_month .= qq~</select>\n~;
 
 my $sel_year = qq~
 <select name="forumstart_year">\n~;
-for($i = 90; $i <= 120; $i++) {
+for ($i = 90; $i <= 120; $i++) {
 	if($i < 100) { $z = $i; $year_pre = qq~19~; } else { $z = $i-100; $year_pre = qq~20~; }
 	$year_val = sprintf("%02d", $z);
 	$sel_year .= qq~<option value="$year_val" ${isselected($forumstart_year == $z)}>$year_pre$year_val</option>\n~;
 }
 $sel_year .= qq~</select>\n~;
 
-my $time_sel = ${$uid.$username}{'timeselect'};
-if($time_sel == 1 || $time_sel == 4 || $time_sel == 5) { $all_date = qq~$sel_month $sel_day $sel_year~; }
+if ($timeselected == 1 || $timeselected == 4 || $timeselected == 5) { $all_date = qq~$sel_month $sel_day $sel_year~; }
 else { $all_date = qq~$sel_day $sel_month $sel_year~; }
 
 my $sel_hour = qq~
@@ -86,7 +85,7 @@ my $all_time = qq~$sel_hour $sel_minute $sel_secund~;
 
 # Timezone selector
 my @usertimeoffset = split(/\./, $timeoffset);
-my $timeoffsetselect = qq~<span class="small"><br /><br /></span><select name="usertimesign"><option value="">+</option><option value="-"~ . ($usertimeoffset[0] < 0 ? ' selected="selected"' : '') . qq~>-</option></select> <select name="usertimehour">~;
+my $timeoffsetselect = qq~<span class="small"><br /><br /></span><select name="usertimesign" id="usertimesign"><option value="">+</option><option value="-"~ . ($usertimeoffset[0] < 0 ? ' selected="selected"' : '') . qq~>-</option></select> <select name="usertimehour">~;
 	for (my $i = 0; 15 > $i; $i++) {
 		$i = sprintf("%02d", $i);
 		$timeoffsetselect .= qq~<option value="$i"~ . (($usertimeoffset[0] == $i || $usertimeoffset[0] == -$i) ? ' selected="selected"' : '') . qq~>$i</option>~;
@@ -150,7 +149,7 @@ my $modulHTTP = $@;
 eval { require Crypt::SSLeay };
 my $modulCrypt = $@;
 
-my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${ischecked($enable_spell_check)} />~;
+my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_spell_check" value="1"${ischecked($enable_spell_check)} />~;
  if ($modulLWP || $modulHTTP || $modulCrypt) {
 	$googiehtml = qq~<input type="hidden" name="enable_spell_check" value="0" />~ .
 	$admin_txt{'377a'} .
@@ -171,19 +170,20 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'generalforum'},
 		},
 		{
-			description => $admin_txt{'350'},
-			input_html => qq~<input type="text" size="40" name="mbname" value="$mbname" />~,
+			description => qq~<label for="mbname">$admin_txt{'350'}</label>~,
+			input_html => qq~<input type="text" size="40" name="mbname" id="mbname" value="$mbname" />~,
 			name => 'mbname',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'350a'},
+			description => qq~<label for="fd_fm">$admin_txt{'350a'}</label>~,
 			input_html => qq~$all_date $maintxt{'107'} $all_time~,
 			### Custom validated.
 		},
 		{
-			description => $admin_txt{'521'},
-			input_html => qq~<select name="MenuType" size="1">
+			description => qq~<label for="MenuType">$admin_txt{'521'}</label>~,
+			input_html => qq~
+<select name="MenuType" id="MenuType" size="1">
   <option value="0" ${isselected($MenuType == 0)}>$admin_txt{'521a'}</option>
   <option value="1" ${isselected($MenuType == 1)}>$admin_txt{'521b'}</option>
   <option value="2" ${isselected($MenuType == 2)}>$admin_txt{'521c'}</option>
@@ -192,23 +192,38 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'813'},
-			input_html => qq~<select name="default_template">$drawndirs</select>~,
+			description => qq~<label for="default_template">$admin_txt{'813'}</label>~,
+			input_html => qq~<select name="default_template" id="default_template">$drawndirs</select>~,
 			name => 'default_template',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'816'},
-			input_html => qq~<select name="lang">$drawnldirs</select>~,
+			description => qq~<label for="lang">$admin_txt{'816'}</label>~,
+			input_html => qq~<select name="lang" id="lang">$drawnldirs</select>~,
 			name => 'lang',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'587'},
-			input_html => qq~<select name="timeselected" size="1">
+			description => qq~<label for="forumnumberformat">$admin_txt{'forumnumbformat'}</label>~,
+			input_html => qq~
+<select name="forumnumberformat" id="forumnumberformat" size="1">
+  <option value="1" ${isselected($forumnumberformat == 1)}>10987.65</option>
+  <option value="2" ${isselected($forumnumberformat == 2)}>10987,65</option>
+  <option value="3" ${isselected($forumnumberformat == 3)}>10,987.65</option>
+  <option value="4" ${isselected($forumnumberformat == 4)}>10.987,65</option>
+  <option value="5" ${isselected($forumnumberformat == 5)}>10 987,65</option>
+</select>~,
+			name => 'forumnumberformat',
+			validate => 'number',
+		},
+		{
+			description => qq~<label for="timeselected">$admin_txt{'587'}</label>~,
+			input_html => qq~
+<select name="timeselected" id="timeselected" size="1">
   <option value="1" ${isselected($timeselected == 1)}>$admin_txt{'480'}</option>
   <option value="5" ${isselected($timeselected == 5)}>$admin_txt{'484'}</option>
   <option value="4" ${isselected($timeselected == 4)}>$admin_txt{'483'}</option>
+  <option value="8" ${isselected($timeselected == 8)}>$admin_txt{'483a'}</option>
   <option value="2" ${isselected($timeselected == 2)}>$admin_txt{'481'}</option>
   <option value="3" ${isselected($timeselected == 3)}>$admin_txt{'482'}</option>
   <option value="6" ${isselected($timeselected == 6)}>$admin_txt{'485'}</option>
@@ -217,160 +232,112 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'371'},
+			description => qq~<label for="usertimesign">$admin_txt{'371'}</label>~,
 			input_html => &timeformat($date,1,0,1) . $timeoffsetselect,
 			### Custom validated.
 		},
 		{
-			description => $admin_txt{'371a'},
-			input_html => qq~<input type="checkbox" name="dstoffset" value="1"${ischecked($dstoffset)}/>~,
+			description => qq~<label for="dstoffset">$admin_txt{'371a'}</label>~,
+			input_html => qq~<input type="checkbox" name="dstoffset" id="dstoffset" value="1"${ischecked($dstoffset)}/>~,
 			name => 'dstoffset',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'371b'},
-			input_html => qq~<input type="checkbox" name="dynamic_clock" value="1"${ischecked($dynamic_clock)}/>~,
+			description => qq~<label for="dynamic_clock">$admin_txt{'371b'}</label>~,
+			input_html => qq~<input type="checkbox" name="dynamic_clock" id="dynamic_clock" value="1"${ischecked($dynamic_clock)}/>~,
 			name => 'dynamic_clock',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'371c'},
-			input_html => qq~<input type="text" size="4" name="timecorrection" value="$timecorrection" />~,
+			description => qq~<label for="timecorrection">$admin_txt{'371c'}</label>~,
+			input_html => qq~<input type="text" size="4" name="timecorrection" id="timecorrection" value="$timecorrection" />~,
 			name => 'timecorrection',
 			validate => 'fullnumber',
-		},
-
-		{
-			description => $admin_txt{'385a'},
-			input_html => qq~<input type="text" name="defaultusertxt" value="$defaultusertxt" />~,
-			name => 'defaultusertxt',
-			validate => 'text,null',
-		},
-		{
-			description => $admin_txt{'101'},
-			input_html => qq~<input type="text" name="maxfavs" value="$maxfavs" />~,
-			name => 'maxfavs',
-			validate => 'number',
-		},
-		{
-			description => $admin_txt{'373'},
-			input_html => qq~<input type="text" size="4" name="TopAmmount" value="$TopAmmount" />~,
-			name => 'TopAmmount',
-			validate => 'number',
-		},
-		{
-			description => $admin_txt{'912'},
-			input_html => qq~<select name="defaultml">
-  <option value="username" ${isselected($defaultml eq 'username')}>$admin_txt{'914'}</option>
-  <option value="position" ${isselected($defaultml eq 'position')}>$admin_txt{'911'}</option>
-  <option value="posts"    ${isselected($defaultml eq 'posts')   }>$admin_txt{'910'}</option>
-  <option value="regdate"  ${isselected($defaultml eq 'regdate') }>$admin_txt{'909'}</option>
-</select>~,
-			name => 'defaultml',
-			validate => 'text',
-		},
-		{
-			description => $admin_txt{'902'} . ' ' . $admin_txt{'107'},
-			input_html => qq~<input type="text" name="barmaxnumb" size="5" value="$barmaxnumb" /> $admin_txt{'904'} <input type="radio" name="barmaxdepend" value="0"${ischecked(!$barmaxdepend)}/> $admin_txt{'905'} <input type="radio" name="barmaxdepend" value="1"${ischecked($barmaxdepend)}/> $admin_txt{'903'}~,
-			name => 'barmaxdepend',
-			validate => 'boolean',
-		},
-		{
-			description => $admin_txt{'374'},
-			input_html => qq~<input type="text" name="maxdisplay" size="5" value="$maxdisplay" />~,
-			name => 'maxdisplay',
-			validate => 'number',
-		},
-		{
-			description => $admin_txt{'375'},
-			input_html => qq~<input type="text" name="maxmessagedisplay" size="5" value="$maxmessagedisplay" />~,
-			name => 'maxmessagedisplay',
-			validate => 'number',
 		},
 		{
 			header => $settings_txt{'showhide'},
 		},
 		{
-			description => $admin_txt{'523'},
-			input_html => qq~<input type="checkbox" name="profilebutton" value="1"${ischecked($profilebutton)} />~,
+			description => qq~<label for="profilebutton">$admin_txt{'523'}</label>~,
+			input_html => qq~<input type="checkbox" name="profilebutton" id="profilebutton" value="1"${ischecked($profilebutton)} />~,
 			name => 'profilebutton',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'526'},
-			input_html => qq~<input type="checkbox" name="usertools" value="1"${ischecked($usertools)} />~,
+			description => qq~<label for="usertools">$admin_txt{'526'}</label>~,
+			input_html => qq~<input type="checkbox" name="usertools" id="usertools" value="1"${ischecked($usertools)} />~,
 			name => 'usertools',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'382'},
-			input_html => qq~<input type="checkbox" name="showlatestmember" value="1"${ischecked($showlatestmember)} />~,
+			description => qq~<label for="showlatestmember">$admin_txt{'382'}</label>~,
+			input_html => qq~<input type="checkbox" name="showlatestmember" id="showlatestmember" value="1"${ischecked($showlatestmember)} />~,
 			name => 'showlatestmember',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'509'},
-			input_html => qq~<input type="checkbox" name="Show_RecentBar" value="1"${ischecked($Show_RecentBar)} />~,
+			description => qq~<label for="Show_RecentBar">$admin_txt{'509'}</label>~,
+			input_html => qq~<input type="checkbox" name="Show_RecentBar" id="Show_RecentBar" value="1"${ischecked($Show_RecentBar)} />~,
 			name => 'Show_RecentBar',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'showall'},
-			input_html => qq~<input type="checkbox" name="showpageall" value="1"${ischecked($showpageall)} />~,
+			description => qq~<label for="showpageall">$admin_txt{'showall'}</label>~,
+			input_html => qq~<input type="checkbox" name="showpageall" id="showpageall" value="1"${ischecked($showpageall)} />~,
 			name => 'showpageall',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'732'},
-			input_html => qq~<input type="checkbox" name="ShowBDescrip" value="1"${ischecked($ShowBDescrip)} />~,
+			description => qq~<label for="ShowBDescrip">$admin_txt{'732'}</label>~,
+			input_html => qq~<input type="checkbox" name="ShowBDescrip" id="ShowBDescrip" value="1"${ischecked($ShowBDescrip)} />~,
 			name => 'ShowBDescrip',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'383'},
-			input_html => qq~<input type="checkbox" name="showmodify" value="1"${ischecked($showmodify)} />~,
+			description => qq~<label for="showmodify">$admin_txt{'383'}</label>~,
+			input_html => qq~<input type="checkbox" name="showmodify" id="showmodify" value="1"${ischecked($showmodify)} />~,
 			name => 'showmodify',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'384'},
-			input_html => qq~<input type="checkbox" name="showuserpic" value="1"${ischecked($showuserpic)} />~,
+			description => qq~<label for="showuserpic">$admin_txt{'384'}</label>~,
+			input_html => qq~<input type="checkbox" name="showuserpic" id="showuserpic" value="1"${ischecked($showuserpic)} />~,
 			name => 'showuserpic',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'385'},
-			input_html => qq~<input type="checkbox" name="showusertext" value="1"${ischecked($showusertext)} />~,
+			description => qq~<label for="showusertext">$admin_txt{'385'}</label>~,
+			input_html => qq~<input type="checkbox" name="showusertext" id="showusertext" value="1"${ischecked($showusertext)} />~,
 			name => 'showusertext',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'386'},
-			input_html => qq~<input type="checkbox" name="showgenderimage" value="1"${ischecked($showgenderimage)} />~,
+			description => qq~<label for="showgenderimage">$admin_txt{'386'}</label>~,
+			input_html => qq~<input type="checkbox" name="showgenderimage" id="showgenderimage" value="1"${ischecked($showgenderimage)} />~,
 			name => 'showgenderimage',
 			validate => 'boolean',
 		},
 		{
-			description => $amv_txt{'12'},
-			input_html => qq~<input type="checkbox" name="showallgroups" value="1"${ischecked($showallgroups)} />~,
+			description => qq~<label for="showallgroups">$amv_txt{'12'}</label>~,
+			input_html => qq~<input type="checkbox" name="showallgroups" id="showallgroups" value="1"${ischecked($showallgroups)} />~,
 			name => 'showallgroups',
 			validate => 'boolean',
 		},
 		{
-			description => qq~$admin_txt{'394'}<br />$admin_txt{'396'}~,
-			input_html => qq~<input type="checkbox" name="showtopicviewers" value="1"${ischecked($showtopicviewers)} />~,
+			description => qq~<label for="showtopicviewers">$admin_txt{'394'}<br />$admin_txt{'396'}</label>~,
+			input_html => qq~<input type="checkbox" name="showtopicviewers" id="showtopicviewers" value="1"${ischecked($showtopicviewers)} />~,
 			name => 'showtopicviewers',
 			validate => 'boolean',
 		},
 		{
-			description => qq~$admin_txt{'395'}<br />$admin_txt{'396'}~,
-			input_html => qq~<input type="checkbox" name="showtopicrepliers" value="1"${ischecked($showtopicrepliers)} />~,
+			description => qq~<label for="showtopicrepliers">$admin_txt{'395'}<br />$admin_txt{'396'}</label>~,
+			input_html => qq~<input type="checkbox" name="showtopicrepliers" id="showtopicrepliers" value="1"${ischecked($showtopicrepliers)} />~,
 			name => 'showtopicrepliers',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'imageinquote'},
-			input_html => qq~<input type="checkbox" name="showimageinquote" value="1"${ischecked($showimageinquote)} />~,
+			description => qq~<label for="showimageinquote">$admin_txt{'imageinquote'}</label>~,
+			input_html => qq~<input type="checkbox" name="showimageinquote" id="showimageinquote" value="1"${ischecked($showimageinquote)} />~,
 			name => 'showimageinquote',
 			validate => 'boolean',
 		},
@@ -384,121 +351,133 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'posting'},
 		},
 		{
-			description => $admin_txt{'377'},
+			description => qq~<label for="enable_spell_check">$admin_txt{'377'}</label>~,
 			input_html => $googiehtml,
 			name => 'enable_spell_check',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'378'},
-			input_html => qq~<input type="checkbox" name="enable_ubbc" value="1"${ischecked($enable_ubbc)} />~,
+			description => qq~<label for="enable_ubbc">$admin_txt{'378'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_ubbc" id="enable_ubbc" value="1"${ischecked($enable_ubbc)} />~,
 			name => 'enable_ubbc',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'740'},
-			input_html => qq~<input type="checkbox" name="showyabbcbutt" value="1"${ischecked($showyabbcbutt)} />~,
+			description => qq~<label for="showyabbcbutt">$admin_txt{'740'}</label>~,
+			input_html => qq~<input type="checkbox" name="showyabbcbutt" id="showyabbcbutt" value="1"${ischecked($showyabbcbutt)} />~,
 			name => 'showyabbcbutt',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'804'},
-			input_html => qq~<input type="checkbox" name="parseflash" value="1"${ischecked($parseflash)} />~,
+			description => qq~<label for="parseflash">$admin_txt{'804'}</label>~,
+			input_html => qq~<input type="checkbox" name="parseflash" id="parseflash" value="1"${ischecked($parseflash)} />~,
 			name => 'parseflash',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'378a'},
-			input_html => qq~<input type="checkbox" name="nestedquotes" value="1"${ischecked($nestedquotes)} />~,
+			description => qq~<label for="nestedquotes">$admin_txt{'378a'}</label>~,
+			input_html => qq~<input type="checkbox" name="nestedquotes" id="nestedquotes" value="1"${ischecked($nestedquotes)} />~,
 			name => 'nestedquotes',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'524'},
-			input_html => qq~<input type="checkbox" name="autolinkurls" value="1"${ischecked($autolinkurls)} />~,
+			description => qq~<label for="autolinkurls">$admin_txt{'524'}</label>~,
+			input_html => qq~<input type="checkbox" name="autolinkurls" id="autolinkurls" value="1"${ischecked($autolinkurls)} />~,
 			name => 'autolinkurls',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'525'},
-			input_html => qq~<input type="text" size="2" name="checkallcaps" value="$checkallcaps" />~,
+			description => qq~<label for="checkallcaps">$admin_txt{'525'}</label>~,
+			input_html => qq~<input type="text" size="2" name="checkallcaps" id="checkallcaps" value="$checkallcaps" />~,
 			name => 'checkallcaps',
 			validate => 'number,null',
 		},
 		{
-			description => $admin_txt{'498a'},
-			input_html => qq~<input type="text" size="5" name="set_subjectMaxLength" value="$set_subjectMaxLength" />~,
+			description => qq~<label for="set_subjectMaxLength">$admin_txt{'498a'}</label>~,
+			input_html => qq~<input type="text" size="5" name="set_subjectMaxLength" id="set_subjectMaxLength" value="$set_subjectMaxLength" />~,
 			name => 'set_subjectMaxLength',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'498'},
-			input_html => qq~<input type="text" size="5" name="MaxMessLen" value="$MaxMessLen" />~,
+			description => qq~<label for="MaxMessLen">$admin_txt{'498'}</label>~,
+			input_html => qq~<input type="text" size="5" name="MaxMessLen" id="MaxMessLen" value="$MaxMessLen" />~,
 			name => 'MaxMessLen',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'499'},
-			input_html => qq~<input type="text" size="4" name="fontsizemin" value="$fontsizemin" />~,
+			description => qq~<label for="fontsizemin">$admin_txt{'499'}</label>~,
+			input_html => qq~<input type="text" size="5" name="fontsizemin" id="fontsizemin" value="$fontsizemin" />~,
 			name => 'fontsizemin',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'500'},
-			input_html => qq~<input type="text" size="4" name="fontsizemax" value="$fontsizemax" />~,
+			description => qq~<label for="fontsizemax">$admin_txt{'500'}</label>~,
+			input_html => qq~<input type="text" size="5" name="fontsizemax" id="fontsizemax" value="$fontsizemax" />~,
 			name => 'fontsizemax',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'842'},
-			input_html => qq~<input type="text" size="4" name="HotTopic" value="$HotTopic" />~,
+			description => qq~<label for="HotTopic">$admin_txt{'842'}</label>~,
+			input_html => qq~<input type="text" size="5" name="HotTopic" id="HotTopic" value="$HotTopic" />~,
 			name => 'HotTopic',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'843'},
-			input_html => qq~<input type="text" size="4" name="VeryHotTopic" value="$VeryHotTopic" />~,
+			description => qq~<label for="VeryHotTopic">$admin_txt{'843'}</label>~,
+			input_html => qq~<input type="text" size="5" name="VeryHotTopic" id="VeryHotTopic" value="$VeryHotTopic" />~,
 			name => 'VeryHotTopic',
+			validate => 'number',
+		},
+		{
+			description => qq~<label for="maxdisplay">$admin_txt{'374'}</label>~,
+			input_html => qq~<input type="text" name="maxdisplay" id="maxdisplay" size="5" value="$maxdisplay" />~,
+			name => 'maxdisplay',
+			validate => 'number',
+		},
+		{
+			description => qq~<label for="maxmessagedisplay">$admin_txt{'375'}</label>~,
+			input_html => qq~<input type="text" name="maxmessagedisplay" id="maxmessagedisplay" size="5" value="$maxmessagedisplay" />~,
+			name => 'maxmessagedisplay',
 			validate => 'number',
 		},
 		{
 			header => $timelocktxt{'01'},
 		},
 		{
-			description => $timelocktxt{'03'},
-			input_html => qq~<input type="checkbox" name="tlnomodflag" value="1"${ischecked($tlnomodflag)} />~,
+			description => qq~<label for="tlnomodflag">$timelocktxt{'03'}</label>~,
+			input_html => qq~<input type="checkbox" name="tlnomodflag" id="tlnomodflag" value="1"${ischecked($tlnomodflag)} />~,
 			name => 'tlnomodflag',
 			validate => 'boolean',
 		},
 		{
-			description => $timelocktxt{'04'},
-			input_html => qq~<input type="text" size="5" name="tlnomodtime" value="$tlnomodtime" />~,
+			description => qq~<label for="tlnomodtime">$timelocktxt{'04'}</label>~,
+			input_html => qq~<input type="text" size="5" name="tlnomodtime" id="tlnomodtime" value="$tlnomodtime" />~,
 			name => 'tlnomodtime',
 			validate => 'number',
 			depends_on => ['tlnomodflag'],
 		},
 		{
-			description => $timelocktxt{'07'},
-			input_html => qq~<input type="checkbox" name="tlnodelflag" value="1"${ischecked($tlnodelflag)} />~,
+			description => qq~<label for="tlnodelflag">$timelocktxt{'07'}</label>~,
+			input_html => qq~<input type="checkbox" name="tlnodelflag" id="tlnodelflag" value="1"${ischecked($tlnodelflag)} />~,
 			name => 'tlnodelflag',
 			validate => 'boolean',
 		},
 		{
-			description => $timelocktxt{'08'},
-			input_html => qq~<input type="text" size="5" name="tlnodeltime" value="$tlnodeltime" />~,
+			description => qq~<label for="tlnodeltime">$timelocktxt{'08'}</label>~,
+			input_html => qq~<input type="text" size="5" name="tlnodeltime" id="tlnodeltime" value="$tlnodeltime" />~,
 			name => 'tlnodeltime',
 			validate => 'number',
 			depends_on => ['tlnodelflag'],
 		},
 		{
-			description => $timelocktxt{'05'},
-			input_html => qq~<input type="checkbox" name="tllastmodflag" value="1"${ischecked($tllastmodflag)} />~,
+			description => qq~<label for="tllastmodflag">$timelocktxt{'05'}</label>~,
+			input_html => qq~<input type="checkbox" name="tllastmodflag" id="tllastmodflag" value="1"${ischecked($tllastmodflag)} />~,
 			name => 'tllastmodflag',
 			validate => 'boolean',
 		},
 		{
-			description => $timelocktxt{'06'},
-			input_html => qq~<input type="text" size="5" name="tllastmodtime" value="$tllastmodtime" />~,
+			description => qq~<label for="tllastmodtime">$timelocktxt{'06'}</label>~,
+			input_html => qq~<input type="text" size="5" name="tllastmodtime" id="tllastmodtime" value="$tllastmodtime" />~,
 			name => 'tllastmodtime',
 			validate => 'number',
 		},
@@ -506,26 +485,26 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $cutts{'8'},
 		},
 		{
-			description => $cutts{'9'},
-			input_html => qq~<input type="checkbox" name="ttsreverse" value="1"${ischecked($ttsreverse)} />~,
+			description => qq~<label for="ttsreverse">$cutts{'9'}</label>~,
+			input_html => qq~<input type="checkbox" name="ttsreverse" id="ttsreverse" value="1"${ischecked($ttsreverse)} />~,
 			name => 'ttsreverse',
 			validate => 'boolean',
 		},
 		{
-			description => $cutts{'9a'},
-			input_html => qq~<input type="checkbox" name="ttsureverse" value="1"${ischecked($ttsureverse)} />~,
+			description => qq~<label for="ttsureverse">$cutts{'9a'}</label>~,
+			input_html => qq~<input type="checkbox" name="ttsureverse" id="ttsureverse" value="1"${ischecked($ttsureverse)} />~,
 			name => 'ttsureverse',
 			validate => 'boolean',
 		},
 		{
-			description => $cutts{'7'},
-			input_html => qq~<input type="checkbox" name="tsreverse" value="1"${ischecked($tsreverse)} />~,
+			description => qq~<label for="tsreverse">$cutts{'7'}</label>~,
+			input_html => qq~<input type="checkbox" name="tsreverse" id="tsreverse" value="1"${ischecked($tsreverse)} />~,
 			name => 'tsreverse',
 			validate => 'boolean',
 		},
 		{
-			description => $cutts{'1'},
-			input_html => qq~<input type="text" size="5" name="cutamount" value="$cutamount" />~,
+			description => qq~<label for="cutamount">$cutts{'1'}</label>~,
+			input_html => qq~<input type="text" size="5" name="cutamount" id="cutamount" value="$cutamount" />~,
 			name => 'cutamount',
 			validate => 'number',
 		},
@@ -533,38 +512,38 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'poll'},
 		},
 		{
-			description => $polltxt{'28'},
-			input_html => qq~<input type="text" size="5" name="numpolloptions" value="$numpolloptions" />~,
+			description => qq~<label for="numpolloptions">$polltxt{'28'}</label>~,
+			input_html => qq~<input type="text" size="5" name="numpolloptions" id="numpolloptions" value="$numpolloptions" />~,
 			name => 'numpolloptions',
 			validate => 'number',
 		},
 		{
-			description => $polltxt{'61'},
-			input_html => qq~<input type="text" size="5" name="maxpq" value="$maxpq" />~,
+			description => qq~<label for="maxpq">$polltxt{'61'}</label>~,
+			input_html => qq~<input type="text" size="5" name="maxpq" id="maxpq" value="$maxpq" />~,
 			name => 'maxpq',
 			validate => 'number',
 		},
 		{
-			description => $polltxt{'62'},
-			input_html => qq~<input type="text" size="5" name="maxpo" value="$maxpo" />~,
+			description => qq~<label for="maxpo">$polltxt{'62'}</label>~,
+			input_html => qq~<input type="text" size="5" name="maxpo" id="maxpo" value="$maxpo" />~,
 			name => 'maxpo',
 			validate => 'number',
 		},
 		{
-			description => $polltxt{'63'},
-			input_html => qq~<input type="text" size="5" name="maxpc" value="$maxpc" />~,
+			description => qq~<label for="maxpc">$polltxt{'63'}</label>~,
+			input_html => qq~<input type="text" size="5" name="maxpc" id="maxpc" value="$maxpc" />~,
 			name => 'maxpc',
 			validate => 'number',
 		},
 		{
-			description => $polltxt{'29'},
-			input_html => qq~<input type="checkbox" name="useraddpoll" value="1"${ischecked($useraddpoll)} />~,
+			description => qq~<label for="useraddpoll">$polltxt{'29'}</label>~,
+			input_html => qq~<input type="checkbox" name="useraddpoll" id="useraddpoll" value="1"${ischecked($useraddpoll)} />~,
 			name => 'useraddpoll',
 			validate => 'boolean',
 		},
 		{
-			description => $polltxt{'60'},
-			input_html => qq~<input type="checkbox" name="ubbcpolls" value="1"${ischecked($ubbcpolls)} />~,
+			description => qq~<label for="ubbcpolls">$polltxt{'60'}</label>~,
+			input_html => qq~<input type="checkbox" name="ubbcpolls" id="ubbcpolls" value="1"${ischecked($ubbcpolls)} />~,
 			name => 'ubbcpolls',
 			validate => 'boolean',
 		},
@@ -572,34 +551,34 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $qrb_txt{'1'},
 		},
 		{
-			description => $qrb_txt{'2'},
-			input_html => qq~<input type="checkbox" name="enable_quickpost" value="1"${ischecked($enable_quickpost)} />~,
+			description => qq~<label for="enable_quickpost">$qrb_txt{'2'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_quickpost" id="enable_quickpost" value="1"${ischecked($enable_quickpost)} />~,
 			name => 'enable_quickpost',
 			validate => 'boolean',
 		},
 		{
-			description => $qrb_txt{'3'},
-			input_html => qq~<input type="checkbox" name="enable_quickreply" value="1"${ischecked($enable_quickreply)} />~,
+			description => qq~<label for="enable_quickreply">$qrb_txt{'3'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_quickreply" id="enable_quickreply" value="1"${ischecked($enable_quickreply)} />~,
 			name => 'enable_quickreply',
 			validate => 'boolean',
 		},
 		{
-			description => $qrb_txt{'4'},
-			input_html => qq~<input type="checkbox" name="enable_markquote" value="1"${ischecked($enable_markquote)} />~,
+			description => qq~<label for="enable_markquote">$qrb_txt{'4'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_markquote" id="enable_markquote" value="1"${ischecked($enable_markquote)} />~,
 			name => 'enable_markquote',
 			validate => 'boolean',
 			depends_on => ['enable_quickreply'],
 		},
 		{
-			description => $qrb_txt{'5'},
-			input_html => qq~<input type="checkbox" name="enable_quoteuser" value="1"${ischecked($enable_quoteuser)} />~,
+			description => qq~<label for="enable_quoteuser">$qrb_txt{'5'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_quoteuser" id="enable_quoteuser" value="1"${ischecked($enable_quoteuser)} />~,
 			name => 'enable_quoteuser',
 			validate => 'boolean',
 			depends_on => ['enable_quickreply'],
 		},
 		{
-			description => $qrb_txt{'6'},
-			input_html => qq~<input type="text" size="7" maxlength="7" name="quoteuser_color" value="$quoteuser_color" onkeyup="previewColor(this.value);" /> <span id="quoteuser_color2" style="background-color:$quoteuser_color">&nbsp; &nbsp; &nbsp;</span> <img align="top" src="$imagesdir/palette1.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=palette;task=templ', '', 'height=308,width=302,menubar=no,toolbar=no,scrollbars=no')" alt="" border="0" />
+			description => qq~<label for="quoteuser_color">$qrb_txt{'6'}</label>~,
+			input_html => qq~<input type="text" size="7" maxlength="7" name="quoteuser_color" id="quoteuser_color" value="$quoteuser_color" onkeyup="previewColor(this.value);" /> <span id="quoteuser_color2" style="background-color:$quoteuser_color">&nbsp; &nbsp; &nbsp;</span> <img src="$defaultimagesdir/palette1.gif" align="top" style="cursor: pointer" onclick="window.open('$scripturl?action=palette;task=templ', '', 'height=308,width=302,menubar=no,toolbar=no,scrollbars=no')" alt="" border="0" />
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
 			function previewColor(color) {
@@ -613,15 +592,15 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			depends_on => ['enable_quoteuser', 'enable_quickreply'],
 		},
 		{
-			description => $qrb_txt{'7'},
-			input_html => qq~<input type="checkbox" name="enable_quickjump" value="1"${ischecked($enable_quickjump)} />~,
+			description => qq~<label for="enable_quickjump">$qrb_txt{'7'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_quickjump" id="enable_quickjump" value="1"${ischecked($enable_quickjump)} />~,
 			name => 'enable_quickjump',
 			validate => 'boolean',
 			depends_on => ['enable_quickpost||', 'enable_quickreply||'],
 		},
 		{
-			description => $qrb_txt{'8'},
-			input_html => qq~<input type="text" size="5" name="quick_quotelength" value="$quick_quotelength" />~,
+			description => qq~<label for="quick_quotelength">$qrb_txt{'8'}</label>~,
+			input_html => qq~<input type="text" size="5" name="quick_quotelength" id="quick_quotelength" value="$quick_quotelength" />~,
 			name => 'quick_quotelength',
 			validate => 'number',
 			depends_on => ['enable_quickjump', 'enable_quickreply'],
@@ -636,26 +615,26 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'guest'},
 		},
 		{
-			description => $admin_txt{'632'},
-			input_html => qq~<input type="checkbox" name="guestaccess" value="1"${ischecked(!$guestaccess)} />~,
+			description => qq~<label for="guestaccess">$admin_txt{'632'}</label>~,
+			input_html => qq~<input type="checkbox" name="guestaccess" id="guestaccess" value="1"${ischecked(!$guestaccess)} />~,
 			name => 'guestaccess',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'380'},
-			input_html => qq~<input type="checkbox" name="enable_guestposting" value="1"${ischecked($enable_guestposting)} />~,
+			description => qq~<label for="enable_guestposting">$admin_txt{'380'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_guestposting" id="enable_guestposting" value="1"${ischecked($enable_guestposting)} />~,
 			name => 'enable_guestposting',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'guestlang'},
-			input_html => qq~<input type="checkbox" name="enable_guestlanguage" value="1"${ischecked($enable_guestlanguage)} />~,
+			description => qq~<label for="enable_guestlanguage">$admin_txt{'guestlang'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_guestlanguage" id="enable_guestlanguage" value="1"${ischecked($enable_guestlanguage)} />~,
 			name => 'enable_guestlanguage',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'guestmedia'},
-			input_html => qq~<input type="checkbox" name="guest_media_disallowed" value="1"${ischecked($guest_media_disallowed)} />~,
+			description => qq~<label for="guest_media_disallowed">$admin_txt{'guestmedia'}</label>~,
+			input_html => qq~<input type="checkbox" name="guest_media_disallowed" id="guest_media_disallowed" value="1"${ischecked($guest_media_disallowed)} />~,
 			name => 'guest_media_disallowed',
 			validate => 'boolean',
 		},
@@ -663,14 +642,14 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'profile'},
 		},
 		{
-			description => $admin_txt{'746'},
-			input_html => qq~<input type="checkbox" name="allowpics" value="1"${ischecked($allowpics)} />~,
+			description => qq~<label for="allowpics">$admin_txt{'746'}</label>~,
+			input_html => qq~<input type="checkbox" name="allowpics" id="allowpics" value="1"${ischecked($allowpics)} />~,
 			name => 'allowpics',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'747'},
-			input_html => qq~<input type="checkbox" name="upload_useravatar" value="1"${ischecked($upload_useravatar)} />~,
+			description => qq~<label for="upload_useravatar">$admin_txt{'747'}</label>~,
+			input_html => qq~<input type="checkbox" name="upload_useravatar" id="upload_useravatar" value="1"${ischecked($upload_useravatar)} />~,
 			name => 'upload_useravatar',
 			validate => 'boolean',
 			depends_on => ['allowpics'],
@@ -680,66 +659,78 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			input_html => qq~$facesdir/UserAvatars<br />~ . ((-w "$facesdir/UserAvatars" && -d "$facesdir/UserAvatars") ? qq~<span style="color: green;">$admin_txt{'163'}</span>~ : qq~<span style="color: red;">$admin_txt{'164'}</span>~), # Non-changable setting
 		},
 		{
-			description => $admin_txt{'748'},
-			input_html => qq~<select multiple="multiple" name="upload_avatargroup" size="8">~ . &DrawPerms($upload_avatargroup, 0) . qq~</select>~,
+			description => qq~<label for="upload_avatargroup">$admin_txt{'748'}</label>~,
+			input_html => qq~<select multiple="multiple" name="upload_avatargroup" id="upload_avatargroup" size="8">~ . &DrawPerms($upload_avatargroup, 0) . qq~</select>~,
 			name => 'upload_avatargroup',
 			validate => 'text,null',
 			depends_on => ['allowpics','upload_useravatar'],
 		},
 		{
-			description => $admin_txt{'749'},
-			input_html => qq~<input type="text" name="avatar_limit" size="5" value="$avatar_limit" /> KB~,
+			description => qq~<label for="avatar_limit">$admin_txt{'749'}</label>~,
+			input_html => qq~<input type="text" name="avatar_limit" id="avatar_limit" size="5" value="$avatar_limit" /> KB~,
 			name => 'avatar_limit',
 			validate => 'number',
 			depends_on => ['allowpics','upload_useravatar'],
 		},
 		{
-			description => $admin_txt{'750'},
-			input_html => qq~<input type="text" name="avatar_dirlimit" size="5" value="$avatar_dirlimit" /> KB~,
+			description => qq~<label for="avatar_dirlimit">$admin_txt{'750'}</label>~,
+			input_html => qq~<input type="text" name="avatar_dirlimit" id="avatar_dirlimit" size="5" value="$avatar_dirlimit" /> KB~,
 			name => 'avatar_dirlimit',
 			validate => 'number',
 			depends_on => ['allowpics','upload_useravatar'],
 		},
 		{
-			description => $admin_txt{'381'},
-			input_html => qq~<input type="checkbox" name="enable_notifications_N" value="1"${ischecked((($enable_notifications == 1 || $enable_notifications == 3) ? 1 : 0))} />~,
+			description => qq~<label for="enable_notifications_N">$admin_txt{'381'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_notifications_N" id="enable_notifications_N" value="1"${ischecked((($enable_notifications == 1 || $enable_notifications == 3) ? 1 : 0))} />~,
 			name => 'enable_notifications_N',
 			validate => 'boolean',
 		},
 		{
-			description => $imtxt{'NewNotificationAlert'},
+			description => qq~<label for="NewNotificationAlert">$imtxt{'NewNotificationAlert'}</label>~,
 			input_html => qq~<input type="checkbox" name="NewNotificationAlert" id="NewNotificationAlert" value="1"${ischecked($NewNotificationAlert)} />~,
 			name => 'NewNotificationAlert',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'723'},
-			input_html => qq~<input type="checkbox" name="allow_hide_email" value="1"${ischecked($allow_hide_email)} />~,
+			description => qq~<label for="allow_hide_email">$admin_txt{'723'}</label>~,
+			input_html => qq~<input type="checkbox" name="allow_hide_email" id="allow_hide_email" value="1"${ischecked($allow_hide_email)} />~,
 			name => 'allow_hide_email',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'buddylist'},
-			input_html => qq~<input type="checkbox" name="buddyListEnabled" value="1"${ischecked($buddyListEnabled)} />~,
-			name => 'buddyListEnabled',
-			validate => 'boolean',
-		},
-		{
-			description => $admin_txt{'689'},
-			input_html => qq~<input type="text" name="MaxSigLen" size="5" value="$MaxSigLen" />~,
-			name => 'MaxSigLen',
-			validate => 'number,null',
-		},
-		{
-			description => $admin_txt{'639'},
-			input_html => qq~<input type="checkbox" name="emailnewpass" value="1"${ischecked($emailnewpass)} />~,
+			description => qq~<label for="emailnewpass">$admin_txt{'639'}</label>~,
+			input_html => qq~<input type="checkbox" name="emailnewpass" id="emailnewpass" value="1"${ischecked($emailnewpass)} />~,
 			name => 'emailnewpass',
 			validate => 'boolean',
 		},
 		{
-			description => $amgtxt{'84'},
+			description => qq~<label for="buddyListEnabled">$admin_txt{'buddylist'}</label>~,
+			input_html => qq~<input type="checkbox" name="buddyListEnabled" id="buddyListEnabled" value="1"${ischecked($buddyListEnabled)} />~,
+			name => 'buddyListEnabled',
+			validate => 'boolean',
+		},
+		{
+			description => qq~<label for="defaultusertxt">$admin_txt{'385a'}</label>~,
+			input_html => qq~<input type="text" name="defaultusertxt" id="defaultusertxt" value="$defaultusertxt" />~,
+			name => 'defaultusertxt',
+			validate => 'text,null',
+		},
+		{
+			description => qq~<label for="MaxSigLen">$admin_txt{'689'}</label>~,
+			input_html => qq~<input type="text" name="MaxSigLen" id="MaxSigLen" size="5" value="$MaxSigLen" />~,
+			name => 'MaxSigLen',
+			validate => 'number,null',
+		},
+		{
+			description => qq~<label for="maxfavs">$admin_txt{'101'}</label>~,
+			input_html => qq~<input type="text" name="maxfavs" id="maxfavs" size="5" value="$maxfavs" />~,
+			name => 'maxfavs',
+			validate => 'number',
+		},
+		{
+			description => qq~<label for="addmemgroup_enabled">$amgtxt{'84'}</label>~,
 			input_html => qq~
-				<select name="addmemgroup_enabled">
+				<select name="addmemgroup_enabled" id="addmemgroup_enabled">
 				  <option value="0"${isselected($addmemgroup_enabled == 0)}>$amgtxt{'85'}</option>
 				  <option value="1"${isselected($addmemgroup_enabled == 1)}>$amgtxt{'86'}</option>
 				  <option value="2"${isselected($addmemgroup_enabled == 2)}>$amgtxt{'87'}</option>
@@ -749,8 +740,8 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'extendedprofiles'},
-			input_html => qq~<input type="checkbox" name="extendedprofiles" value="1" ${ischecked($extendedprofiles)}/>~,
+			description => qq~<label for="extendedprofiles">$admin_txt{'extendedprofiles'}</label>~,
+			input_html => qq~<input type="checkbox" name="extendedprofiles" id="extendedprofiles" value="1" ${ischecked($extendedprofiles)}/>~,
 			name => 'extendedprofiles',
 			validate => 'boolean',
 		},
@@ -758,9 +749,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'login'},
 		},
 		{
-			description => $admin_txt{'432'},
+			description => qq~<label for="Cookie_Length">$admin_txt{'432'}</label>~,
 			input_html => qq~
-<select name="Cookie_Length">
+<select name="Cookie_Length" id="Cookie_Length">
   <option value="2" ${isselected($Cookie_Length == 2)}>$admin_txt{'497d'}</option>
   <option value="1" ${isselected($Cookie_Length == 1)}>$admin_txt{'497c'}</option>
   <option value="60" ${isselected($Cookie_Length == 60)}>1 $admin_txt{'497a'}</option>
@@ -775,20 +766,20 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'352'},
-			input_html => qq~<input type="text" name="cookieusername" size="20" value="$cookieusername" />~,
+			description => qq~<label for="cookieusername">$admin_txt{'352'}</label>~,
+			input_html => qq~<input type="text" name="cookieusername" id="cookieusername" size="20" value="$cookieusername" />~,
 			name => 'cookieusername',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'353'},
-			input_html => qq~<input type="text" name="cookiepassword" size="20" value="$cookiepassword" />~,
+			description => qq~<label for="cookiepassword">$admin_txt{'353'}</label>~,
+			input_html => qq~<input type="text" name="cookiepassword" id="cookiepassword" size="20" value="$cookiepassword" />~,
 			name => 'cookiepassword',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'353a'},
-			input_html => qq~<input type="text" name="cookiesession_name" size="20" value="$cookiesession_name" />~,
+			description => qq~<label for="cookiesession_name">$admin_txt{'353a'}</label>~,
+			input_html => qq~<input type="text" name="cookiesession_name" id="cookiesession_name" size="20" value="$cookiesession_name" />~,
 			name => 'cookiesession_name',
 			validate => 'text',
 		},
@@ -796,9 +787,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'registration'},
 		},
 		{
-			description => $rtype_text{'4'},
+			description => qq~<label for="regtype">$rtype_text{'4'}</label>~,
 			input_html => qq~
-			<select name="regtype" size="1">
+			<select name="regtype" id="regtype" size="1">
 			  <option value="0" ${isselected($regtype == 0)}>$rtype_text{'0'}</option>
 			  <option value="1" ${isselected($regtype == 1)}>$rtype_text{'1'}</option>
 			  <option value="2" ${isselected($regtype == 2)}>$rtype_text{'2'}</option>
@@ -808,35 +799,35 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $prereg_txt{'11'},
-			input_html => qq~<input type="text" name="preregspan" size="5" value="$preregspan" />~,
+			description => qq~<label for="preregspan">$prereg_txt{'11'}</label>~,
+			input_html => qq~<input type="text" name="preregspan" id="preregspan" size="5" value="$preregspan" />~,
 			name => 'preregspan',
 			validate => 'number',
 			depends_on => ['regtype!=0', 'regtype!=3'],
 		},
 		{
-			description => $admin_txt{'702'},
-			input_html => qq~<input type="checkbox" name="emailpassword" value="1"${ischecked($emailpassword)} />~,
+			description => qq~<label for="emailpassword">$admin_txt{'702'}</label>~,
+			input_html => qq~<input type="checkbox" name="emailpassword" id="emailpassword" value="1"${ischecked($emailpassword)} />~,
 			name => 'emailpassword',
 			validate => 'boolean',
 		},
 		{
-			description => $admin_txt{'619'},
-			input_html => qq~<input type="checkbox" name="emailwelcome" value="1"${ischecked($emailwelcome)} />~,
+			description => qq~<label for="emailwelcome">$admin_txt{'619'}</label>~,
+			input_html => qq~<input type="checkbox" name="emailwelcome" id="emailwelcome" value="1"${ischecked($emailwelcome)} />~,
 			name => 'emailwelcome',
 			validate => 'boolean',
 			depends_on => ['!emailpassword'],
 		},
 		{
-			description => $register_txt{'768'},
-			input_html => qq~<input type="checkbox" name="name_cannot_be_userid" value="1"${ischecked($name_cannot_be_userid)} />~,
+			description => qq~<label for="name_cannot_be_userid">$register_txt{'768'}</label>~,
+			input_html => qq~<input type="checkbox" name="name_cannot_be_userid" id="name_cannot_be_userid" value="1"${ischecked($name_cannot_be_userid)} />~,
 			name => 'name_cannot_be_userid',
 			validate => 'boolean',
 		},
 		{
-			description => $register_txt{'770'},
+			description => qq~<label for="birthday_on_reg">$register_txt{'770'}</label>~,
 			input_html => qq~
-			<select name="birthday_on_reg" size="1">
+			<select name="birthday_on_reg" id="birthday_on_reg" size="1">
 			  <option value="0">$register_txt{'771'}</option>
 			  <option value="1"${isselected($birthday_on_reg == 1)}>$register_txt{'772'}</option>
 			  <option value="2"${isselected($birthday_on_reg == 2)}>$register_txt{'773'}</option>
@@ -845,33 +836,44 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number,null',
 		},
 		{
-			description => $admin_txt{'710'},
-			input_html => qq~<input type="text" name="pwstrengthmeter_scores" size="20" value="$pwstrengthmeter_scores" />~,
+			description => $register_txt{'gender_reg'},
+			input_html => qq~
+			<select name="gender_on_reg" size="1">
+			  <option value="0">$register_txt{'771'}</option>
+			  <option value="1"${isselected($gender_on_reg == 1)}>$register_txt{'gender_reg_opt'}</option>
+			  <option value="2"${isselected($gender_on_reg == 2)}>$register_txt{'gender_reg_req'}</option>
+			</select>~,
+			name => 'gender_on_reg',
+			validate => 'number,null',
+		},
+		{
+			description => qq~<label for="pwstrengthmeter_scores">$admin_txt{'710'}</label>~,
+			input_html => qq~<input type="text" name="pwstrengthmeter_scores" id="pwstrengthmeter_scores" size="20" value="$pwstrengthmeter_scores" />~,
 			name => 'pwstrengthmeter_scores',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'711'},
-			input_html => qq~<input type="text" name="pwstrengthmeter_common" size="20" value='$pwstrengthmeter_common' />~,
+			description => qq~<label for="pwstrengthmeter_common">$admin_txt{'711'}</label>~,
+			input_html => qq~<input type="text" name="pwstrengthmeter_common" id="pwstrengthmeter_common" size="20" value='$pwstrengthmeter_common' />~,
 			name => 'pwstrengthmeter_common',
 			validate => 'text',
 		},
 		{
-			description => $admin_txt{'712'},
-			input_html => qq~<input type="text" name="pwstrengthmeter_minchar" size="20" value="$pwstrengthmeter_minchar" />~,
+			description => qq~<label for="pwstrengthmeter_minchar">$admin_txt{'712'}</label>~,
+			input_html => qq~<input type="text" name="pwstrengthmeter_minchar" id="pwstrengthmeter_minchar" size="5" value="$pwstrengthmeter_minchar" />~,
 			name => 'pwstrengthmeter_minchar',
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'regreason'},
-			input_html => qq~<input type="text" name="RegReasonSymbols" size="5" value="$RegReasonSymbols" />~,
+			description => qq~<label for="RegReasonSymbols">$admin_txt{'regreason'}</label>~,
+			input_html => qq~<input type="text" name="RegReasonSymbols" id="RegReasonSymbols" size="5" value="$RegReasonSymbols" />~,
 			name => 'RegReasonSymbols',
 			validate => 'number',
 			depends_on => ['regtype==1'],
 		},
 		{
-			description => $admin_txt{'584'},
-			input_html => qq~<input type="checkbox" name="RegAgree" value="1"${ischecked($RegAgree)} />~,
+			description => qq~<label for="RegAgree">$admin_txt{'584'}</label>~,
+			input_html => qq~<input type="checkbox" name="RegAgree" id="RegAgree" value="1"${ischecked($RegAgree)} />~,
 			name => 'RegAgree',
 			validate => 'boolean',
 			depends_on => ['regtype!=0'],
@@ -880,9 +882,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'memberlist'},
 		},
 		{
-			description => $admin_txt{'mlview'},
+			description => qq~<label for="ML_Allowed">$admin_txt{'mlview'}</label>~,
 			input_html => qq~
-<select name="ML_Allowed">
+<select name="ML_Allowed" id="ML_Allowed">
   <option value="0" ${isselected($ML_Allowed == 0)}>$userlevel_txt{'all'}</option>
   <option value="1" ${isselected($ML_Allowed == 1)}>$userlevel_txt{'members'}</option>
   <option value="2" ${isselected($ML_Allowed == 2)}>$userlevel_txt{'modgmodadmin'}</option>
@@ -890,6 +892,30 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 </select>~,
 			name => 'ML_Allowed',
 			validate => 'number',
+		},
+		{
+			description => qq~<label for="defaultml">$admin_txt{'912'}</label>~,
+			input_html => qq~
+<select name="defaultml" id="defaultml">
+  <option value="username" ${isselected($defaultml eq 'username')}>$admin_txt{'914'}</option>
+  <option value="position" ${isselected($defaultml eq 'position')}>$admin_txt{'911'}</option>
+  <option value="posts"    ${isselected($defaultml eq 'posts')   }>$admin_txt{'910'}</option>
+  <option value="regdate"  ${isselected($defaultml eq 'regdate') }>$admin_txt{'909'}</option>
+</select>~,
+			name => 'defaultml',
+			validate => 'text',
+		},
+		{
+			description => qq~<label for="TopAmmount">$admin_txt{'373'}</label>~,
+			input_html => qq~<input type="text" size="5" name="TopAmmount" id="TopAmmount" value="$TopAmmount" />~,
+			name => 'TopAmmount',
+			validate => 'number',
+		},
+		{
+			description => qq~<label for="barmaxnumb">$admin_txt{'902'} $admin_txt{'107'}</label>~,
+			input_html => qq~<input type="text" name="barmaxnumb" id="barmaxnumb" size="5" value="$barmaxnumb" /> $admin_txt{'904'} <input type="radio" name="barmaxdepend" value="0"${ischecked(!$barmaxdepend)}/> $admin_txt{'905'} <input type="radio" name="barmaxdepend" value="1"${ischecked($barmaxdepend)}/> $admin_txt{'903'}~,
+			name => 'barmaxdepend',
+			validate => 'boolean',
 		},
 	]
 },
@@ -902,33 +928,33 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 		},
 		# Multi-delete/multi-admin
 		{
-			description => qq~$mdintxt{'1'} $admin_txt{'684'}?~,
-			input_html => qq~<input type="checkbox" name="mdadmin" value="1"${ischecked($mdadmin)} />~,
+			description => qq~<label for="mdadmin">$mdintxt{'1'} $admin_txt{'684'}?</label>~,
+			input_html => qq~<input type="checkbox" name="mdadmin" id="mdadmin" value="1"${ischecked($mdadmin)} />~,
 			name => 'mdadmin',
 			validate => 'boolean',
 		},
 		{
-			description => qq~$mdintxt{'1'} $admin_txt{'684a'}?~,
-			input_html => qq~<input type="checkbox" name="mdglobal" value="1"${ischecked($mdglobal)} />~,
+			description => qq~<label for="mdglobal">$mdintxt{'1'} $admin_txt{'684a'}?</label>~,
+			input_html => qq~<input type="checkbox" name="mdglobal" id="mdglobal" value="1"${ischecked($mdglobal)} />~,
 			name => 'mdglobal',
 			validate => 'boolean',
 		},
 		{
-			description => qq~$mdintxt{'1'} $admin_txt{'63'}?~,
-			input_html => qq~<input type="checkbox" name="mdmod" value="1"${ischecked($mdmod)} />~,
+			description => qq~<label for="mdmod">$mdintxt{'1'} $admin_txt{'63'}?</label>~,
+			input_html => qq~<input type="checkbox" name="mdmod" id="mdmod" value="1"${ischecked($mdmod)} />~,
 			name => 'mdmod',
 			validate => 'boolean',
 		},
 		{
-			description => $mdintxt{'4'},
-			input_html => qq~<input type="checkbox" name="adminbin" value="1"${ischecked($adminbin)} />~,
+			description => qq~<label for="adminbin">$mdintxt{'4'}</label>~,
+			input_html => qq~<input type="checkbox" name="adminbin" id="adminbin" value="1"${ischecked($adminbin)} />~,
 			name => 'adminbin',
 			validate => 'boolean',
 		},
 		{
-			description => $matxt{'5'},
+			description => qq~<label for="adminview">$matxt{'5'}</label>~,
 			input_html => qq~
-<select name="adminview" size="1">
+<select name="adminview" id="adminview" size="1">
   <option value="0" ${isselected($adminview == 0)}>$matxt{'1'}</option>
   <option value="1" ${isselected($adminview == 1)}>$matxt{'2'}</option>
   <option value="2" ${isselected($adminview == 2)}>$matxt{'3'}</option>
@@ -938,9 +964,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $matxt{'6'},
+			description => qq~<label for="gmodview">$matxt{'6'}</label>~,
 			input_html => qq~
-<select name="gmodview" size="1">
+<select name="gmodview" id="gmodview" size="1">
   <option value="0" ${isselected($gmodview == 0)}>$matxt{'1'}</option>
   <option value="1" ${isselected($gmodview == 1)}>$matxt{'2'}</option>
   <option value="2" ${isselected($gmodview == 2)}>$matxt{'3'}</option>
@@ -950,9 +976,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $matxt{'7'},
+			description => qq~<label for="modview">$matxt{'7'}</label>~,
 			input_html => qq~
-<select name="modview" size="1">
+<select name="modview" id="modview" size="1">
   <option value="0" ${isselected($modview == 0)}>$matxt{'1'}</option>
   <option value="1" ${isselected($modview == 1)}>$matxt{'2'}</option>
   <option value="2" ${isselected($modview == 2)}>$matxt{'3'}</option>
@@ -962,15 +988,15 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $admin_txt{'stealh'},
-			input_html => qq~<input type="checkbox" name="enable_MCstatusStealth" value="1"${ischecked($enable_MCstatusStealth)}/>~,
+			description => qq~<label for="enable_MCstatusStealth">$admin_txt{'stealth'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_MCstatusStealth" id="enable_MCstatusStealth" value="1"${ischecked($enable_MCstatusStealth)}/>~,
 			name => 'enable_MCstatusStealth',
 			validate => 'boolean',
 		},
 		{
-			description => qq~$bypassLock_txt{'allow'}~,
+			description => qq~<label for="bypass_lock_perm">$bypassLock_txt{'allow'}</label>~,
 			input_html => qq~
-<select name="bypass_lock_perm" size="1">
+<select name="bypass_lock_perm" id="bypass_lock_perm" size="1">
   <option value="0" ${isselected($bypass_lock_perm eq '0')}>$userlevel_txt{'none'}</option>
   <option value="mod" ${isselected($bypass_lock_perm eq 'mod')}>$userlevel_txt{'modgmodadmin'}</option>
   <option value="gmod" ${isselected($bypass_lock_perm eq 'gmod')}>$userlevel_txt{'gmodadmin'}</option>
@@ -989,9 +1015,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'pmgeneral'},
 		},
 		{
-			description => $imtxt{'enablePM'},
+			description => qq~<label for="PM_level">$imtxt{'enablePM'}</label>~,
 			input_html => qq~
-<select name="PM_level">
+<select name="PM_level" id="PM_level">
   <option value="0" ${isselected($PM_level == 0)}>$userlevel_txt{'none'}</option>
   <option value="1" ${isselected($PM_level == 1)}>$userlevel_txt{'members'}</option>
   <option value="2" ${isselected($PM_level == 2)}>$userlevel_txt{'modgmodadmin'}</option>
@@ -1001,50 +1027,50 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			validate => 'number',
 		},
 		{
-			description => $imtxt{'75'},
-			input_html => qq~<input type="text" name="numposts" size="5" value="$numposts" />~,
+			description => qq~<label for="numposts">$imtxt{'75'}</label>~,
+			input_html => qq~<input type="text" name="numposts" id="numposts" size="5" value="$numposts" />~,
 			name => 'numposts',
 			validate => 'number',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'52'},
-			input_html => qq~<input type="text" name="imspam" size="5" value="$imspam" />~,
+			description => qq~<label for="imspam">$imtxt{'52'}</label>~,
+			input_html => qq~<input type="text" name="imspam" id="imspam" size="5" value="$imspam" />~,
 			name => 'imspam',
 			validate => 'number,null',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'enable_PMsearch'},
-			input_html => qq~<input type="text" name="enable_PMsearch" size="5" value="$enable_PMsearch" />~,
+			description => qq~<label for="enable_PMsearch">$imtxt{'enable_PMsearch'}</label>~,
+			input_html => qq~<input type="text" name="enable_PMsearch" id="enable_PMsearch" size="5" value="$enable_PMsearch" />~,
 			name => 'enable_PMsearch',
 			validate => 'number,null',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'33'},
-			input_html => qq~<input type="checkbox" name="send_welcomeim" value="1"${ischecked($send_welcomeim)} />~,
+			description => qq~<label for="send_welcomeim">$imtxt{'33'}</label>~,
+			input_html => qq~<input type="checkbox" name="send_welcomeim" id="send_welcomeim" value="1"${ischecked($send_welcomeim)} />~,
 			name => 'send_welcomeim',
 			validate => 'boolean',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'34'},
-			input_html => qq~<input type="text" name="sendname" size="35" value="$sendname" />~,
+			description => qq~<label for="sendname">$imtxt{'34'}</label>~,
+			input_html => qq~<input type="text" name="sendname" id="sendname" size="35" value="$sendname" />~,
 			name => 'sendname',
 			validate => 'text,null',
 			depends_on => ['PM_level!=0', 'send_welcomeim'],
 		},
 		{
-			description => $imtxt{'36'},
-			input_html => qq~<input type="text" name="imsubject" size="35" value="$imsubject" />~,
+			description => qq~<label for="imsubject">$imtxt{'36'}</label>~,
+			input_html => qq~<input type="text" name="imsubject" id="imsubject" size="35" value="$imsubject" />~,
 			name => 'imsubject',
 			validate => 'text,null',
 			depends_on => ['PM_level!=0', 'send_welcomeim'],
 		},
 		{
-			description => $imtxt{'35'},
-			input_html => qq~<textarea name="imtext" cols="35" rows="5">$imtext</textarea>~,
+			description => qq~<label for="imtext">$imtxt{'35'}</label>~,
+			input_html => qq~<textarea name="imtext" id="imtext" cols="35" rows="5">$imtext</textarea>~,
 			name => 'imtext',
 			validate => 'fulltext,null',
 			depends_on => ['PM_level!=0', 'send_welcomeim'],
@@ -1053,9 +1079,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'bmessages'},
 		},
 		{
-			description => $imtxt{'87'},
+			description => qq~<label for="PMenableBm_level">$imtxt{'87'}</label>~,
 			input_html => qq~
-<select name="PMenableBm_level">
+<select name="PMenableBm_level" id="PMenableBm_level">
   <option value="0" ${isselected($PMenableBm_level == 0)}>$userlevel_txt{'none'}</option>
   <option value="1" ${isselected($PMenableBm_level == 1)}>$userlevel_txt{'modgmodadmin'}</option>
   <option value="2" ${isselected($PMenableBm_level == 2)}>$userlevel_txt{'gmodadmin'}</option>
@@ -1066,22 +1092,22 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'88'},
-			input_html => qq~<input type="checkbox" name="PMenableGuestButton" value="1"${ischecked($PMenableGuestButton)} />~,
+			description => qq~<label for="PMenableGuestButton">$imtxt{'88'}</label>~,
+			input_html => qq~<input type="checkbox" name="PMenableGuestButton" id="PMenableGuestButton" value="1"${ischecked($PMenableGuestButton)} />~,
 			name => 'PMenableGuestButton',
 			validate => 'boolean',
 			depends_on => ['PMenableBm_level!=0', 'PM_level!=0'],
 		},
 		{
-			description => $imtxt{'89'},
-			input_html => qq~<input type="checkbox" name="PMenableAlertButton" value="1"${ischecked($PMenableAlertButton)} />~,
+			description => qq~<label for="PMenableAlertButton">$imtxt{'89'}</label>~,
+			input_html => qq~<input type="checkbox" name="PMenableAlertButton" id="PMenableAlertButton" value="1"${ischecked($PMenableAlertButton)} />~,
 			name => 'PMenableAlertButton',
 			validate => 'boolean',
 			depends_on => ['PMenableBm_level!=0', 'PM_level!=0'],
 		},
 		{
-			description => $imtxt{'90'},
-			input_html => qq~<input type="checkbox" name="PMAlertButtonGuests" value="1"${ischecked($PMAlertButtonGuests)} />~,
+			description => qq~<label for="PMAlertButtonGuests">$imtxt{'90'}</label>~,
+			input_html => qq~<input type="checkbox" name="PMAlertButtonGuests" id="PMAlertButtonGuests" value="1"${ischecked($PMAlertButtonGuests)} />~,
 			name => 'PMAlertButtonGuests',
 			validate => 'boolean',
 			depends_on => ['PMenableBm_level!=0', 'PMenableAlertButton', 'PM_level!=0'],
@@ -1092,43 +1118,43 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'members'},
 		},
 		{
-			description => $imtxt{'06'},
-			input_html => qq~<input type="checkbox" name="enable_imlimit" value="1"${ischecked($enable_imlimit)} />~,
+			description => qq~<label for="enable_imlimit">$imtxt{'06'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_imlimit" id="enable_imlimit" value="1"${ischecked($enable_imlimit)} />~,
 			name => 'enable_imlimit',
 			validate => 'boolean',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => qq~$imtxt{'03'} $imtxt{'85'}~,
-			input_html => qq~<input type="text" name="numobox" size="5" value="$numobox" />~,
+			description => qq~<label for="numobox">$imtxt{'03'} $imtxt{'85'}</label>~,
+			input_html => qq~<input type="text" name="numobox" id="numobox" size="5" value="$numobox" />~,
 			name => 'numobox',
 			validate => 'number,null',
 			depends_on => ['enable_imlimit', 'PM_level!=0'],
 		},
 		{
-			description => qq~$imtxt{'03'} $imtxt{'84'}~,
-			input_html => qq~<input type="text" name="numibox" size="5" value="$numibox" />~,
+			description => qq~<label for="numibox">$imtxt{'03'} $imtxt{'84'}</label>~,
+			input_html => qq~<input type="text" name="numibox" id="numibox" size="5" value="$numibox" />~,
 			name => 'numibox',
 			validate => 'number,null',
 			depends_on => ['enable_imlimit', 'PM_level!=0'],
 			 
 		},
 		{
-			description => qq~$imtxt{'03'} $imtxt{'46'}~,
-			input_html => qq~<input type="text" name="numstore" size="5" value="$numstore" />~,
+			description => qq~<label for="numstore">$imtxt{'03'} $imtxt{'46'}</label>~,
+			input_html => qq~<input type="text" name="numstore" id="numstore" size="5" value="$numstore" />~,
 			name => 'numstore',
 			validate => 'number,null',
 			depends_on => ['enable_imlimit', 'PM_level!=0'],
 		},
 		{
-			description => qq~$imtxt{'03'} $imtxt{'draft'}~,
-			input_html => qq~<input type="text" name="numdraft" size="5" value="$numdraft" />~,
+			description => qq~<label for="numdraft">$imtxt{'03'} $imtxt{'draft'}</label>~,
+			input_html => qq~<input type="text" name="numdraft" id="numdraft" size="5" value="$numdraft" />~,
 			name => 'numdraft',
 			validate => 'number,null',
 			depends_on => ['enable_imlimit', 'PM_level!=0'],
 		},
 		{
-			description => $imtxt{'allowcc'},
+			description => qq~<label for="PMenable_cc">$imtxt{'allowcc'}</label>~,
 			input_html => qq~<input type="checkbox" name="PMenable_cc" id="PMenable_cc" value="1"${ischecked($PMenable_cc)} />~,
 			name => 'PMenable_cc',
 			validate => 'boolean',
@@ -1136,49 +1162,49 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 		 
 		},
 		{
-			description => $imtxt{'allowbcc'},
+			description => qq~<label for="PMenable_bcc">$imtxt{'allowbcc'}</label>~,
 			input_html => qq~<input type="checkbox" name="PMenable_bcc" id="PMenable_bcc" value="1"${ischecked($PMenable_bcc)} />~,
 			name => 'PMenable_bcc',
 			validate => 'boolean',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'381'},
-			input_html => qq~<input type="checkbox" name="enable_notifications_PM" value="1"${ischecked((($enable_notifications == 2 || $enable_notifications == 3) ? 1 : 0))} />~,
+			description => qq~<label for="enable_notifications_PM">$imtxt{'381'}</label>~,
+			input_html => qq~<input type="checkbox" name="enable_notifications_PM" id="enable_notifications_PM" value="1"${ischecked((($enable_notifications == 2 || $enable_notifications == 3) ? 1 : 0))} />~,
 			name => 'enable_notifications_PM',
 			validate => 'boolean',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'extrastore'},
-			input_html => qq~<input type="text" name="enable_storefolders" size="5" value="$enable_storefolders" />~,
+			description => qq~<label for="enable_storefolders">$imtxt{'extrastore'}</label>~,
+			input_html => qq~<input type="text" name="enable_storefolders" id="enable_storefolders" size="5" value="$enable_storefolders" />~,
 			name => 'enable_storefolders',
 			validate => 'number,null',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'enablecontrols'},
+			description => qq~<label for="enable_PMcontrols">$imtxt{'enablecontrols'}</label>~,
 			input_html => qq~<input type="checkbox" name="enable_PMcontrols" id="enable_PMcontrols" value="1"${ischecked($enable_PMcontrols)} />~,
 			name => 'enable_PMcontrols',
 			validate => 'boolean',
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $imtxt{'enable_PMprev'},
+			description => qq~<label for="enable_PMprev">$imtxt{'enable_PMprev'}</label>~,
 			input_html => qq~<input type="checkbox" name="enable_PMprev" id="enable_PMprev" value="1"${ischecked($enable_PMprev)} />~,
 			name => 'enable_PMprev',
 			validate => 'boolean',
 			depends_on => ['!enable_PMcontrols', 'PM_level!=0'],
 		},
 		{
-			description => $imtxt{'enable_PMActprev'},
+			description => qq~<label for="enable_PMActprev">$imtxt{'enable_PMActprev'}</label>~,
 			input_html => qq~<input type="checkbox" name="enable_PMActprev" id="enable_PMActprev" value="1"${ischecked($enable_PMActprev)} />~,
 			name => 'enable_PMActprev',
 			validate => 'boolean',
 			depends_on => ['!enable_PMcontrols', 'PM_level!=0'],
 		},
 		{
-			description => $imtxt{'enable_PMviewMess'},
+			description => qq~<label for="enable_PMviewMess">$imtxt{'enable_PMviewMess'}</label>~,
 			input_html => qq~<input type="checkbox" name="enable_PMviewMess" id="enable_PMviewMess" value="1"${ischecked($enable_PMviewMess)} />~,
 			name => 'enable_PMviewMess',
 			validate => 'boolean',
@@ -1190,9 +1216,9 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			header => $settings_txt{'mycenter'},
 		},
 		{
-			description => $imtxt{'away'},
+			description => qq~<label for="enable_MCaway">$imtxt{'away'}</label>~,
 			input_html => qq~
-<select name="enable_MCaway">
+<select name="enable_MCaway" id="enable_MCaway">
   <option value="0" ${isselected($enable_MCaway == 0)}>$userlevel_txt{'none'}</option>
   <option value="1" ${isselected($enable_MCaway == 1)}>$userlevel_txt{'staff'}</option>
   <option value="2" ${isselected($enable_MCaway == 2)}>$userlevel_txt{'staffall'}</option>
@@ -1203,8 +1229,8 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" value="1"${
 			depends_on => ['PM_level!=0'],
 		},
 		{
-			description => $admin_txt{'689a'},
-			input_html => qq~<input type="text" name="MaxAwayLen" size="5" value="$MaxAwayLen" />~,
+			description => qq~<label for="MaxAwayLen">$admin_txt{'689a'}</label>~,
+			input_html => qq~<input type="text" name="MaxAwayLen" id="MaxAwayLen" size="5" value="$MaxAwayLen" />~,
 			name => 'MaxAwayLen',
 			validate => 'number,null',
 			depends_on => ['enable_MCaway!=0', 'PM_level!=0'],

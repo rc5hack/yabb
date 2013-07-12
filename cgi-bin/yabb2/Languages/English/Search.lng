@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$searchlngver = 'YaBB 2.4 $Revision: 1.14 $';
+$searchlngver = 'YaBB 2.5 AE $Revision: 1.15 $';
 
 %search_txt = (
 '1' => 'This post was made in the last...',
@@ -81,9 +81,9 @@ $searchlngver = 'YaBB 2.4 $Revision: 1.14 $';
 );
 
 %searchselector_txt = (
-'linklabel' => 'Click here to select user to search for.',
-'instructions' => 'Click here to remove the user.',
-'remove' => 'Are you sure you want to remove user name?',
+'select' => 'Select',
+'remove' => 'Remove',
+'removeconfirm' => 'Are you sure you want to remove user name?',
 );
 
 1;

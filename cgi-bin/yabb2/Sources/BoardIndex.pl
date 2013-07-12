@@ -3,25 +3,25 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$boardindexplver = 'YaBB 2.4 $Revision: 1.40 $';
+$boardindexplver = 'YaBB 2.5 AE $Revision: 1.41 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('BoardIndex');
 require "$templatesdir/$useboard/BoardIndex.template";
 
 sub BoardIndex {
-	my ($users, $lspostid, $lspostbd, $lssub, $lsposttime, $lsposter, $lsreply, $lsdatetime, $lastthreadtime, @goodboards, @loadboards);
+	my ($users, $lspostid, $lspostbd, $lssub, $lsposttime, $lsposter, $lsreply, $lsdatetime, $lastthreadtime, @goodboards, @loadboards, $guestlist);
 	my ($memcount, $latestmember) = &MembershipGet;
 	chomp $latestmember;
 	$totalm = 0;
@@ -30,11 +30,7 @@ sub BoardIndex {
 	$lastthreadtime = 0;
 	&GetBotlist;
 
-	my $checkadded = 0;
-	if (($iamadmin && $show_online_ip_admin) || ($iamgmod && $show_online_ip_gmod)) {$guestlist = qq~<span class="small">~;}
-	$guests = 0;
-	$numusers = 0;
-	$numbots = 0;
+	my ($numusers, $guests, $numbots, $user_in_log, $guest_in_log) = (0,0,0,0,0);
 	my $lastonline = $date - ($OnlineLogTime * 60);
 	foreach (@logentries) {
 		($name, $date1, $last_ip, $last_host) = split(/\|/, $_);
@@ -45,7 +41,8 @@ sub BoardIndex {
 			$bot_count{$is_a_bot}++;
 		} elsif ($name) {
 			if (&LoadUser($name)) {
-				next if ${$uid.$name}{'lastonline'} < $lastonline;
+				if ($name eq $username) { $user_in_log = 1; }
+				elsif (${$uid.$name}{'lastonline'} < $lastonline) { next; }
 				if ($iamadmin || $iamgmod) {
 					$numusers++;
 					$users .= &QuickLinks($name);
@@ -57,6 +54,7 @@ sub BoardIndex {
 					$users .= &QuickLinks($name) . ", ";
 				}
 			} else {
+				if ($name eq $user_ip) { $guest_in_log = 1; }
 				$guests++;
 				if (($iamadmin && $show_online_ip_admin) || ($iamgmod && $show_online_ip_gmod)) {
 					$guestlist .= qq~<i>$last_ip</i>, ~;
@@ -64,34 +62,35 @@ sub BoardIndex {
 			}
 		}
 	}
-	if (!$iamguest && $users !~ /;username=$useraccount{$username}"/) {
+	if (!$iamguest && !$user_in_log) {
+		$guests-- if $guests;
+		$numusers++;
+		$users .= &QuickLinks($username);
 		if ($iamadmin || $iamgmod) {
-			$numusers++;
-			$users .= &QuickLinks($username);
-			$users .= (${$uid.$username}{'stealth'} ? "*" : "") .
-				  ((($iamadmin && $show_online_ip_admin) || ($iamgmod && $show_online_ip_gmod)) ? "&nbsp;<i>($user_ip)</i>" : "");
-		} elsif (!${$uid.$username}{'stealth'}) {
-			$numusers++;
-			$users .= &QuickLinks($username);
+			$users .= ${$uid.$username}{'stealth'} ? "*" : "";
+			if (($iamadmin && $show_online_ip_admin) || ($iamgmod && $show_online_ip_gmod)) {
+				$users .= "&nbsp;<i>($user_ip)</i>";
+				$guestlist =~ s|<i>$last_ip</i>, ||o;
+			}
 		}
+	} elsif ($iamguest && !$guest_in_log) {
+		$guests++;
 	}
-	$users =~ s~, \Z~~;
 
-	if ($numusers) { $users .= qq~<br />~; }
-	if ((($iamadmin && $show_online_ip_admin) || ($iamgmod && $show_online_ip_gmod)) && $guests >= 1) {
-		$guestlist =~ s~, \Z~~;
-		$guestlist .= qq~</span>~;
-	} elsif ((($iamadmin && $show_online_ip_admin) || ($iamgmod && $show_online_ip_gmod)) && $guests == 0) {
-		$guestlist = qq~~;
+	if ($numusers) {
+		$users =~ s~, \Z~~;
+		$users .= qq~<br />~;
 	}
-	if ($guestlist ne '') {$guestlist .= qq~<br />~;}
-	## let's build the bot list now ##
-	if ($numbots > 0) {
-		$botlist = qq~<span class="small">~;
+	if ($guestlist) { # build the guest list
+		$guestlist =~ s/, $//;
+		$guestlist = qq~<span class="small">$guestlist</span><br />~;
+	}
+	if ($numbots) { # build the bot list
 		foreach (sort keys(%bot_count)) { $botlist .= qq~$_&nbsp;($bot_count{$_}), ~; }
-		$botlist =~ s~, \Z~~;
-		$botlist .= qq~</span>~;
+		$botlist =~ s/, $//;
+		$botlist = qq~<span class="small">$botlist</span>~;
 	}
+
 	if (!$INFO{'catselect'}) {
 		$yytitle = $boardindex_txt{'18'};
 	} else {
@@ -265,7 +264,7 @@ sub BoardIndex {
 			$collapse_link = '';
 			
 			if ($catallowcol) {
-				$collapse_link = qq~<a href="javascript:SendRequest('$scripturl?action=collapse_cat;cat=$catid','$catid','$imagesdir','$boardindex_exptxt{'1'}','$boardindex_exptxt{'2'}')">~;
+				$collapse_link = qq~<a href="javascript:SendRequest('$scripturl?action=collapse_cat;cat=$catid','$catid','$imagesdir','$boardindex_exptxt{'2'}','$boardindex_exptxt{'1'}')">~;
 			}
 
 			# loop through any collapsed boards to find new posts in it and change the image to match
@@ -458,6 +457,8 @@ sub BoardIndex {
 				my $lasttopiclink = qq~<a href="$scripturl?num=${$uid.$curboard}{'lastpostid'}/${$uid.$curboard}{'lastreply'}#${$uid.$curboard}{'lastreply'}" title="$fulltopictext">$lasttopictxt</a>~;
 				if (${$uid.$curboard}{'threadcount'} < 0)  { ${$uid.$curboard}{'threadcount'}  = 0; }
 				if (${$uid.$curboard}{'messagecount'} < 0) { ${$uid.$curboard}{'messagecount'} = 0; }
+				${$uid.$curboard}{'threadcount'} = &NumberFormat(${$uid.$curboard}{'threadcount'});
+				${$uid.$curboard}{'messagecount'} = &NumberFormat(${$uid.$curboard}{'messagecount'});
 				$templateblock =~ s/({|<)yabb boardanchor(}|>)/$boardanchor/g;
 				$templateblock =~ s/({|<)yabb boardurl(}|>)/$scripturl\?board\=$curboard/g;
 				$templateblock =~ s/({|<)yabb new(}|>)/$new/g;
@@ -497,33 +498,33 @@ sub BoardIndex {
 		}
 		my $imsweredeleted = 0;
 		if (${$username}{'PMmnum'} > $numibox && $numibox && $enable_imlimit) {
+			&Del_Max_IM('msg',$numibox);
+			$imsweredeleted = ${$username}{'PMmnum'} - $numibox;
 			$yymain .= qq~\n<script language="JavaScript1.2" type="text/javascript">
 <!--
-	if (confirm('$boardindex_imtxt{'11'} ${$username}{'PMmnum'} $boardindex_imtxt{'12'} $boardindex_txt{'316'}, $boardindex_imtxt{'16'} $numibox $boardindex_imtxt{'18'} $boardindex_imtxt{'19'}')) viewIM();
+	if (confirm('$boardindex_imtxt{'11'} ${$username}{'PMmnum'} $boardindex_imtxt{'12'} $boardindex_txt{'316'}, $boardindex_imtxt{'16'} $numibox $boardindex_imtxt{'18'}. $boardindex_imtxt{'19'} $imsweredeleted $boardindex_imtxt{'20'} $boardindex_txt{'316'} $boardindex_imtxt{'21'}')) viewIM();
 // -->
 </script>~;
-			&Del_Max_IM('msg',$numibox);
-			$imsweredeleted = 1;
 			${$username}{'PMmnum'} = $numibox;
 		}
 		if (${$username}{'PMmoutnum'} > $numobox && $numobox && $enable_imlimit) {
+			&Del_Max_IM('outbox',$numobox);
+			$imsweredeleted = ${$username}{'PMmoutnum'} - $numobox;
 			$yymain .= qq~\n<script language="JavaScript1.2" type="text/javascript">
 <!--
-	if (confirm('$boardindex_imtxt{'11'} ${$username}{'PMmoutnum'} $boardindex_imtxt{'12'} $boardindex_txt{'320'}! $boardindex_imtxt{'16'} $numobox $boardindex_imtxt{'18'} $boardindex_imtxt{'19'}')) viewIMOUT();
+	if (confirm('$boardindex_imtxt{'11'} ${$username}{'PMmoutnum'} $boardindex_imtxt{'12'} $boardindex_txt{'320'}, $boardindex_imtxt{'16'} $numobox $boardindex_imtxt{'18'}. $boardindex_imtxt{'19'}' $imsweredeleted $boardindex_imtxt{'20'} $boardindex_txt{'320'} $boardindex_imtxt{'21'}')) viewIMOUT();
 // -->
 </script>~;
-			&Del_Max_IM('outbox',$numobox);
-			$imsweredeleted = 1;
 			${$username}{'PMmoutnum'} = $numobox;
 		}
 		if (${$username}{'PMstorenum'} > $numstore && $numstore && $enable_imlimit) {
+			&Del_Max_IM('imstore',$numstore);
+			$imsweredeleted = ${$username}{'PMstorenum'} - $numstore;
 			$yymain .= qq~\n<script language="JavaScript1.2" type="text/javascript">
 <!--
-	if (confirm('$boardindex_imtxt{'11'} ${$username}{'PMstorenum'} $boardindex_imtxt{'12'} $boardindex_imtxt{'46'}! $boardindex_imtxt{'16'} $numstore $boardindex_imtxt{'18'} $boardindex_imtxt{'19'}')) viewIMSTORE();
+if (confirm('$boardindex_imtxt{'11'} ${$username}{'PMstorenum'} $boardindex_imtxt{'12'} $boardindex_imtxt{'46'}, $boardindex_imtxt{'16'} $numstore $boardindex_imtxt{'18'}. $boardindex_imtxt{'19'}' $imsweredeleted $boardindex_imtxt{'20'} $boardindex_imtxt{'46'} $boardindex_imtxt{'21'}')) viewIMSTORE();
 // -->
 </script>~;
-			&Del_Max_IM('imstore',$numstore);
-			$imsweredeleted = 1;
 			${$username}{'PMstorenum'} = $numstore;
 		}
 		if ($imsweredeleted) {
@@ -564,6 +565,8 @@ sub BoardIndex {
 
 	if ($totalt < 0) { $totalt = 0; }
 	if ($totalm < 0) { $totalm = 0; }
+	$totalt = &NumberFormat($totalt);
+	$totalm = &NumberFormat($totalm);
 
 	$guestson = qq~<span class="small">$boardindex_txt{'141'}: <b>$guests</b></span>~;
 	$userson = qq~<span class="small">$boardindex_txt{'142'}: <b>$numusers</b></span>~;
@@ -603,6 +606,10 @@ sub BoardIndex {
 	$themostguestdate = &timeformat($dateguest);
 	$themostuserdate = &timeformat($dateusers);
 	$themostbotsdate = &timeformat($datebots);
+	$mostmemb = &NumberFormat($mostmemb);
+	$mostguest = &NumberFormat($mostguest);
+	$mostusers = &NumberFormat($mostusers);
+	$mostbots = &NumberFormat($mostbots);
 
 	my $shared_login;
 	if ($iamguest) {
@@ -651,8 +658,8 @@ sub BoardIndex {
 	# Template it
 	my ($rss_link, $rss_text);
 	if (!$rss_disabled) {
-		$rss_link = qq~<a href="$scripturl?action=RSSrecent" target="_blank"><img src="$imagesdir/rss.png" border="0" alt="$main_txt{'rssfeed'}" title="$main_txt{'rssfeed'}" style="vertical-align: middle;" /></a>~;
-		$rss_link = qq~<a href="$scripturl?action=RSSrecent;catselect=$INFO{'catselect'}" target="_blank"><img src="$imagesdir/rss.png" border="0" alt="$main_txt{'rssfeed'}" title="$main_txt{'rssfeed'}" style="vertical-align: middle;" /></a>~ if $INFO{'catselect'};
+		$rss_link = qq~<a href="$scripturl?action=RSSrecent" target="_blank"><img src="$imagesdir/rss.png" border="0" alt="$maintxt{'rssfeed'}" title="$maintxt{'rssfeed'}" style="vertical-align: middle;" /></a>~;
+		$rss_link = qq~<a href="$scripturl?action=RSSrecent;catselect=$INFO{'catselect'}" target="_blank"><img src="$imagesdir/rss.png" border="0" alt="$maintxt{'rssfeed'}" title="$maintxt{'rssfeed'}" style="vertical-align: middle;" /></a>~ if $INFO{'catselect'};
 		$rss_text = qq~<a href="$scripturl?action=RSSrecent" target="_blank">$boardindex_txt{'792'}</a>~;
 		$rss_text = qq~<a href="$scripturl?action=RSSrecent;catselect=$INFO{'catselect'}" target="_blank">$boardindex_txt{'792'}</a>~ if $INFO{'catselect'};
 	}
@@ -702,6 +709,7 @@ sub BoardIndex {
 		$boardindex_template =~ s/({|<)yabb recentposts(}|>)//g;
 		$boardindex_template =~ s/({|<)yabb lastpostdate(}|>)//g;
 	}
+	$memcount = &NumberFormat($memcount);
 	$membercountlink = qq~<a href="$scripturl?action=ml"><b>$memcount</b></a>~;
 	$boardindex_template =~ s/({|<)yabb membercount(}|>)/$membercountlink/g;
 	if ($showlatestmember) {

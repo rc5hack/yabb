@@ -3,18 +3,18 @@
 //##############################################################################
 //# YaBB: Yet another Bulletin Board                                           #
 //# Open-Source Community Software for Webmasters                              #
-//# Version:        YaBB 2.4                                                   #
-//# Packaged:       April 12, 2009                                             #
+//# Version:        YaBB 2.5 Anniversary Edition                               #
+//# Packaged:       July 04, 2010                                              #
 //# Distributed by: http://www.yabbforum.com                                   #
 //# ===========================================================================#
-//# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.    #
+//# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.    #
 //# Software by:  The YaBB Development Team                                    #
 //#               with assistance from the YaBB community.                     #
 //# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com           #
 //#               Your source for web hosting, web design, and domains.        #
 //##############################################################################
 
-//YaBB 2.4 $Revision: 1.5 $
+//YaBB 2.5 AE $Revision: 1.6 $
 
 var op = ( navigator.userAgent.indexOf( 'Opera' ) != -1 );
 var konq = ( navigator.userAgent.indexOf( 'Konqueror' ) != -1 );
@@ -85,17 +85,18 @@ function saveColor() {
 }
 
 var skydNu = false;
-var x, knapObj, retning;
+var x, knapObj, knappos, retning;
 
 function flytKnap(e) {
 	if (skydNu) {
-		glX = parseInt(knapObj.style.left+0);
-		if(ns6) knapObj.style.left = temp2 + e.clientX - x; else knapObj.style.left = temp2 + event.clientX - x;
-		nyX = parseInt(knapObj.style.left+0);
+		glX = parseInt(knappos);
+		if(ns6) knappos = temp2 + e.clientX - x; else knappos = temp2 + event.clientX - x;
+		nyX = parseInt(knappos);
 		if (nyX > glX) retning = "vn"; else retning = "hj";
-		if (nyX < 4 && retning == "hj") { knapObj.style.left = 4; retning = "vn"; }
-		if (nyX > 259 && retning == "vn") { knapObj.style.left = 259; retning = "hj"; }
-		delEnh = parseInt(knapObj.style.left+0)-4;
+		if (nyX < 4 && retning == "hj") { knappos = 4; retning = "vn"; }
+		if (nyX > 259 && retning == "vn") { knappos = 259; retning = "hj"; }
+		knapObj.style.left = knappos + 'px';
+		delEnh = parseInt(knappos)-4;
 		setColor(delEnh);
 		document.onmouseup = saveColor;
 		return false;
@@ -111,7 +112,8 @@ function skydeKnap(e){
 	if (flytobj.className == "skyd"){
 		skydNu = true;
 		knapObj = flytobj;
-		temp2 = parseInt(knapObj.style.left+0);
+		knappos = knapObj.style.left;
+		temp2 = parseInt(knappos);
 		if(ns6) x = e.clientX; else x = event.clientX;
 		document.onmousemove = flytKnap;
 		return false;

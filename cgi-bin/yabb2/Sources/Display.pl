@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$displayplver = 'YaBB 2.4 $Revision: 1.61 $';
+$displayplver = 'YaBB 2.5 AE $Revision: 1.62 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Display');
@@ -84,6 +84,24 @@ sub Display {
 
 	# Check to make sure this thread isn't locked.
 	($mnum, $msubthread, $mname, $memail, $mdate, $mreplies, $musername, $micon, $mstate) = split(/\|/, $yyThreadLine);
+
+	if ($mstate =~ /m/) {
+		$msubthread =~ / dest=(\d+)\]/;
+		my $newnum = $1;
+		if (-e "$datadir/$newnum.txt") {
+			$yySetLocation = "$scripturl?num=$newnum";
+			&redirectexit;
+		}
+		eval { require "$datadir/movedthreads.cgi" };
+		while (exists $moved_file{$newnum}) {
+			$newnum = $moved_file{$newnum};
+			next if exists $moved_file{$newnum};
+			if (-e "$datadir/$newnum.txt") {
+				$yySetLocation = "$scripturl?num=$newnum";
+				&redirectexit;
+			}
+		}
+	}
 
 	($msubthread, undef) = &Split_Splice_Move($msubthread,0);
 	&ToChars($msubthread);
@@ -385,14 +403,14 @@ sub Display {
 	$topviewers = 0;
 	if (${$uid.$currentboard}{'ann'} == 1) {
 		if ($vircurrentboard) {
-			$template_cat = qq~<a href="$scripturl?catselect=$vircurcat" class="nav">$vircat</a>~;
-			$template_board = qq~<a href="$scripturl?board=$vircurrentboard" class="nav">$virboardname</a>~;
-			$navback = qq~<a href="$scripturl?board=$vircurrentboard" class="nav">&lsaquo; $maintxt{'board'}</a>~;
+			$template_cat = qq~<a href="$scripturl?catselect=$vircurcat">$vircat</a>~;
+			$template_board = qq~<a href="$scripturl?board=$vircurrentboard">$virboardname</a>~;
+			$navback = qq~<a href="$scripturl?board=$vircurrentboard">&lsaquo; $maintxt{'board'}</a>~;
 			$template_mods = qq~$showmods$showmodgroups~;
 		} elsif ($iamadmin || $iamgmod) {
-			$template_cat = qq~<a href="$scripturl?catselect=$curcat" class="nav">$cat</a>~;
-			$template_board = qq~<a href="$scripturl?board=$currentboard" class="nav">$boardname</a>~;
-			$navback = qq~<a href="$scripturl?board=$currentboard" class="nav">&lsaquo; $maintxt{'board'}</a>~;
+			$template_cat = qq~<a href="$scripturl?catselect=$curcat">$cat</a>~;
+			$template_board = qq~<a href="$scripturl?board=$currentboard">$boardname</a>~;
+			$navback = qq~<a href="$scripturl?board=$currentboard">&lsaquo; $maintxt{'board'}</a>~;
 			$template_mods = qq~$showmods$showmodgroups~;
 		} else {
 			$template_cat = $maintxt{'418'};
@@ -400,9 +418,9 @@ sub Display {
 			$template_mods = '';
 		}
 	} else {
-		$template_cat = qq~<a href="$scripturl?catselect=$curcat" class="nav">$cat</a>~;
-		$template_board = qq~<a href="$scripturl?board=$currentboard" class="nav">$boardname</a>~;
-		$navback = qq~<a href="$scripturl?board=$currentboard" class="nav">&lsaquo; $maintxt{'board'}</a>~;
+		$template_cat = qq~<a href="$scripturl?catselect=$curcat">$cat</a>~;
+		$template_board = qq~<a href="$scripturl?board=$currentboard">$boardname</a>~;
+		$navback = qq~<a href="$scripturl?board=$currentboard">&lsaquo; $maintxt{'board'}</a>~;
 		$template_mods  = qq~$showmods$showmodgroups~;
 	}
 	if ($showtopicviewers && ($iamadmin || $iamgmod || $iammod) && $sessionvalid == 1) {
@@ -471,6 +489,20 @@ sub Display {
 		$css = $cssvalues[($counter % $cssnum)];
 		($msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $postmessage, $ns, $mlm, $mlmb, $mfn) = split(/[\|]/, $_);
 
+		# If the user isn't a guest, load their info.
+		if ($musername ne 'Guest' && !$yyUDLoaded{$musername} && -e ("$memberdir/$musername.vars")) {
+			my $tmpns = $ns;
+			$ns = "";
+			&LoadUserDisplay($musername);
+			$ns = $tmpns;
+		}
+		$messagedate = $mdate;
+		if (${$uid.$musername}{'regtime'}) {
+			$registrationdate = ${$uid.$musername}{'regtime'};
+		} else {
+			$registrationdate = $date;
+		}
+
 		# Do we have an attachment file?
 		chomp $mfn;
 		$attachment = '';
@@ -523,16 +555,6 @@ sub Display {
 		if ($iamadmin || $iamgmod && $gmod_access2{'ipban2'} eq "on") { $mip = $mip }
 		else { $mip = $display_txt{'511'}; }
 
-		# If the user isn't a guest, load their info.
-		if ($musername ne 'Guest' && !$yyUDLoaded{$musername} && -e ("$memberdir/$musername.vars")) {
-			&LoadUserDisplay($musername);
-		}
-		$messagedate = $mdate;
-		if (${$uid.$musername}{'regtime'}) {
-			$registrationdate = ${$uid.$musername}{'regtime'};
-		} else {
-			$registrationdate = $date;
-		}
 		## moderator alert button!
 		if ($PMenableAlertButton && $PM_level && !$iamadmin && !$iamgmod && !$iammod && (!$iamguest || ($iamguest && $PMAlertButtonGuests))) {
 			$PMAlertButton = qq~$menusep<a href="$scripturl?action=modalert;num=$viewnum;title=PostReply;quote=$counter" onclick="return confirm('$display_txt{'alertmod_confirm'}');">$img{'alertmod'}</a>~;
@@ -556,7 +578,8 @@ sub Display {
 				}
 			}
 
-			$template_postinfo = qq~$display_txt{'21'}: ${$uid.$musername}{'postcount'}<br />~;
+			$tmppostcount = &NumberFormat(${$uid.$musername}{'postcount'});
+			$template_postinfo = qq~$display_txt{'21'}: $tmppostcount<br />~;
 			$template_profile = ($profilebutton && !$iamguest) ? qq~$menusep<a href="$scripturl?action=viewprofile;username=$useraccount{$musername}">$img{'viewprofile_sm'}</a>~ : '';
 			$template_www = ${$uid.$musername}{'weburl'} ? qq~$menusep${$uid.$musername}{'weburl'}~ : '';
 
@@ -600,6 +623,7 @@ sub Display {
 		# Insert 2
 		if ((!${$uid.$musername}{'hidemail'} || $iamadmin || $allow_hide_email != 1 || $musername eq 'Guest') && !$exmem) {
 			$template_email = $menusep . &enc_eMail($img{'email_sm'},$memail,'','');
+			if ($iamadmin) { $template_email =~ s~title=\\"$img_txt{'69'}\\"~title=\\"$memail\\"~; }
 		}
 		if ($iamguest) { $template_email = ''; }
 
@@ -615,7 +639,7 @@ sub Display {
 		&ToChars($msub);
 		$msub = &Censor($msub);
 
-		$message = $postmessage;
+		$message = &Censor($postmessage);
 		&wrap;
 		($message,$movedflag) = &Split_Splice_Move($message,$viewnum);
 		if ($enable_ubbc) {
@@ -624,13 +648,12 @@ sub Display {
 		}
 		&wrap2;
 		&ToChars($message);
-		$message = &Censor($message);
 
 		if ($icanbypass) { $template_modify = qq~$menusep<a href="$scripturl?board=$currentboard;action=modify;message=$counter;thread=$viewnum" onclick="return confirm('$display_txt{'modifyinlocked'}');">$img{'modify'}</a> ~; }
 
 		if ($mstate !~ /l/i) {
 			if ($replybutton) {
-				my $quote_mname = $mname;
+				my $quote_mname = $displayname;
 				$quote_mname =~ s/'/\\'/g;
 				$usernamelink = qq~<a href="javascript:void(AddText('[color=$quoteuser_color]@[/color] [b]$quote_mname\[/b]\\r\\n\\r\\n'))"><img src="$imagesdir/qquname.gif" border="0" alt="$display_txt{'146n'}" title="$display_txt{'146n'}" /></a> $usernamelink~ if $enable_quickreply && $enable_quoteuser && (!$iamguest || $enable_guestposting);
 
@@ -647,6 +670,9 @@ sub Display {
 						if ($enable_quickjump) {
 							if (length($postmessage) <= $quick_quotelength) {
 								my $quickmessage = $postmessage;
+								if (!$nestedquotes) {
+									$quickmessage =~ s~(<(br|p).*?>){0,1}\[quote([^\]]*)\](.*?)\[/quote([^\]]*)\](<(br|p).*?>){0,1}~<br />~ig;
+								}
 								$quickmessage =~ s/<(br|p).*?>/\\r\\n/ig;
 								$quickmessage =~ s/'/\\'/g;
 								$template_quote .= qq~$menusep<a href="javascript:void(quoteSelection('$quote_mname',$viewnum,$counter,$mdate,'$quickmessage'))">$img{'quote'}</a>~;
@@ -795,7 +821,7 @@ sub Display {
 	# Template it
 
 	$tabsep = qq~<img src="$imagesdir/tabsep211.png" border="0" alt="" style="vertical-align: middle;" />~;
-	$yynavback = qq~$tabsep <a href="$scripturl" class="nav">&#171; $img_txt{'103'}</a> $tabsep $navback $tabsep~;
+	$yynavback = qq~$tabsep <a href="$scripturl">&#171; $img_txt{'103'}</a> $tabsep $navback $tabsep~;
 	$yynavigation = qq~&rsaquo; $template_cat &rsaquo; $template_board &rsaquo; $msubthread~;
 	# Create link to modify displayed post order if allowed
 	my $curthreadurl = (!$iamguest and $ttsureverse) ? qq~<a title="$display_txt{'reverse'}" href="$scripturl?num=$viewnum;start=~ . (!$ttsreverse ? $mreplies : 0) . qq~;action=~ . ($userthreadpage == 1 ? 'threadpagetext' : 'threadpagedrop') . qq~;reversetopic=$ttsreverse"><img src="$imagesdir/arrow_~ . ($ttsreverse ? 'up' : 'down') . qq~.gif" border="0" alt="" style="vertical-align: middle;" /> $msubthread</a>~ : $msubthread;
@@ -830,7 +856,9 @@ sub Display {
 	$display_template =~ s/({|<)yabb threadhandellist(}|>)/$threadhandellist/g;
 	$display_template =~ s/({|<)yabb threadimage(}|>)/$template_threadimage/g;
 	$display_template =~ s/({|<)yabb threadurl(}|>)/$curthreadurl/g;
-	$display_template =~ s/({|<)yabb views(}|>)/ ${$viewnum}{'views'} - 1 /eg;
+	$tmpviews = ${$viewnum}{'views'} - 1;
+	$tmpviews = &NumberFormat($tmpviews);
+	$display_template =~ s/({|<)yabb views(}|>)/ $tmpviews /eg;
 	if (($iamadmin || $iamgmod || $iammod) && $sessionvalid == 1) {
 		# Board=$currentboard is necessary for multidel - DO NOT REMOVE!!
 		# This form is necessary to allow thread deletion in locked topics.
@@ -999,12 +1027,12 @@ $msnstyle
 <table border="0" width="100%" cellspacing="1" cellpadding="4" class="bordercolor">
 	<tr>
 		<td class="titlebg" align="left" height="22">
-		<img src="$defaultimagesdir/msn3.gif" width="16" height="14" alt="" title="" border="0" /> $msntxt{'5'}
+		<img src="$defaultimagesdir/msn.gif" width="16" height="14" alt="" title="" border="0" /> $msntxt{'5'}
 		</td>
 	</tr>
 	<tr>
 		<td class="windowbg" align="left" height="58">
-		<img src="$defaultimagesdir/msn3.gif" width="16" height="16" style="vertical-align: middle;" alt="${$uid.$msnname}{'realname'}" title="${$uid.$msnname}{'realname'}" border="0" /> $msnuser<br /><br />
+		<img src="$defaultimagesdir/msn.gif" width="16" height="16" style="vertical-align: middle;" alt="${$uid.$msnname}{'realname'}" title="${$uid.$msnname}{'realname'}" border="0" /> $msnuser<br /><br />
 		</td>
 	</tr>
 </table>

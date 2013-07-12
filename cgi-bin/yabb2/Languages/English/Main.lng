@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mainlngver = 'YaBB 2.4 $Revision: 1.30 $';
+$mainlngver = 'YaBB 2.5 AE $Revision: 1.31 $';
 
 $yycharset = 'ISO-8859-1';
 $abbr_lang = 'en-us';
@@ -42,6 +42,7 @@ $abbr_lang = 'en-us';
 '10' => 'Last online',
 '11' => 'days and',
 '12' => 'hours ago',
+'13' => 'Has not logged in since registering',
 '22' => 'Last post',
 '23' => 'Unable to open',
 '27' => 'View Profile',
@@ -72,11 +73,13 @@ $abbr_lang = 'en-us';
 '155' => 'Maintenance Mode',
 '156' => 'Our Forum is currently in Maintenance Mode!',
 '157' => 'Our Forum is currently in Maintenance Mode. Please try again later. Thank you!',
-'160' => 'This Topic has been moved to',
-'160a' => 'The contents of this Topic have been moved to',
-'160b' => 'this Topic',
-'160c' => 'Off-Topic replies have been moved to',
-'160d' => '.',
+'160' => 'This',
+'160a' => 'Topic',
+'160b' => 'has been moved to',
+'160c' => 'The contents of this Topic have been moved to',
+'160d' => 'this Topic',
+'160e' => 'Off-Topic replies have been moved to',
+'160f' => '.',
 '161' => 'This Topic was moved here from',
 '161a' => 'The last',
 '161b' => 'Posts were moved here from',
@@ -92,6 +95,7 @@ $abbr_lang = 'en-us';
 '213' => 'Users Last Posts',
 '214' => 'Recent Posts',
 '214b' => 'most Recent Topics',
+'215' => 'Recent Topics',
 '236' => 'Return',
 '237' => 'to the Board Index.',
 '247m' => 'Good Morning',
@@ -145,7 +149,7 @@ $abbr_lang = 'en-us';
 '471' => 'message',
 '616' => 'Remember, this forum is in \'Maintenance Mode\'.',
 '617' => 'Remember, last Backup was done on:',
-'773' => "IP not found, please change \$user_ip in $lang",
+'773' => "IP not found, please change \$user_ip in \$lang/Main.lng",
 '805' => 'You',
 '806' => '<b>can</b>',
 '807' => '<b>cannot</b>',
@@ -154,6 +158,7 @@ $abbr_lang = 'en-us';
 '810' => 'start new Topics in this Board.',
 '811' => 'start Polls in this Board.',
 '812' => 'post towards your Post Count in this Board.',
+'813' => 'post Attachments in this Board.',
 );
 
 %load_imtxt = (
@@ -250,6 +255,6 @@ $forwardedpm = qq~This alert was forwarded as Email~;
 );
 
 
-$yycopyright = qq~<span class="copyright"><a href="$boardurl/$yyexec.$yyext" class="copyright">$mbname</a> &#187; Powered by <a href="http://www.yabbforum.com" class="copyright">$YaBBversion</a>!<br />\n<a href="http://www.yabbforum.com" class="copyright">YaBB</a> &copy; 2000-2009. All Rights Reserved.</span>~;
+$yycopyright = qq~<span class="copyright"><a href="$boardurl/$yyexec.$yyext" class="copyright">$mbname</a> &#187; Powered by <a href="http://www.yabbforum.com" class="copyright">$YaBBversion</a>!<br />\n<a href="http://www.yabbforum.com" class="copyright">YaBB Forum Software</a> &copy; 2000-2010. All Rights Reserved.</span>~;
 
 1;

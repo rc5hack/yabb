@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$loginoutplver = 'YaBB 2.4 $Revision: 1.24.2.1 $';
+$loginoutplver = 'YaBB 2.5 AE $Revision: 1.25 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if ($regcheck) { require "$sourcedir/Decoder.pl"; }
@@ -91,24 +91,25 @@ sub Login2 {
 	$sessionvalid = 1;
 	$iamguest = 0;
 
+	if ($maintenance && !$iamadmin) { $username = 'Guest'; &fatal_error("admin_login_only"); }
+	&banning;
+
 	if ($FORM{'cookielength'} == 1) { $ck{'len'} = 'Sunday, 17-Jan-2038 00:00:00 GMT'; }
 	elsif ($FORM{'cookielength'} == 2) { $ck{'len'} = ''; }
-	else { $ck{'len'} = "\+$FORM{'cookielength'}m"; }
-	$password = &encode_password("$FORM{'passwrd'}");
+	else { $ck{'len'} = "+$FORM{'cookielength'}m"; }
 	${$uid.$username}{'session'} = &encode_password($user_ip);
-	&UserAccount($username, "update", "-"); # "-" to not update 'lastonline' here
-	&UpdateCookie("write", "$username", "$password", "${$uid.$username}{'session'}", "/", "$ck{'len'}");
+	&UpdateCookie("write", $username, &encode_password($FORM{'passwrd'}), ${$uid.$username}{'session'}, "/", $ck{'len'});
 
-	if ($maintenance && !$iamadmin) { $username = 'Guest'; &fatal_error("admin_login_only"); }
+	&UserAccount($username, "update", "-"); # "-" to not update 'lastonline' here
 	&buildIMS($username,'load'); # isn't loaded because was Guest before
 	&buildIMS($username,''); # rebuild the Members/$username.ims file on login
-	&banning;
+
 	if($FORM{'sredir'}) {
 		$FORM{'sredir'} =~ s/\~/\=/g;
 		$FORM{'sredir'} =~ s/x3B/;/g;
 		$FORM{'sredir'} =~ s/search2/search/g;
 		$FORM{'sredir'} = qq~?$FORM{'sredir'}~;
-		$FORM{'sredir'} = '' if $FORM{'sredir'} =~ /action=register/;
+		$FORM{'sredir'} = '' if $FORM{'sredir'} =~ /action=(register|login2)/;
 	}
 	$yySetLocation = qq~$scripturl$FORM{'sredir'}~;
 	&redirectexit;
@@ -164,6 +165,7 @@ $border
 		<td class="windowbg" width="5%" valign="middle" align="center"><img src="$imagesdir/login.gif" border="0" alt="" /></td>
 		<td class="windowbg2" align="center" valign="middle" style="padding: 10px;">~;
 	}
+	if ($maintenance || !$regtype) { $dbutton = ' disabled="disabled"'; }
 	$sharedlog .= qq~
 			<form name="loginform" action="$scripturl?action=login2" method="post">
 				<input type="hidden" name="sredir" value="$INFO{'sesredir'}" />
@@ -177,13 +179,13 @@ $border
 					</span>
 					<span style="float: left; width: 27%; text-align: right; margin-bottom: 5px;">
 						&nbsp;<br />
-						<input type="button" value="$maintxt{'97'}" style="width: 160px;~ . ($regtype ? "" : " visibility:hidden") . qq~" onclick="location.href='$scripturl?action=register'" tabindex="6" class="button" />
+						<input type="button" value="$maintxt{'97'}"$dbutton style="width: 160px;" onclick="location.href='$scripturl?action=register'" tabindex="6" class="button" />
 					</span>
 				</div>
 				<div style="width: 600px;">
 					<span style="float: left; width: 29%; text-align: left; margin-bottom: 5px;">
 						<label for="passwrd">$loginout_txt{'36'}</label>:<br />
-						<input type="password" name="passwrd" id="passwrd" size="15" maxlength="30" style="width: 110px;" tabindex="2" />
+						<input type="password" name="passwrd" id="passwrd" size="15" maxlength="30" style="width: 110px;" tabindex="2" onkeypress="capsLock(event,'shared_login')" />
 					</span>
 					<span style="float: left; width: 21%; text-align: left; margin-bottom: 5px;">
 						<label for="cookielength">$loginout_txt{'497'}</label>:<br />
@@ -205,10 +207,12 @@ $border
 					</span>
 					<span style="float: left; width: 27%; text-align: right; margin-bottom: 5px;">
 						&nbsp;<br />
-						<input type="button" value="$loginout_txt{'315'}" style="width: 160px;" onclick="location.href='$scripturl?action=reminder'" tabindex="5" class="button" />
+						<input type="button" value="$loginout_txt{'315'}"$dbutton style="width: 160px;" onclick="location.href='$scripturl?action=reminder'" tabindex="5" class="button" />
 					</span>
 					<br /><br />
 				</div>
+				<div style="width: 600px; text-align: left; color: red; font-weight: bold; display: none" id="shared_login">$loginout_txt{'capslock'}</div>
+				<div style="width: 600px; text-align: left; color: red; font-weight: bold; display: none" id="shared_login_char">$loginout_txt{'wrong_char'}: <span id="shared_login_character">&nbsp;</span></div>
 			</form>
 		</td>
 	</tr>
@@ -232,8 +236,8 @@ sub Reminder {
 	</td>
 	</tr><tr>
 	<td class="windowbg">
-	<span class="text1"><b>$loginout_txt{'35'}:</b></span>
-	<input type="text" name="user"$regstyle />
+	<label for="user"><span class="text1"><b>$loginout_txt{'35'}:</b></span></label>
+	<input type="text" name="user" id="user" $regstyle />
 	</td>
 	</tr>
 ~;
@@ -243,13 +247,13 @@ sub Reminder {
 		$yymain .= qq~
 	<tr>
 	<td class="windowbg">
-	<span class="text1"><b>$floodtxt{'1'}: </b></span>
+	<label for="verification"><span class="text1"><b>$floodtxt{'1'}: </b></span>
 	$showcheck
-	<br /><span class="small">$floodtxt{'casewarning'}</span>
+	<br /><span class="small">$floodtxt{'casewarning'}</span></label>
 	</td>
 	</tr><tr>
 	<td class="windowbg">
-	<span class="text1"><b>$floodtxt{'3'}: </b></span>
+	<label for="verification"><span class="text1"><b>$floodtxt{'3'}: </b></span></label>
 	<span class="text1"><input type="text" maxlength="30" name="verification" id="verification" size="20" /></span>
 	</td>
 	</tr>

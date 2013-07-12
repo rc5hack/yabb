@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$edithelpcentreplver = 'YaBB 2.4 $Revision: 1.6 $';
+$edithelpcentreplver = 'YaBB 2.5 AE $Revision: 1.7 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('HelpCentre');
@@ -24,6 +24,11 @@ $yytitle = $helptxt{'1'};
 sub HelpEdit {
 	$page      = $FORM{'page'};
 	$help_area = $INFO{'area'};
+
+	if ($page eq "user00_agreement") {
+		$yySetLocation = qq~$adminurl?action=modagreement;agreementlanguage=$language;destination=helpadmin~;
+		&redirectexit;
+	}
 
 	require "$helpfile/$language/$help_area/$page.help";
 
@@ -266,7 +271,7 @@ sub MainAdmin {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-		$helptxt{'9'} <input type="checkbox" name="UseHelp_Perms" value="1"$perms_check />
+		<label for="UseHelp_Perms">$helptxt{'9'}</label> <input type="checkbox" name="UseHelp_Perms" id="UseHelp_Perms" value="1"$perms_check />
 	   </td>
      </tr>
      <tr valign="middle">

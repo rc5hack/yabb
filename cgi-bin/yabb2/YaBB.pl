@@ -5,11 +5,11 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
@@ -17,8 +17,8 @@
 ###############################################################################
 
 ### Version Info ###
-$YaBBversion = 'YaBB 2.4';
-$YaBBplver = 'YaBB 2.4 $Revision: 1.22.2.1 $';
+$YaBBversion = 'YaBB 2.5 AE';
+$YaBBplver = 'YaBB 2.5 AE $Revision: 1.23 $';
 
 if ($action eq 'detailedversion') { return 1; }
 
@@ -87,7 +87,10 @@ $formsession = &cloak("$mbname$username");
 # check for valid form sessionid in any POST request
 if ($ENV{REQUEST_METHOD} =~ /post/i) {
 	if ($CGI_query && $CGI_query->cgi_error()) { &fatal_error("denial_of_service", $CGI_query->cgi_error()); }
-	if (&decloak($FORM{'formsession'}) ne "$mbname$username") { &fatal_error("form_spoofing","$user_ip"); }
+	if (&decloak($FORM{'formsession'}) ne "$mbname$username") {
+		&fatal_error("logged_in_already",$username) if $action eq 'login2' && $username ne 'Guest';
+		&fatal_error("form_spoofing",$user_ip);
+	}
 }
 
 if ($is_perm && $accept_permalink) {
@@ -132,7 +135,7 @@ sub yymain {
 	}
 
 	# Guest can do the very few following actions
-	&KickGuest if $iamguest && !$guestaccess && $action !~ /^(login|register|reminder|validate|activate|resetpass|guestpm|$randaction)2?$/;
+	&KickGuest if $iamguest && !$guestaccess && $action !~ /^(login|register|reminder|validate|activate|resetpass|guestpm|checkavail|$randaction)2?$/;
 
 	if ($action ne "") {
 		if ($action eq $randaction) {

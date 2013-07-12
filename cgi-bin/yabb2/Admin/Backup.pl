@@ -3,11 +3,11 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
@@ -16,7 +16,7 @@
 
 # Many thanks to AK108 (http://fkp.jkcsi.com/) for his contibution to the YaBB community
 
-$backupplver = 'YaBB 2.4 $Revision: 1.2 $';
+$backupplver = 'YaBB 2.5 AE $Revision: 1.3 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Add in support for Archive::Tar in the Modules directory and binaries in different places
@@ -39,6 +39,8 @@ my %dirs = (
 	    'html' => "yabbfiles",
 	    'upld' => "yabbfiles/Attachments $backup_txt{'and'} yabbfiles/avatars/UserAvatars",
 	    );
+	    
+&is_admin_or_gmod;
 
 sub backupsettings {
 	my ($module, $command, $tarcompress1, $tarcompress2, $allchecked, $item, %pathchecklist, %methodchecklist, $presetjavascriptcode, $file, @backups, $newcommand, $style, $disabledtext, $input);
@@ -153,53 +155,53 @@ sub backupsettings {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg">
-         <input type="checkbox" name="YaBB_ALL" value="1" onclick="masscheckYaBB(this.checked)" $allchecked/> $backup_txt{5}<br />
-         $backup_txt{6}
+         <input type="checkbox" name="YaBB_ALL" id="YaBB_ALL" value="1" onclick="masscheckYaBB(this.checked)" $allchecked/> <label for="YaBB_ALL">$backup_txt{5}<br />
+         $backup_txt{6}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_src" value="1" $pathchecklist{'src'}/> Admin/ $backup_txt{'and'} Sources/ $backup_txt{13}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_src" id="YaBB_src" value="1" $pathchecklist{'src'}/> <label for="YaBB_src">Admin/ $backup_txt{'and'} Sources/ $backup_txt{13}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_bo" value="1" $pathchecklist{'bo'}/> Boards/ $backup_txt{7}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_bo" id="YaBB_bo" value="1" $pathchecklist{'bo'}/> <label for="YaBB_bo">Boards/ $backup_txt{7}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_lan" value="1" $pathchecklist{'lan'}/> Languages/ $backup_txt{'and'} Help/ $backup_txt{11}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_lan" id="YaBB_lan" value="1" $pathchecklist{'lan'}/> <label for="YaBB_lan">Languages/ $backup_txt{'and'} Help/ $backup_txt{11}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_mem" value="1" $pathchecklist{'mem'}/> Members/ $backup_txt{9}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_mem" id="YaBB_mem" value="1" $pathchecklist{'mem'}/> <label for="YaBB_mem">Members/ $backup_txt{9}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_mes" value="1" $pathchecklist{'mes'}/> Messages/ $backup_txt{8}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_mes" id="YaBB_mes" value="1" $pathchecklist{'mes'}/> <label for="YaBB_mes">Messages/ $backup_txt{8}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_temp" value="1" $pathchecklist{'temp'}/> Templates/ $backup_txt{10} $backup_txt{'10a'}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_temp" id="YaBB_temp" value="1" $pathchecklist{'temp'}/> <label for="YaBB_temp">Templates/ $backup_txt{10} $backup_txt{'10a'}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_var" value="1" $pathchecklist{'var'}/> Variables/ $backup_txt{12}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_var" id="YaBB_var" value="1" $pathchecklist{'var'}/> <label for="YaBB_var">Variables/ $backup_txt{12}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_html" value="1" $pathchecklist{'html'}/> yabbfiles $backup_txt{14}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_html" id="YaBB_html" value="1" $pathchecklist{'html'}/> <label for="YaBB_html">yabbfiles $backup_txt{14}</label>
        </td>
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         <input type="checkbox" onclick="checkYaBB()" name="YaBB_upld" value="1" $pathchecklist{'upld'}/> yabbfiles/Attachments $backup_txt{'and'} yabbfiles/avatars/UserAvatars $backup_txt{'14a'}
+         <input type="checkbox" onclick="checkYaBB()" name="YaBB_upld" id="YaBB_upld" value="1" $pathchecklist{'upld'}/> <label for="YaBB_upld">yabbfiles/Attachments $backup_txt{'and'} yabbfiles/avatars/UserAvatars $backup_txt{'14a'}</label>
        </td>
      </tr>
      <tr valign="middle">
@@ -217,12 +219,14 @@ sub backupsettings {
 	$tarcompress1 = qq~
      <tr valign="middle">
        <td align="left" class="windowbg">
-         <input type="radio" name="tarmodulecompress" value="none" $methodchecklist{'none'}/> $backup_txt{17}
+         <input type="radio" name="tarmodulecompress" id="tarmodulecompress" value="none" $methodchecklist{'none'}/> <label for="tarmodulecompress">$backup_txt{17}</label>
        </td>
      </tr>~;
 
+	my $label_id;
 	foreach $module qw(Compress::Zlib Compress::Bzip2) {
-		$input = qq~name="tarmodulecompress" value="$module" $methodchecklist{$module}~;
+		$label_id++;
+		$input = qq~name="tarmodulecompress" id="label_$label_id" value="$module" $methodchecklist{$module}~;
 		eval "use $module();";
 		if ($@) {
 			$input = qq~disabled="disabled"~;
@@ -234,7 +238,7 @@ sub backupsettings {
 		$tarcompress1 .= qq~
      <tr valign="middle">
        <td align="left" class="windowbg" $style>
-         <input type="radio" $input/> $module $backup_txt{18} $disabledtext
+         <input type="radio" $input/> <label for="label_$label_id">$module $backup_txt{18} $disabledtext</label>
        </td>
      </tr>~;
 	}
@@ -250,12 +254,13 @@ sub backupsettings {
 	$tarcompress2 = qq~
      <tr valign="middle">
        <td align="left" class="windowbg">
-         <input type="radio" name="bintarcompress" value="none" $methodchecklist{'none'}/> $backup_txt{17}
+         <input type="radio" name="bintarcompress" id="bintarcompress" value="none" $methodchecklist{'none'}/> <label for="bintarcompress">$backup_txt{17}</label>
        </td>
      </tr>~;
 
 	foreach $command qw(/bin/gzip /bin/bzip2) {
-		$input = qq~name="bintarcompress" value="$command" $methodchecklist{$command}~;
+		$label_id++;
+		$input = qq~name="bintarcompress" id="label_$label_id" value="$command" $methodchecklist{$command}~;
 		$newcommand = &CheckPath($command);
 		if (!$newcommand) {
 			$input = qq~disabled="disabled"~;
@@ -268,7 +273,7 @@ sub backupsettings {
 		$tarcompress2 .= qq~
      <tr valign="middle">
        <td align="left" class="windowbg" $style>
-         <input type="radio" $input/> $newcommand $backup_txt{18} $disabledtext
+         <input type="radio" $input/> <label for="label_$label_id">$newcommand $backup_txt{18} $disabledtext</label>
        </td>
      </tr>~;
 	}
@@ -282,7 +287,7 @@ sub backupsettings {
 
 	# Display the commands we can use for compression
 	# Non-translated here, as I doubt there are words to describe "tar" in another language
-	$input = qq~name="backupmethod" value="/usr/bin/tar" onclick="domodulecheck('/usr/bin/tar')" $methodchecklist{'/usr/bin/tar'}~;
+	$input = qq~name="backupmethod" id="backupmethod1" value="/usr/bin/tar" onclick="domodulecheck('/usr/bin/tar')" $methodchecklist{'/usr/bin/tar'}~;
 	$newcommand = &CheckPath('/usr/bin/tar');
 	if ($newcommand) {
 		if (&ak_system("tar -cf $vardir/backuptest.$curtime.tar ./$yyexec.$yyext")) {
@@ -301,11 +306,11 @@ sub backupsettings {
 	$yymain .= qq~
      <tr valign="middle">
        <td align="left" class="windowbg2" $style>
-         <input type="radio" $input/> Tar ($newcommand) $disabledtext
+         <input type="radio" $input/> <label for="backupmethod1">Tar ($newcommand) $disabledtext</label>
        </td>
      </tr>$tarcompress2~;
 
-	$input = qq~name="backupmethod" value="/usr/bin/zip" onclick="domodulecheck('/usr/bin/zip')" $methodchecklist{'/usr/bin/zip'}~;
+	$input = qq~name="backupmethod" id="backupmethod2" value="/usr/bin/zip" onclick="domodulecheck('/usr/bin/zip')" $methodchecklist{'/usr/bin/zip'}~;
 	$newcommand = &CheckPath('/usr/bin/zip');
 	if ($newcommand) {
 		if (&ak_system("zip -gq $vardir/backuptest.$curtime.zip ./$yyexec.$yyext")) {
@@ -324,7 +329,7 @@ sub backupsettings {
 	$yymain .= qq~
      <tr valign="middle">
        <td align="left" class="windowbg2" $style>
-         <input type="radio" $input/> Zip ($newcommand) $disabledtext
+         <input type="radio" $input/> <label for="backupmethod2">Zip ($newcommand) $disabledtext</label>
        </td>
      </tr>
      <tr valign="middle">
@@ -335,7 +340,8 @@ sub backupsettings {
 
 	# Display the modules that we can use
 	foreach $module qw(Archive::Tar Archive::Zip) {
-		$input = qq~name="backupmethod" value="$module" onclick="domodulecheck('$module')" $methodchecklist{$module}~;
+		$i++;
+		$input = qq~name="backupmethod" id="backupmethod3_$i" value="$module" onclick="domodulecheck('$module')" $methodchecklist{$module}~;
 		eval "use $module();";
 		if ($@) {
 			$input = qq~disabled="disabled"~;
@@ -347,7 +353,7 @@ sub backupsettings {
 		$yymain .= qq~
      <tr valign="middle">
        <td align="left" class="windowbg2" $style>
-         <input type="radio" $input/> $module $disabledtext
+         <input type="radio" $input/> <label for="backupmethod3_$i">$module $disabledtext</label>
        </td>
      </tr>~;
 		if ($module eq 'Archive::Tar') { $yymain .= $tarcompress1; }
@@ -367,7 +373,7 @@ sub backupsettings {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         $backup_txt{'19a'}: <input type="text" name="backupdir" value="$backupdir" size="80"/>
+         <label for="backupdir">$backup_txt{'19a'}</label>: <input type="text" name="backupdir" id="backupdir" value="$backupdir" size="80"/>
        </td>
      </tr>
      <tr valign="middle">
@@ -377,7 +383,7 @@ sub backupsettings {
      </tr>
      <tr valign="middle">
        <td align="left" class="windowbg2">
-         $backup_txt{'19c'} <input type="text" name="rememberbackup" value="~ . ($rememberbackup / 86400) . qq~" size="3"/> $backup_txt{'19d'}
+         <label for="rememberbackup">$backup_txt{'19c'}</label> <input type="text" name="rememberbackup" id="rememberbackup" value="~ . ($rememberbackup / 86400) . qq~" size="3"/> <label for="rememberbackup">$backup_txt{'19d'}</label>
        </td>
      </tr>
      <tr valign="middle">
@@ -424,7 +430,7 @@ $presetjavascriptcode
 			}
 
 			$filename = "$1$2.$3.$4.$5";
-			$filelist .= qq~          <tr><td align="left">~ . &timeformat($3) . qq~</td><td align="right">$filesize</td><td align="left">- ~ . join('<br />- ', @dirs) . qq~</td><td align="left">~ . ($2 ? "<acronym title='$backup_txt{62}'>N</acronym><br />" : '') . qq~$5</td><td><a href="$adminurl?action=downloadbackup;backupid=$file">$backup_txt{60}</a></td><td><a href="$adminurl?action=emailbackup;backupid=$file">$backup_txt{52}</a></td><td><a href="$adminurl?action=runbackup;runbackup_again=$1$2.0.$4.$5">$backup_txt{61}</a><br /><a href="$adminurl?action=runbackup;runbackup_again=$filename">$backup_txt{62}</a></td><td align="center">~ . (($5 =~ /^a\.tar/|| $5 !~ /tar/) ? '-' : qq~<a href="$adminurl?action=recoverbackup1;recoverfile=$filename">$backup_txt{63}</a>~) . qq~</td><td><a href="$adminurl?action=deletebackup;backupid=$file">$backup_txt{53}</a></td></tr>\n~;
+			$filelist .= qq~          <tr><td align="left">~ . &timeformat($3) . qq~</td><td align="right">$filesize</td><td align="left">- ~ . join('<br />- ', @dirs) . qq~</td><td align="left">~ . ($2 ? "<acronym title='$backup_txt{62}'>$backup_txt{'62a'}</acronym><br />" : '') . qq~$5</td><td><a href="$adminurl?action=downloadbackup;backupid=$file">$backup_txt{60}</a></td><td><a href="$adminurl?action=emailbackup;backupid=$file">$backup_txt{52}</a></td><td><a href="$adminurl?action=runbackup;runbackup_again=$1$2.0.$4.$5">$backup_txt{61}</a><br /><a href="$adminurl?action=runbackup;runbackup_again=$filename">$backup_txt{62}</a></td><td align="center">~ . (($5 =~ /^a\.tar/|| $5 !~ /tar/) ? '-' : qq~<a href="$adminurl?action=recoverbackup1;recoverfile=$filename">$backup_txt{63}</a>~) . qq~</td><td><a href="$adminurl?action=deletebackup;backupid=$file">$backup_txt{53}</a></td></tr>\n~;
 		}
 
 		$filelist ||= qq~          <tr><td align="left" colspan="9"><i>$backup_txt{38}</i></td></tr>\n~;

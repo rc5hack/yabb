@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$helpcentreplver = 'YaBB 2.4 $Revision: 1.7 $';
+$helpcentreplver = 'YaBB 2.5 AE $Revision: 1.8 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('HelpCentre');
@@ -107,7 +107,6 @@ sub SectionPrint {
 }
 
 sub GetHelpFiles {
-
 	unless ($HelpTemplateLoaded) {
 		if (-e ("$templatesdir/$usestyle/HelpCentre.template")) {
 			require "$templatesdir/$usestyle/HelpCentre.template";
@@ -120,20 +119,18 @@ sub GetHelpFiles {
 
 	# This determines if the order file is present and if it isn't
 	# It creates a new one, in default alphabetical order
-	if (!-e ("$vardir/$help_area.helporder")) {
-		&CreateOrderFile;
-	}
+	&CreateOrderFile if !-e "$vardir/$help_area.helporder";
 
 	fopen(HELPORDER, "$vardir/$help_area.helporder");
-	@helporderlist = <HELPORDER>;
+	my @helporderlist = <HELPORDER>;
 	fclose(HELPORDER);
+	chomp(@helporderlist);
 
-	foreach $line (@helporderlist) {
-		chomp $line;
-		if (-e ("$helpfile/$language/$help_area/$line.help")) {
-			require "$helpfile/$language/$help_area/$line.help";
-		} elsif (-e ("$helpfile/English/$help_area/$line.help")) {
-			require "$helpfile/English/$help_area/$line.help";
+	foreach (@helporderlist) {
+		if (-e "$helpfile/$language/$help_area/$_.help") {
+			require "$helpfile/$language/$help_area/$_.help";
+		} elsif (-e "$helpfile/English/$help_area/$_.help") {
+			require "$helpfile/English/$help_area/$_.help";
 		} else {
 			next;
 		}
@@ -222,12 +219,10 @@ sub MainHelp {
 }
 
 sub ContentContainer {
-
 	$MainLayout =~ s/<yabb contents>/$Contents/g;
 	$MainLayout =~ s/<yabb body>/$Body/g;
 
 	$yymain .= qq~$MainLayout~;
-
 }
 
 sub DoContents {
@@ -264,18 +259,15 @@ sub CreateOrderFile {
 	@contents = readdir(HELPDIR);
 	closedir(HELPDIR);
 
-	foreach $line (sort { uc($a) cmp uc($b) } @contents) {
-		($name, $extension) = split(/\./, $line);
-		if ($extension !~ /help/i) { next; }
-
+	foreach (sort { uc($a) cmp uc($b) } @contents) {
+		($name, $extension) = split(/\./, $_);
+		next if $extension !~ /help/i;
 		$order_list .= "$name\n";
-
 	}
 
 	fopen(HELPORDER, ">$vardir/$help_area.helporder") || die("couldn't write order file - check permissions on $vardir and $vardir/$help_area.helporder");
 	print HELPORDER qq~$order_list~;
 	fclose(HELPORDER);
-
 }
 
 1;

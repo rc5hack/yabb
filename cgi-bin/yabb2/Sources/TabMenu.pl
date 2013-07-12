@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$tabmenuplver = 'YaBB 2.4 $Revision: 1.19 $';
+$tabmenuplver = 'YaBB 2.5 AE $Revision: 1.20 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('TabMenu');
@@ -114,8 +114,8 @@ sub mainMenu {
 		if ($action eq "addtab") { $seladdtab = qq~class="selected"~; }
 		elsif ($action eq "edittab") { $seledittab = qq~class="selected"~; }
 		$yytabadd = qq~<div style="float: right; width: 100px; height: 21px; text-align: right;">~;
-		$yytabadd .= qq~$tabsep<span $seladdtab><a href="$scripturl?action=addtab" title = "$tabmenu_txt{'newtab'}" style="padding: 2px 0;">$tabfill<img src="$imagesdir/tabadd.gif" height="23" width="20" border="0" alt="$tabmenu_txt{'newtab'}" title="$tabmenu_txt{'newtab'}" />$tabfill</a></span>$tabsep~;
-		$yytabadd .= qq~<span $seledittab><a href="$scripturl?action=edittab" title = "$tabmenu_txt{'edittab'}" style="padding: 2px 0;">$tabfill<img src="$imagesdir/tabedit.gif" height="23" width="20" border="0" alt="$tabmenu_txt{'edittab'}" title="$tabmenu_txt{'edittab'}" />$tabfill</a></span>$tabsep~;
+		$yytabadd .= qq~$tabsep<span style="padding-top: 1px;"$seladdtab><a href="$scripturl?action=addtab" title = "$tabmenu_txt{'newtab'}" style="float: left;">$tabfill<img src="$imagesdir/tabadd.gif" height="23" width="20" border="0" alt="$tabmenu_txt{'newtab'}" title="$tabmenu_txt{'newtab'}" style="display: inline;" />$tabfill</a></span>$tabsep~;
+		$yytabadd .= qq~<span style="padding-top: 1px;"$seledittab><a href="$scripturl?action=edittab" title = "$tabmenu_txt{'edittab'}" style="float: left;">$tabfill<img src="$imagesdir/tabedit.gif" height="23" width="20" border="0" alt="$tabmenu_txt{'edittab'}" title="$tabmenu_txt{'edittab'}" />$tabfill</a></span>$tabsep~;
 		$yytabadd .= qq~</div>~;
 	} else {
 		$yytabadd = qq~&nbsp;~;

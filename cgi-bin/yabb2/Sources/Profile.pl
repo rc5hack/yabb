@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$profileplver = 'YaBB 2.4 $Revision: 1.111.2.1 $';
+$profileplver = 'YaBB 2.5 AE $Revision: 1.112 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Profile');
@@ -74,22 +74,20 @@ sub ProfileCheck {
 	<tr><td class="titlebg" colspan="2"><b>$profile_txt{'901'}</b></td></tr>
 	<tr>
 		<td class="windowbg2" align="center">
-			<span class="small"><br />$sid_descript<br /><br /></span>
+			<label for="passwrd"><span class="small"><br />$sid_descript<br /><br /></span></label>
 		</td>
 	</tr>
 	<tr>
-		<td class="windowbg2" valign="middle">
+		<td class="windowbg2" align="center" valign="middle">
 			<form action="$scripturl?action=profileCheck2;username=$useraccount{$user}" method="post" name="confirmform">
 			<input type="hidden" name="redir" value="$redirsid" />
-			<div style="clear: both; padding-top: 4px; margin-left: auto; margin-right: auto; width: 370px;">
-				<span style="float: left; width: 100%; text-align: center; align: center;">
-					<input type="password" name="passwrd" size="15" style="width: 150px;" />
-				</span>
+			<div style="padding-top: 4px;">
+				<div><input type="password" name="passwrd" id="passwrd" size="15" style="width: 150px;" onkeypress="capsLock(event,'cappasswrd')" /></div>
+				<div style="color: red; font-weight: bold; display: none" id="cappasswrd">$profile_txt{'capslock'}</div>
+				<div style="color: red; font-weight: bold; display: none" id="cappasswrd_char">$profile_txt{'wrong_char'}: <span id="cappasswrd_character">&nbsp;</span></div>
 			</div>
-			<div style="clear: both; margin-top: 25px; margin-left: auto; margin-right: auto; width: 310px;">
-				<span style="float: left; width: 100%; text-align: center;">
-					<input type="submit" value="$profile_txt{'900'}" class="button" />
-				</span>
+			<div style="padding-top: 8px;">
+				<input type="submit" value="$profile_txt{'900'}" class="button" />
 			</div>
 			</form>
 		</td>
@@ -203,12 +201,16 @@ sub ModifyProfile {
 	if (${$uid.$user}{'gender'} eq 'Female') { $GenderFemale = ' selected="selected" '; }
 
 	my $timeorder;
-	if    (${$uid.$user}{'timeselect'} == 6) { $timeorder = 1; }
-	elsif (${$uid.$user}{'timeselect'} == 3) { $timeorder = 1; }
-	elsif (${$uid.$user}{'timeselect'} == 2) { $timeorder = 1; }
-	elsif ($timeselected == 6) { $timeorder = 1; }
-	elsif ($timeselected == 3) { $timeorder = 1; }
-	elsif ($timeselected == 2) { $timeorder = 1; }
+	if(${$uid.$user}{'timeselect'}) {
+		if    (${$uid.$user}{'timeselect'} == 6) { $timeorder = 1; }
+		elsif (${$uid.$user}{'timeselect'} == 3) { $timeorder = 1; }
+		elsif (${$uid.$user}{'timeselect'} == 2) { $timeorder = 1; }
+	}
+	else {
+		if ($timeselected == 6) { $timeorder = 1; }
+		elsif ($timeselected == 3) { $timeorder = 1; }
+		elsif ($timeselected == 2) { $timeorder = 1; }
+	}
 
 	&CalcAge($user, "parse");
 	$dayormonthm = qq~<label for="bday1">$profile_txt{'564'}</label><input type="text" name="bday1" id="bday1" size="2" maxlength="2" value="$umonth" /> ~; 
@@ -230,19 +232,25 @@ sub ModifyProfile {
 			<span class="small">$profile_txt{'896'}</span></label>
 		</td>
 		<td align="left">
-			<div style="float:left;"><input type="password" maxlength="30" name="passwrd1" id="passwrd1" size="20" onkeyup="runPassword(this.value);" /> &nbsp; </div>
+			<div style="float:left;"><input type="password" maxlength="30" name="passwrd1" id="passwrd1" size="20" onkeyup="runPassword(this.value);" onkeypress="capsLock(event,'cappasswrd1')" /> &nbsp; </div>
 			<div style="float:left; width: 150px; height: 20px;">
 			<div id="password-strength-meter" style="background: transparent url($imagesdir/empty_bar.gif) repeat-x center left; height: 4px"></div>
 			<div class="pstrength-bar" id="passwrd1_bar" style="border: 1px solid #FFFFFF; height: 4px"></div>
 			<div class="pstrength-info" id="passwrd1_text">&nbsp;</div>
 			</div>
+			<div style="clear:left; color: red; font-weight: bold; display: none" id="cappasswrd1">$profile_txt{'capslock'}</div>
+			<div style="clear:left; color: red; font-weight: bold; display: none" id="cappasswrd1_char">$profile_txt{'wrong_char'}: <span id="cappasswrd1_character">&nbsp;</span></div>
 		</td>
 	</tr>
 	<tr class="windowbg">
 		<td width="220" align="left"><label for="passwrd2"><b>$profile_txt{82}: </b><br />
 			<span class="small">$profile_txt{'896'}</span></label>
 		</td>
-		<td align="left"><input type="password" maxlength="30" name="passwrd2" id="passwrd2" size="20" /></td>
+		<td align="left">
+			<input type="password" maxlength="30" name="passwrd2" id="passwrd2" size="20" onkeypress="capsLock(event,'cappasswrd2')" />
+			<div style="color: red; font-weight: bold; display: none" id="cappasswrd2">$profile_txt{'capslock'}</div>
+			<div style="color: red; font-weight: bold; display: none" id="cappasswrd2_char">$profile_txt{'wrong_char'}: <span id="cappasswrd2_character">&nbsp;</span></div>
+		</td>
 	</tr>
 	<tr class="windowbg">
 		<td width="220" align="left"><label for="name"><b>$profile_txt{68}: </b><br />~;
@@ -252,7 +260,7 @@ sub ModifyProfile {
 	}
 	$showProfile .= qq~
 		</td>
-		<td align="left"><input type="text" maxlength="30" name="name" id="name" size="30" value="${$uid.$user}{'realname'}" /></td>
+		<td align="left"><input type="text" maxlength="30" onchange="checkAvail('$scripturl',this.value,'display')" name="name" id="name" size="30" value="${$uid.$user}{'realname'}" /><div id="displayavailability"></div></td>
 	</tr>
 	<tr class="windowbg">
 		<td width="220" align="left"><label for="gender"><b>$profile_txt{231}: </b></label></td>
@@ -445,7 +453,7 @@ sub ModifyProfileContacts {
 	</tr>
 	<tr class="windowbg">
 		<td width="320" align="left"><label for="email"><b>$profile_txt{'69'}: </b><br /><span class="small">$profile_txt{'679'} </span></label></td>
-		<td align="left"><input type="text" maxlength="100" name="email" id="email" size="40" value="${$uid.$user}{'email'}" /></td>
+		<td align="left"><input type="text" maxlength="100" onchange="checkAvail('$scripturl',this.value,'email')" name="email" id="email" size="40" value="${$uid.$user}{'email'}" /><div id="emailavailability"></div></td>
 	</tr>~;
 	if ($allow_hide_email) {
 		my $checked = '';
@@ -742,6 +750,16 @@ sub ModifyProfileOptions {
 	</tr>~ if $addmemgroup;
 	}
 
+	if    (${$uid.$user}{'numberformat'} == 1) { $unfsl1 = ' selected="selected" '; }
+	elsif (${$uid.$user}{'numberformat'} == 2) { $unfsl2 = ' selected="selected" '; }
+	elsif (${$uid.$user}{'numberformat'} == 3) { $unfsl3 = ' selected="selected" '; }
+	elsif (${$uid.$user}{'numberformat'} == 4) { $unfsl4 = ' selected="selected" '; }
+	elsif (${$uid.$user}{'numberformat'} == 5) { $unfsl5 = ' selected="selected" '; }
+	elsif ($forumnumberformat == 1) { $unfsl1 = ' selected="selected" '; }
+	elsif ($forumnumberformat == 2) { $unfsl2 = ' selected="selected" '; }
+	elsif ($forumnumberformat == 3) { $unfsl3 = ' selected="selected" '; }
+	elsif ($forumnumberformat == 4) { $unfsl4 = ' selected="selected" '; }
+	elsif ($forumnumberformat == 5) { $unfsl5 = ' selected="selected" '; }
 	if    (${$uid.$user}{'timeselect'} == 7) { $tsl7 = ' selected="selected" '; }
 	elsif (${$uid.$user}{'timeselect'} == 6) { $tsl6 = ' selected="selected" '; }
 	elsif (${$uid.$user}{'timeselect'} == 5) { $tsl5 = ' selected="selected" '; }
@@ -749,6 +767,8 @@ sub ModifyProfileOptions {
 	elsif (${$uid.$user}{'timeselect'} == 3) { $tsl3 = ' selected="selected" '; }
 	elsif (${$uid.$user}{'timeselect'} == 2) { $tsl2 = ' selected="selected" '; }
 	elsif (${$uid.$user}{'timeselect'} == 1) { $tsl1 = ' selected="selected" '; }
+	elsif (${$uid.$user}{'timeselect'} == 8) { $tsl8 = ' selected="selected" '; }
+	elsif ($timeselected == 8) { $tsl8 = ' selected="selected" '; }
 	elsif ($timeselected == 7) { $tsl7 = ' selected="selected" '; }
 	elsif ($timeselected == 6) { $tsl6 = ' selected="selected" '; }
 	elsif ($timeselected == 5) { $tsl5 = ' selected="selected" '; }
@@ -761,6 +781,18 @@ sub ModifyProfileOptions {
 
 	$showProfile .= qq~
 	<tr class="windowbg">
+		<td align="left"><label for="usernumberformat"><b>$profile_txt{'usernumbformat'}:</b></label></td>
+		<td align="left">
+			<select name="usernumberformat" id="usernumberformat" size="1">
+			<option value="1"$unfsl1>10987.65</option>
+			<option value="2"$unfsl2>10987,65</option>
+			<option value="3"$unfsl3>10,987.65</option>
+			<option value="4"$unfsl4>10.987,65</option>
+			<option value="5"$unfsl5>10 987,65</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="windowbg">
 		<td align="left"><label for="usertimeselect"><b>$profile_txt{'486'}:</b><br />
 			<span class="small">$profile_txt{'479'}</span></label></td>
 		<td align="left">
@@ -768,6 +800,7 @@ sub ModifyProfileOptions {
 			<option value="1"$tsl1>$profile_txt{'480'}</option>
 			<option value="5"$tsl5>$profile_txt{'484'}</option>
 			<option value="4"$tsl4>$profile_txt{'483'}</option>
+			<option value="8"$tsl8>$profile_txt{'483a'}</option>
 			<option value="2"$tsl2>$profile_txt{'481'}</option>
 			<option value="3"$tsl3>$profile_txt{'482'}</option>
 			<option value="6"$tsl6>$profile_txt{'485'}</option>
@@ -1386,6 +1419,7 @@ sub ModifyProfile2 {
 
 
 		if (${$uid.$user}{'realname'} ne $member{'name'}) {
+			$member{'name'} =~ s~\t+~\ ~g;
 			if ($member{'name'} eq '') { &fatal_error("no_name"); }
 			if ($name_cannot_be_userid && lc $member{'name'} eq lc $member{'username'}) { &fatal_error('name_is_userid'); }
 
@@ -1402,7 +1436,7 @@ sub ModifyProfile2 {
 			&fatal_error("name_too_long") if $cliped;
 			&ToHTML($member{'name'});
 			&ToChars($member{'name'});
-
+			
 			&fatal_error("invalid_character","$profile_txt{'68'} $profile_txt{'241re'}") if $member{'name'} =~ /[^ \w\x80-\xFF\[\]\(\)#\%\+,\-\|\.:=\?\@\^]/;
 
 			if ($user ne "admin") {
@@ -1432,7 +1466,7 @@ sub ModifyProfile2 {
 				}
 			}
 
-			if (lc &MemberIndex("check_exist", $member{'name'}) eq lc $member{'name'}) { &fatal_error('name_taken',"($member{'name'})"); }
+			if ((lc &MemberIndex("check_exist", $member{'name'}) eq lc $member{'name'}) && (lc $member{'name'} ne lc $member{'username'})) { &fatal_error('name_taken',"($member{'name'})"); }
 
 			# rewrite attachments.txt with new username
 			fopen(ATM, "+<$vardir/attachments.txt", 1) || &fatal_error("cannot_open","$vardir/attachments.txt");
@@ -1682,6 +1716,12 @@ sub ModifyProfileOptions2 {
 
 	&fatal_error("not_allowed") if $member{'moda'} ne $profile_txt{'88'};
 
+	if (!$minlinksig){ $minlinksig = 0 ;}
+	if (${$uid.$user}{'postcount'} < $minlinksig && !$iamadmin && !$iamgmod) {
+		if ($member{'signature'} =~ m~http:\/\/~ || $member{'signature'} =~ m~https:\/\/~ || $member{'signature'} =~ m~ftp:\/\/~ || $member{'signature'} =~ m~www.~ || $member{'signature'} =~ m~ftp.~ =~ m~\[url~ || $member{'signature'} =~ m~\[link~ || $member{'signature'} =~ m~\[img~ || $member{'signature'} =~ m~\[ftp~) {
+			&fatal_error("no_siglinks_allowed");
+		}
+	}
 	&FromChars($member{'usertext'});
 	$convertstr = $member{'usertext'};
 	$convertcut = 51;
@@ -1867,6 +1907,7 @@ sub ModifyProfileOptions2 {
 	${$uid.$user}{'template'} = $member{'usertemplate'};
 	${$uid.$user}{'language'} = $member{'userlanguage'};
 	${$uid.$user}{'timeformat'} = $member{'timeformat'};
+	${$uid.$user}{'numberformat'} = int($member{'usernumberformat'});
 
 	&UserAccount($user, "update");
 
@@ -2226,7 +2267,7 @@ sub ViewProfile {
 			<b>$profile_txt{'823'}: </b>
 			</div>
 			<div style="float: left; width: 70%; padding-top: 5px; padding-bottom: 5px;">
-			<img src="$imagesdir/msn3.gif" alt="" border="0" style="vertical-align: middle;" />
+			<img src="$imagesdir/msn.gif" alt="" border="0" style="vertical-align: middle;" />
 			<a href="#" onclick="window.open('$scripturl?action=setmsn;msnname=$user','','height=80,width=340,menubar=no,toolbar=no,scrollbars=no'); return false">$profile_txt{'823'} ${$uid.$user}{'realname'}</a>
 			</div>~;
 	}
@@ -2267,7 +2308,7 @@ sub ViewProfile {
 			</div>
 			<div style="float: left; width: 70%; padding-top: 5px; padding-bottom: 5px;">
 			<img src="$imagesdir/facebook.gif" alt="" border="0" style="vertical-align: middle;" />
-			<a href="http://www.facebook.com/profile.php?id=${$uid.$user}{'facebook'}" target="_blank">$profile_txt{'573'} ${$uid.$user}{'realname'}</a>
+			<a href="http://www.facebook.com/~ . (${$uid.$user}{'facebook'} !~ /\D/ ? "profile.php?id=" : "") . qq~${$uid.$user}{'facebook'}" target="_blank"> ${$uid.$user}{'facebook'}</a>
 			</div>~;
 	}
 	if (!${$uid.$user}{'hidemail'} || $iamadmin || !$allow_hide_email || $view) {
@@ -2354,7 +2395,7 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 	$string_regdate = &stringtotime(${$uid.$user}{'regdate'});
 	$string_curdate = $date;
 
-	if ($string_regdate < $forumstart) { $string_regdate = $forumstart }
+	#if ($string_regdate < $forumstart) { $string_regdate = $forumstart }
 	if ($string_curdate < $forumstart) { $string_curdate = $forumstart }
 
 	$member_for_days = int(($string_curdate - $string_regdate) / 86400);
@@ -2362,6 +2403,9 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 	if ($member_for_days < 1) { $tmpmember_for_days = 1; }
 	else { $tmpmember_for_days = $member_for_days; }
 	$post_per_day = sprintf("%.2f", ($post_count / $tmpmember_for_days));
+	$member_for_days = &NumberFormat($member_for_days);
+	$post_per_day = &NumberFormat($post_per_day);
+	$post_count = &NumberFormat($post_count);
 
 	# End statistics.
 	if (${$uid.$user}{'usertext'}) {
@@ -2414,7 +2458,7 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 			<b>$profile_txt{'21'}: </b>
 			</div>
 			<div style="float: left; width: 70%; padding-top: 5px; padding-bottom: 5px;">
-			<b>${$uid.$user}{'postcount'}<br />$post_per_day</b> $profile_txt{'893'}
+			<b>$post_count<br />$post_per_day</b> $profile_txt{'893'}
 			</div>
 			<div style="float: left; clear: left; width: 30%; padding-top: 5px; padding-bottom: 5px;">
 			<b>$profile_txt{'233'}: </b>
@@ -2659,7 +2703,7 @@ sub usersrecentposts {
 			}
 		} elsif ($numfound) {
 			$recentfound += $recentthreadfound{$thread} if exists $recentthreadfound{$thread};
-			last if $recentfound >= $display;
+			last if $recentfound >= $display && $data[$#data] > ${$recent{$thread}}[1];
 			next;
 		}
 
@@ -2680,10 +2724,9 @@ sub usersrecentposts {
 						($msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $message, $mns) = split(/\|/, $messages[$c]);
 
 						if ($curuser eq $musername) {
-							my @i = @data;
-							push(@i, $mdate);
+							my @i = (@data, $mdate);
 							@data = sort { $b <=> $a } @i;
-							if (pop(@data) != $mdate) {
+							if (pop(@data) < $mdate) {
 								chomp $mns;
 								$data{$mdate} = [$curboard, $tnum, $c, $tname, $msub, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $message, $mns, $tstate];
 								if (!$usercheck) {
@@ -2694,7 +2737,6 @@ sub usersrecentposts {
 									$recentthreadfound{$tnum}++;
 									$recentfound++ if $thread == $tnum;
 								}
-								last recentcheck if $display == $recentfound;
 								if (${$recent{$tnum}}[1] < $mdate) {
 									$save_recent = 1;
 									${$recent{$tnum}}[1] = $mdate;
@@ -2819,7 +2861,7 @@ sub usersrecentposts {
 		<td colspan="2">
 			<table border="0" width="100%" class="catbg">
 				<tr>
-					<td align="left">$maintxt{'109'} $tname | $maintxt{'197'} $mname</td>
+					<td align="left">$maintxt{'109'} $tname | $maintxt{'197'} ${$uid.$curuser}{'realname'}</td>
 					<td align="right">&nbsp;~;
 
 		if ($tstate != 1) {

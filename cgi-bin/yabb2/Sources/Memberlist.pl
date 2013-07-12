@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$memberlistplver = 'YaBB 2.4 $Revision: 1.23.2.1 $';
+$memberlistplver = 'YaBB 2.5 AE $Revision: 1.24 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if ($iamguest && $ML_Allowed) { &fatal_error('no_access'); }
@@ -25,6 +25,8 @@ if ($ML_Allowed  == 3 && !$iamadmin && !$iamgmod) { &fatal_error('no_access'); }
 
 $MembersPerPage = $TopAmmount;
 $maxbar = 100;
+$dr_warning = '';
+$forumstart = $forumstart ? &stringtotime($forumstart) : "1104537600";
 
 
 sub Ml {
@@ -218,7 +220,7 @@ sub MLDate {
 sub showRows {
 	my ($user) = $_[0];
 	my ($wwwshow);
-	if ($user ne "") {
+	if ($user ne '') {
 		&LoadUser($user);
 		if (${$uid.$user}{'realname'} eq "") { ${$uid.$user}{'realname'} = $user; }
 		if (${$uid.$user}{'weburl'}) { $wwwshow = qq~<a href="${$uid.$user}{'weburl'}" target="_blank"><img src="$imagesdir/www.gif" border="0" alt="${$uid.$user}{'webtitle'}" title="${$uid.$user}{'webtitle'}" /></a>~; }
@@ -228,21 +230,20 @@ sub showRows {
 		$barwidth = ($barwidth + 0.5);
 		$barwidth = int($barwidth);
 		if ($barwidth > $maxbar) { $barwidth = $maxbar }
-		if ($barchart < 1)       { $Bar      = ""; }
-		else {
-			$Bar = qq~<img src="$imagesdir/bar.gif" width="$barwidth" height="10" alt="" border="0" />~;
-		}
+		if ($barchart < 1) { $Bar = ''; }
+		else { $Bar = qq~<img src="$imagesdir/bar.gif" width="$barwidth" height="10" alt="" border="0" />~; }
 		if ($Bar eq "") { $Bar = "&nbsp;"; }
 		my $additional_tds = $extendedprofiles ? &ext_memberlist_tds($user) : '';
 
 		$dr_regdate = '';
-		if (${$uid.$user}{'regtime'}) {
-			#my $curtimeformat = ${$uid.$username}{'timeformat'};
-			#${$uid.$username}{'timeselect'} = 1;
+		if(${$uid.$user}{'regtime'}) {
 			$dr_regdate = &timeformat(${$uid.$user}{'regtime'});
-			#${$uid.$username}{'timeselect'} = $curtimeformat;
+			$dr_regdate =~ s~(.*)(, 1?[0-9]):[0-9][0-9].*~$1~;
+			if($iamadmin && ${$uid.$user}{'regtime'} < $forumstart) {
+				$dr_regdate = qq~<span style="color: #AA0000;">$dr_regdate *</span>~;
+				$dr_warning = qq~$ml_txt{'dr_warning'} <a href="$boardurl/AdminIndex.$yyaext?action=newsettings;page=main">$ml_txt{'dr_warnurl'}</a>~;
+			}
 		}
-		$dr_regdate =~ s~(.*)(, 1?[0-9]):[0-9][0-9].*~$1~;
 
 		$yymain .= qq~
 		<tr>
@@ -250,23 +251,23 @@ sub showRows {
 		~;
 		if (${$uid.$user}{'hidemail'} && !$iamadmin && $allow_hide_email == 1) {
 			$yymain .= qq~
-			<td align="center" class="windowbg2"><img src="$imagesdir/lockmail.gif" alt="Hidden Email" /></td>
+			<td align="center" class="windowbg2"><img src="$imagesdir/lockmail.gif" alt="$ml_txt{'308'}" title="$ml_txt{'308'}" /></td>
 		~;
 		} else {
 			if (!$iamguest){
 				$yymain .= qq~
-				<td align="center" class="windowbg2">~ . &enc_eMail(qq~<img src="$imagesdir/email.gif" border="0" alt="$img_txt{'69'}" title="$img_txt{'69'}" />~,${$uid.$user}{'email'},'','') . qq~</td>
+				<td align="center" class="windowbg2">~ . &enc_eMail(qq~<img src="$imagesdir/email.gif" border="0" alt="$img_txt{'69'}" title="~ . ($iamadmin ? ${$uid.$user}{'email'} : $img_txt{'69'}) . qq~" />~,${$uid.$user}{'email'},'','') . qq~</td>
 			~;
 			} else {
 				$yymain .= qq~
-				<td align="center" class="windowbg2"><img src="$imagesdir/lockmail.gif" alt="Hidden Email" /></td>
+				<td align="center" class="windowbg2"><img src="$imagesdir/lockmail.gif" alt="$ml_txt{'308'}" title="$ml_txt{'308'}" /></td>
 			~;
 			}
 		}
 		$yymain .= qq~
 		<td align="center" class="windowbg2">$wwwshow</td>
 		<td class="windowbg">$memberinfo{$user}&nbsp;</td>
-		<td class="windowbg2" width="5%" align="center">${$uid.$user}{'postcount'}&nbsp;</td>
+		<td class="windowbg2" width="5%" align="center">~ . &NumberFormat(${$uid.$user}{'postcount'}) . qq~&nbsp;</td>
 		<td class="windowbg" width="18%">$Bar</td>
 		<td class="windowbg">$dr_regdate &nbsp;</td>
 		$additional_tds
@@ -430,7 +431,7 @@ sub buildIndex {
 		
 		$FindForm .= qq~
 			<form action="$scripturl?action=ml;sort=memsearch" method="post" id="form1" name="form1" enctype="application/x-www-form-urlencoded" style="display: inline;">
-			<label for="member">$ml_txt{'801'}</label>: <input type="text" name="member" id="member" style="font-size: 11px; width: 100px;" />
+			<input type="text" name="member" id="member" value="$ml_txt{'801'}" style="font-size: 11px; width: 180px;" onfocus="txtInFields(this, '$ml_txt{'801'}');" onblur="txtInFields(this, '$ml_txt{'801'}')" />
 			<input name="submit" type="submit" class="button" style="font-size: 10px;" value="$ml_txt{'2'}" />
 			</form>
 		~;
@@ -498,6 +499,7 @@ sub buildIndex {
 		<tr>
 		<td class="catbg" colspan="$headercount" width="100%" align="left" valign="middle">
 		<div style="float: left; width: 50%; text-align: left;">$pageindex2</div>
+		<div style="float: left; width: 49%; color: #AA0000; font-weight: normal; vertical-align: middle; text-align: right;">$dr_warning</div> 
 		$pageindexjs
 		</td>
 		</tr>

@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$membergroupsplver = 'YaBB 2.4 $Revision: 1.17.2.2 $';
+$membergroupsplver = 'YaBB 2.5 AE $Revision: 1.18 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub EditMemberGroups {
@@ -338,6 +338,7 @@ sub editAddGroup {
 	elsif ($starpic eq "stargold.gif")   { $stars6 = "selected=\"selected\"" }
 	elsif ($starpic eq "")               { $stars1 = "selected=\"selected\"" }
 	else { $stars7 = "selected=\"selected\""; $pick = $starpic; $otherdisable = ""; }
+	my $starurl = ($starpic !~ m~http://~ ? "$imagesdir/" : "") . ($starpic ? $starpic : "blank.gif");
 
 	$color =~ s/\#//g;
 
@@ -371,15 +372,15 @@ sub editAddGroup {
 		</td>
 	</tr>
 	<tr valign="middle">
-		<td class="windowbg" width="40%">$amgtxt{'51'}:</td>
-		<td class="windowbg2" width="60%"><input type="text" name="title" value="$title" /></td>
+		<td class="windowbg" width="40%"><label for="title">$amgtxt{'51'}:</label></td>
+		<td class="windowbg2" width="60%"><input type="text" name="title" id="title" value="$title" /></td>
 	</tr><tr>
-		<td class="windowbg">$amgtxt{'05'}:</td>
-		<td class="windowbg2"><input type="text" name="numstars" size="2" value="$stars" /></td>
+		<td class="windowbg"><label for="numstars">$amgtxt{'05'}</label></td>
+		<td class="windowbg2"><input type="text" name="numstars" id="numstars" size="2" value="$stars" /></td>
 	</tr><tr>
-		<td class="windowbg">$amgtxt{'38'}:</td>
+		<td class="windowbg"><label for="starsadmin">$amgtxt{'38'}:</label></td>
 		<td class="windowbg2">
-			<select name="starsadmin" onchange="stars(this.value)">
+			<select name="starsadmin" id="starsadmin" onchange="stars(this.value); showimage();">
 			<option value="staradmin.gif" $stars1>$amgtxt{'20'}</option>
 			<option value="stargmod.gif" $stars2>$amgtxt{'21'}</option>
 			<option value="starmod.gif" $stars3>$amgtxt{'22'}</option>
@@ -389,10 +390,12 @@ sub editAddGroup {
 			<option value="other" $stars7>$amgtxt{'26'}</option>
 			</select>
 			&nbsp;
-			<b>$amgtxt{'26'}</b> <input type="text" name="otherstar" id="otherstar" value="$pick"$otherdisable />
+			<label for="otherstar"><b>$amgtxt{'26'}</b></label> <input type="text" name="otherstar" id="otherstar" onchange="showimage();" value="$pick"$otherdisable />
+			&nbsp;
+			<img src="$starurl" name="starpic" border="0" alt="" />
 		</td>
 	</tr><tr>
-		<td class="windowbg">$amgtxt{'08'}:</td>
+		<td class="windowbg"><label for="color">$amgtxt{'08'}:</label></td>
 		<td class="windowbg2" >
 			<select name="color" id="color" onchange="viscolor(this.options[this.selectedIndex].value);">
 			<option value=""></option>
@@ -421,7 +424,7 @@ sub editAddGroup {
 			<option value="4682B4">$amgtxt{'81'}</option>
 			<option value="9ACD32">$amgtxt{'82'}</option>
 			</select> &nbsp;
-			<span id="grpcolor"~ . ($color ne '' ? qq* style="color: #$color;"* : '') . qq~><b>$amgtxt{'08'}</b></span>
+			<span id="grpcolor"~ . ($color ne '' ? qq* style="color: #$color;"* : '') . qq~><label for="color2"><b>$amgtxt{'08'}</b></label></span>
 			#<input type="text" name="color2" id="color2" size="6" value="$color" maxlength="6" onkeyup="viscolor(this.value);" /> &nbsp;
 			<img src="$imagesdir/palette1.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=palette;task=templ', '', 'height=308,width=302,menubar=no,toolbar=no,scrollbars=no')" align="top" alt="" border="0" /> 
 		</td>
@@ -433,25 +436,25 @@ sub editAddGroup {
 	unless (exists $Group{$INFO{'group'}}) {
 		$yymain .= qq~
 	<tr>
-		<td class="windowbg">$amgtxt{'39a'}</td>
+		<td class="windowbg"><label for="postindepend">$amgtxt{'39a'}</label></td>
 		<td class="windowbg2">
-			<input type="radio" name="postdepend" value="No" $post2 class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="depend(this.value)" /><br />
-			<b>$amgtxt{'42'}?</b>
-			<input type="checkbox" name="viewpublic" id="viewpublic" value="1"$pc$pd style="vertical-align: middle;" /> <br />$amgtxt{'43'}
+			<input type="radio" name="postdepend" id="postindepend" value="No" $post2 class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="depend(this.value)" /><br />
+			<label for="viewpublic"><b>$amgtxt{'42'}?</b>
+			<input type="checkbox" name="viewpublic" id="viewpublic" value="1"$pc$pd style="vertical-align: middle;" /> <br />$amgtxt{'43'}</label>
 			<input type="hidden" name="noposts" id="noposts" value="$noposts" />
 		</td>
 	</tr><tr>
-		<td class="windowbg">$amgtxt{'39'}</td>
+		<td class="windowbg"><label for="postdepend">$amgtxt{'39'}</label></td>
 		<td class="windowbg2">
-			<input type="radio" name="postdepend" value="Yes" $post1 class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="depend(this.value)" /><br />
-			<b>$amgtxt{'04'}:</b> <input type="text" name="posts" id="posts" size="5" value="$posts"$pt style="vertical-align: middle;" />
+			<input type="radio" name="postdepend" id="postdepend" value="Yes" $post1 class="windowbg2" style="border: 0px; vertical-align: middle;" onclick="depend(this.value)" /><br />
+			<label for="posts"><b>$amgtxt{'04'}</b></label> <input type="text" name="posts" id="posts" size="5" value="$posts"$pt style="vertical-align: middle;" />
 		</td>
 	</tr>~;
 
 	} else {
 		$yymain .= qq~
 	<tr>
-		<td class="windowbg"><b>$amgtxt{'42'}</b> <br /><b>$amgtxt{'43'}</b></td>
+		<td class="windowbg"><label for="viewpublic"><b>$amgtxt{'42'}</b> <br /><b>$amgtxt{'43'}</b></label></td>
 		<td class="windowbg2">
 			<input type="checkbox" name="viewpublic" id="viewpublic" value="1"$pc$pd style="vertical-align: middle;" />
 		</td>
@@ -462,9 +465,9 @@ sub editAddGroup {
 		if ($choosable || (!$choosable && $action ne 'editgroup1' && !$INFO{'group'})) {
 			$yymain .= qq~
 	<tr>
-		<td class="windowbg">$amgtxt{'83'}</td>
+		<td class="windowbg"><label for="additional">$amgtxt{'83'}</label></td>
 		<td class="windowbg2">
-			<input type="checkbox" name="additional" id="additional" value="1"$admg style="vertical-align: middle;" /> <br />$amgtxt{'84'}
+			<input type="checkbox" name="additional" id="additional" value="1"$admg style="vertical-align: middle;" /> <br /><label for="additional">$amgtxt{'84'}</label>
 		</td>
 	</tr>~;
 		}
@@ -484,18 +487,18 @@ sub editAddGroup {
 		</td>
 	</tr>
 	<tr valign="middle">
-		<td align="center" class="catbg" width="20%"><span class="small">$amgtxt{'45'} $amgtxt{'46'}</span></td>
-		<td align="center" class="catbg" width="20%"><span class="small">$amgtxt{'45'} $amgtxt{'47'}</span></td>
-		<td align="center" class="catbg" width="21%"><span class="small">$amgtxt{'45'} $amgtxt{'48'}</span></td>
-		<td align="center" class="catbg" width="19%"><span class="small">$amgtxt{'45'} $amgtxt{'49'}</span></td>
-		<td align="center" class="catbg" width="20%"><span class="small">$amgtxt{'45'} $amgtxt{'50'}</span></td>
+		<td align="center" class="catbg" width="20%"><label for="view"><span class="small">$amgtxt{'45'} $amgtxt{'46'}</span></label></td>
+		<td align="center" class="catbg" width="20%"><label for="topics"><span class="small">$amgtxt{'45'} $amgtxt{'47'}</span></label></td>
+		<td align="center" class="catbg" width="21%"><label for="reply"><span class="small">$amgtxt{'45'} $amgtxt{'48'}</span></label></td>
+		<td align="center" class="catbg" width="19%"><label for="polls"><span class="small">$amgtxt{'45'} $amgtxt{'49'}</span></label></td>
+		<td align="center" class="catbg" width="20%"><label for="attach"><span class="small">$amgtxt{'45'} $amgtxt{'50'}</span></label></td>
 	</tr>
 	<tr valign="middle">
-		<td align="center" class="windowbg2" width="20%"><span class="small"><input type="checkbox" name="view" value="1"$vc /></span></td>
-		<td align="center" class="windowbg2" width="20%"><span class="small"><input type="checkbox" name="topics" value="1"$tc /></span></td>
-		<td align="center" class="windowbg2" width="21%"><span class="small"><input type="checkbox" name="reply" value="1"$rc /></span></td>
-		<td align="center" class="windowbg2" width="19%"><span class="small"><input type="checkbox" name="polls" value="1"$poc /></span></td>
-		<td align="center" class="windowbg2" width="20%"><span class="small"><input type="checkbox" name="attach" value="1"$ac /></span></td>
+		<td align="center" class="windowbg2" width="20%"><span class="small"><input type="checkbox" name="view" id="view" value="1"$vc /></span></td>
+		<td align="center" class="windowbg2" width="20%"><span class="small"><input type="checkbox" name="topics" id="topics" value="1"$tc /></span></td>
+		<td align="center" class="windowbg2" width="21%"><span class="small"><input type="checkbox" name="reply" id="reply" value="1"$rc /></span></td>
+		<td align="center" class="windowbg2" width="19%"><span class="small"><input type="checkbox" name="polls" id="polls" value="1"$poc /></span></td>
+		<td align="center" class="windowbg2" width="20%"><span class="small"><input type="checkbox" name="attach" id="attach" value="1"$ac /></span></td>
 	</tr>~;
 	}
 
@@ -536,6 +539,17 @@ function previewColor(color) {
 function stars(value) {
 	if (value == "other") document.getElementById('otherstar').disabled = false;
 	else document.getElementById('otherstar').disabled = true;
+}
+
+function showimage() {
+	selected = document.groups.starsadmin.options[document.groups.starsadmin.selectedIndex].value;
+	otherurl = document.groups.otherstar.value;
+	useimg = (selected != "other") ? "$imagesdir/"+selected : ((otherurl != "") ? otherurl : "$imagesdir/blank.gif");
+	document.images.starpic.src=useimg;
+	if (document.images.starpic.complete == false) {
+		useimg = (selected != "other") ? "$defaultimagesdir/"+selected : ((otherurl != "") ? otherurl : "$defaultimagesdir/blank.gif");
+		document.images.starpic.src=useimg;
+	}
 }
 
 function depend(value) {

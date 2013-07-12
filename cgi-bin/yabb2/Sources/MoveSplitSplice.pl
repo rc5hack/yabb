@@ -3,24 +3,24 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$movesplitspliceplver = 'YaBB 2.4 $Revision: 1.3 $';
+$movesplitspliceplver = 'YaBB 2.5 AE $Revision: 1.4 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('MoveSplitSplice');
 
 sub Split_Splice {
-	if (!$iammod && !$iamadmin && !$iamgmod) { &fatal_error("split_splice_not_allowed"); }
+	if (!$staff) { &fatal_error("split_splice_not_allowed"); }
 	&Split_Splice_2 if $FORM{'ss_submit'} || $INFO{'ss_submit'};
 
 	$output = qq~<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -181,23 +181,23 @@ sub Split_Splice {
 <input type="hidden" name="formsession" value="$formsession" />
 <table border="0" cellspacing="1" cellpadding="8" class="bordercolor" align="center" width="90%">
 	<tr>
-		<td class="titlebg"><img src="$imagesdir/admin_move_split_splice.gif" alt="$sstxt{'1'}" /> <b>$sstxt{'1'}</b></td>
+		<td class="titlebg"><img src="$defaultimagesdir/admin_move_split_splice.gif" alt="$sstxt{'1'}" /> <b>$sstxt{'1'}</b></td>
 	</tr><tr>
 		<td class="catbg"><b>$sstxt{'2'}:</b></td>
 	</tr><tr>
 		<td class="windowbg"><b>$sstxt{'3'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'14'}<br />
-			<select name="oldposts" size="$size1" multiple="multiple">$postlist</select><br />
-			<span class="small">$sstxt{'14a'}</span>
+			<label for="oldposts">$sstxt{'14'}<br />
+			<select name="oldposts" id="oldposts" size="$size1" multiple="multiple">$postlist</select><br />
+			<span class="small">$sstxt{'14a'}</span></label>
 		</td>
 	</tr><tr>
 		<td class="windowbg"><b>$sstxt{'4'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'15'}<br />
-			<select name="leave">$leavelist</select>
+			<label for="leave">$sstxt{'15'}</label><br />
+			<select name="leave" id="leave">$leavelist</select>
 		</td>
 	</tr><tr>
 		<td class="catbg"><b>$sstxt{'5'}:</b></td>
@@ -205,22 +205,22 @@ sub Split_Splice {
 		<td class="windowbg"><b>$sstxt{'6'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'16'}<br />
-			<select name="newcat" onchange="document.split_splice.submit();">$catlist</select>
+			<label for="newcat">$sstxt{'16'}</label><br />
+			<select name="newcat" id="newcat" onchange="document.split_splice.submit();">$catlist</select>
 		</td>
 	</tr><tr>
 		<td class="windowbg"><b>$sstxt{'7'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'17'}<br />
-			<select name="newboard" onchange="document.split_splice.submit();">$boardlist</select>
+			<label for="newboard">$sstxt{'17'}</label><br />
+			<select name="newboard" id="newboard" onchange="document.split_splice.submit();">$boardlist</select>
 		</td>
 	</tr><tr>
 		<td class="windowbg"><b>$sstxt{'8'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'18'}<br />
-			<select name="newthread" onchange="document.split_splice.submit();">$threadlist</select>
+			<label for="newthread">$sstxt{'18'}</label><br />
+			<select name="newthread" id="newthread" onchange="document.split_splice.submit();">$threadlist</select>
 		</td>
 	</tr>~;
 
@@ -229,8 +229,8 @@ sub Split_Splice {
 		<td class="windowbg"><b>$sstxt{'9'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'20'}<br />
-			<input type="text" name="newthread_subject" size="50" value="$FORM{'newthread_subject'}" />
+			<label for="newthread_subject">$sstxt{'20'}</label><br />
+			<input type="text" name="newthread_subject" id="newthread_subject" size="50" value="$FORM{'newthread_subject'}" />
 			<input type="hidden" name="position" value="$FORM{'position'}" />
 			<input type="hidden" name="old_position_thread" value="$FORM{'old_position_thread'}" />
 		</td>
@@ -241,8 +241,8 @@ sub Split_Splice {
 		<td class="windowbg"><b>$sstxt{'10'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			$sstxt{'19'}<br />
-			<select name="position">$positionlist</select>
+			<label for="position">$sstxt{'19'}</label><br />
+			<select name="position" id="position">$positionlist</select>
 			<input type="hidden" name="newthread_subject" value="$FORM{'newthread_subject'}" />
 			<input type="hidden" name="old_position_thread" value="$newthread" />
 		</td>
@@ -253,7 +253,7 @@ sub Split_Splice {
 		<td class="windowbg"><b>$sstxt{'4'}</b></td>
 	</tr><tr>
 		<td class="windowbg2">
-			<input type="checkbox" name="newinfo" value="1"~ . ($FORM{'newinfo'} ? ' checked="checked"' : '') . qq~ /> $sstxt{'15a'}
+			<input type="checkbox" name="newinfo" id="newinfo" value="1"~ . ($FORM{'newinfo'} ? ' checked="checked"' : '') . qq~ /> <label for="newinfo">$sstxt{'15a'}</label>
 		</td>
 	</tr><tr>
 		<td class="catbg" align="center"><input type="submit" name="ss_submit" value="$sstxt{'24'}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" value="$sstxt{'25'}" /></td>
@@ -272,7 +272,7 @@ sub Split_Splice {
 }
 
 sub Split_Splice_2 {
-	if (!$iammod && !$iamadmin && !$iamgmod && $INFO{'newboard'} ne $binboard) { &fatal_error("split_splice_not_allowed"); }
+	if (!$staff && $INFO{'newboard'} ne $binboard) { &fatal_error("split_splice_not_allowed"); }
 
 	my $curboard       = $INFO{'board'};
 	my $curthreadid    = $INFO{'thread'};
@@ -310,6 +310,12 @@ sub Split_Splice_2 {
 	if ((split(/\, /, $movingposts, 2))[0] eq "all") { @postnum = (0 .. $#curthread); }
 	else { @postnum = sort {$a <=> $b} split(/\, /, $movingposts); } # sort numerically ascending because may be reversed!
 
+	# Check to see if current thread was the latest post for the board and if the last post was selected to change
+	&BoardTotals("load", $curboard);
+	if(${$curthreadid}{'lastpostdate'} == ${$uid.$curboard}{'lastposttime'} && $leavemess == 2 && $postnum[$#postnum] == $#curthread) {
+		$newest_post = 1;
+	}
+
 	# Move selected posts to a brand new thread
 	if ($newthreadid eq "new") {
 		# Find a valid random ID for new thread.
@@ -320,7 +326,7 @@ sub Split_Splice_2 {
 			if ($newthreadsub || $leavemess == 1) { # insert new subject name || add 'no_postcount' into copies
 				my @x = split(/\|/, $curthread[$_]);
 				if ($newthreadsub) { $x[0] = $_ == $postnum[0] ? $newthreadsub : qq~$sstxt{'21'} $newthreadsub~; }
-				if ($leavemess == 1) { $x[6] = 'no_postcount'; }
+				if ($leavemess == 1) { $x[5] = 'no_postcount'; }
 				push(@utdnewthread, join('|', @x));
 			} else {
 				push(@utdnewthread, $curthread[$_]);
@@ -343,7 +349,7 @@ sub Split_Splice_2 {
 			foreach (@postnum) {
 				if ($leavemess == 1) { # add 'no_postcount' into copies
 					my @x = split(/\|/, $curthread[$_]);
-					$x[6] = 'no_postcount';
+					$x[5] = 'no_postcount';
 					push(@utdnewthread, join('|', @x));
 				} else {
 					push(@utdnewthread, $curthread[$_]);
@@ -357,7 +363,7 @@ sub Split_Splice_2 {
 				foreach (@postnum) {
 					if ($leavemess == 1) { # add 'no_postcount' into copies
 						my @x = split(/\|/, $curthread[$_]);
-						$x[6] = 'no_postcount';
+						$x[5] = 'no_postcount';
 						push(@utdnewthread, join('|', @x));
 					} else {
 						push(@utdnewthread, $curthread[$_]);
@@ -382,10 +388,11 @@ sub Split_Splice_2 {
 				$tmpsub = qq~[m by=$hidename destboard=$newboard dest=$newthreadid]: '$tmpsub'~;
 			}
 			&FromChars($tmpmessage);
-			$utdcurthread[0] = qq~$tmpsub|${$uid.$username}{'realname'}|${$uid.$username}{'email'}|$date|$username|exclamation|no_postcount|$user_ip|$tmpmessage||\n~;
+			$utdcurthread[0] = qq~$tmpsub|${$uid.$username}{'realname'}|${$uid.$username}{'email'}|$date|$username|no_postcount||$user_ip|$tmpmessage||||\n~;
 
 			eval { require "$datadir/movedthreads.cgi" };
 			$moved_file{$curthreadid} = $newthreadid;
+			delete $moved_file{$newthreadid};
 			&save_moved_file;
 			$leavemess = 0;
 		} else {
@@ -400,7 +407,7 @@ sub Split_Splice_2 {
 				if ($leavemess == 0 && $i == $postnum[$#postnum]){
 					my $tmpsub;
 					($tmpsub, undef) = split(/\|/, $curthread[$i], 2);
-					push (@utdcurthread, qq~$tmpsub|${$uid.$username}{'realname'}|${$uid.$username}{'email'}|$date|$username|exclamation|no_postcount|$user_ip|[split] [link=$scripturl?num=$newthreadid/$linkcount#$linkcount][splithere][/link][splithere_end]||\n~);
+					push (@utdcurthread, qq~$tmpsub|${$uid.$username}{'realname'}|${$uid.$username}{'email'}|$date|$username|no_postcount||$user_ip|[split] [link=$scripturl?num=$newthreadid/$linkcount#$linkcount][splithere][/link][splithere_end]||||\n~);
 				}
 			} else {
 				push (@utdcurthread, $curthread[$i]);
@@ -410,15 +417,20 @@ sub Split_Splice_2 {
 	} else { @utdcurthread = @curthread; }
 
 	if ($forcenewinfo) {
-		my ($boardtitle,$tmpsub,$tmpicon,$tmpmessage);
+		my ($boardtitle,$tmpsub,$tmpmessage);
 		($boardtitle, undef) = split(/\|/, $board{$curboard}, 2);
 		$tmpmessage = ($#postnum == $#utdnewthread ? "[b][movedhere]" : "[b][postsmovedhere1] " . @postnum . " [postsmovedhere2]") . " [i]$boardtitle\[/i] [move by] [i]${$uid.$username}{'realname'}\[/i].[/b]";
 		&FromChars($tmpmessage);
-		($tmpsub, undef, undef, undef, undef, $tmpicon, undef) = split(/\|/, $utdnewthread[0], 7);
-		splice(@utdnewthread, ($linkcount + @postnum), 0,qq~$sstxt{'21'} $tmpsub|${$uid.$username}{'realname'}|${$uid.$username}{'email'}|$date|$username|$tmpicon|no_postcount|$user_ip|$tmpmessage||||\n~);
+		($tmpsub, undef, undef, undef, undef, undef, undef) = split(/\|/, $utdnewthread[0], 7);
+		splice(@utdnewthread, ($linkcount + @postnum), 0,qq~$sstxt{'21'} $tmpsub|${$uid.$username}{'realname'}|${$uid.$username}{'email'}|$date|$username|no_postcount||$user_ip|$tmpmessage||||\n~);
 	}
 
 	if (@utdcurthread) {
+		for ($i = 0; $i < @utdcurthread; $i++) { # sort post numbers
+			my @x = split(/\|/, $utdcurthread[$i]);
+			$x[6] = $i;
+			$utdcurthread[$i] = join('|', @x);
+		}
 		# Update current thread
 		fopen(FILE, ">$datadir/$curthreadid.txt");
 		print FILE @utdcurthread;
@@ -431,6 +443,11 @@ sub Split_Splice_2 {
 		$INFO{'moveit'} = $moveit;
 	}
 
+	for ($i = 0; $i < @utdnewthread; $i++) { # sort post numbers
+		my @x = split(/\|/, $utdnewthread[$i]);
+		$x[6] = $i;
+		$utdnewthread[$i] = join('|', @x);
+	}
 	# Update new thread
 	fopen(FILE, ">$datadir/$newthreadid.txt");
 	print FILE @utdnewthread;
@@ -440,7 +457,7 @@ sub Split_Splice_2 {
 	my ($reply,$ms,$mn,$md,$mu,$mnp,$mi,%mu,%curthreadusersdate,%curthreaduserscount,%newthreadusersdate,%newthreaduserscount,%BoardTotals);
 	$reply = 0;
 	foreach (@utdcurthread) { # $subject|$name|$email|$date|$username|$icon|0|$user_ip|$message|$ns|||$fixfile
-		($ms, $mn, undef, $md, $mu, undef, $mnp, $mi, undef) = split(/\|/, $_, 9);
+		($ms, $mn, undef, $md, $mu, $mnp, undef, $mi, undef) = split(/\|/, $_, 9);
 		$BoardTotals{$curthreadid} = [$md,$mu,$reply,$ms,$mn,$mi] if ${$BoardTotals{$curthreadid}}[0] <= $md;
 		$reply++;
 		next if $mnp eq 'no_postcount';
@@ -450,7 +467,7 @@ sub Split_Splice_2 {
 	}
 	$reply = 0;
 	foreach (@utdnewthread) {
-		($ms, $mn, undef, $md, $mu, undef, $mnp, $mi, undef) = split(/\|/, $_, 9);
+		($ms, $mn, undef, $md, $mu, $mnp, undef, $mi, undef) = split(/\|/, $_, 9);
 		$BoardTotals{$newthreadid} = [$md,$mu,$reply,$ms,$mn,$mi] if ${$BoardTotals{$newthreadid}}[0] <= $md;
 		$reply++;
 		next if $mnp eq 'no_postcount';
@@ -500,7 +517,6 @@ sub Split_Splice_2 {
 
 	# Update current message index
 	fopen(BOARD, "+<$boardsdir/$curboard.txt", 1);
-	seek BOARD, 0, 0;
 	my @curmessindex = <BOARD>;
 	truncate BOARD, 0;
 	seek BOARD, 0, 0;
@@ -511,7 +527,7 @@ sub Split_Splice_2 {
 		$boardlog = 0 if $mdate > $yyuserlog{$curboard}; # For: Mark boards as read
 		if ($mnum == $curthreadid) {
 			chomp $mstate;
-			if ($#postnum == $#curthread && $leavemess != 1) {
+			if ($#postnum == $#curthread && $leavemess != 1) { # thread was moved
 				my $hidename = &cloak($username);
 				if ($curboard eq $newboard) {
 					$msub = qq~[m by=$hidename dest=$newthreadid]: '$msub'~;
@@ -523,10 +539,10 @@ sub Split_Splice_2 {
 				$mreplies = 0;
 				$musername = $username;
 				# alter message icon to 'exclamation' to match status 'lm'
-				$micon = 'exclamation';
-				# thread status - (l)ocked,  (m)oved, (h)idden and (a)nnoumcement
+				$micon = 'exclamation' if $micon ne 'no_postcount';
+				# thread status - (a)nnoumcement, (h)idden, (l)ocked, (m)oved and (s)ticky
 				$old_mstate = $mstate;
-				if ($mstate =~ /a/i) { $mstate .= "h"; }
+				if ($curboard eq $annboard && $mstate !~ /a/i) { $mstate .= "a"; }
 				if ($mstate !~ /l/i) { $mstate .= "l"; }
 				if ($mstate !~ /m/i) { $mstate .= "m"; }
 				${$curthreadid}{'threadstatus'} = $mstate;
@@ -542,7 +558,7 @@ sub Split_Splice_2 {
 			if ($FORM{'position'} eq 'begin') {
 				($msub, $mname, $memail, undef, $musername, $micon, undef) = split(/\|/, $utdnewthread[0], 7);
 			}
-			$curmessindex[$i] = qq~$mnum|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$mstate\n~;
+			$yyThreadLine = $curmessindex[$i] = qq~$mnum|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$mstate\n~;
 			${$BoardTotals{$mnum}}[6] = $mstate;
 			if (($enable_notifications == 1 || $enable_notifications == 3) && (-e "$boardsdir/$curboard.mail" || -e "$datadir/$newthreadid.mail")) {
 				require "$sourcedir/Post.pl";
@@ -556,7 +572,8 @@ sub Split_Splice_2 {
 		my ($msub,$mname,$memail,$musername,$micon);
 		($msub, $mname, $memail, undef, $musername, $micon, undef) = split(/\|/, $utdnewthread[0], 7);
 		if ($old_mstate !~ /0/i) { $old_mstate .= "0"; }
-		unshift (@curmessindex, qq~$newthreadid|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$old_mstate\n~);
+		$yyThreadLine = qq~$newthreadid|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$old_mstate\n~;
+		unshift (@curmessindex, $yyThreadLine);
 		${$BoardTotals{$newthreadid}}[6] = $old_mstate;
 		if (($enable_notifications == 1 || $enable_notifications == 3) && -e "$boardsdir/$newboard.mail") {
 			require "$sourcedir/Post.pl";
@@ -589,9 +606,14 @@ sub Split_Splice_2 {
 
 			my ($msub,$mname,$memail,$musername,$micon);
 			($msub, $mname, $memail, undef, $musername, $micon, undef) = split(/\|/, $utdnewthread[0], 7);
-			if ($old_mstate !~ /a/i && $newboard eq $annboard) { $old_mstate .= "a"; }
+			if ($old_mstate =~ /a/i) { 
+				if ($newboard ne $annboard) { $old_mstate =~ s/a//gi; }
+			} elsif ($newboard eq $annboard) {
+				$old_mstate .= "a";
+			}
 			if ($old_mstate !~ /0/i) { $old_mstate .= "0"; }
-			unshift (@newmessindex, qq~$newthreadid|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$old_mstate\n~);
+			$yyThreadLine = qq~$newthreadid|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$old_mstate\n~;
+			unshift (@newmessindex, $yyThreadLine);
 			${$BoardTotals{$newthreadid}}[6] = $old_mstate;
 			if (($enable_notifications == 1 || $enable_notifications == 3) && -e "$boardsdir/$newboard.mail") {
 				require "$sourcedir/Post.pl";
@@ -609,7 +631,7 @@ sub Split_Splice_2 {
 					if ($FORM{'position'} eq 'begin') {
 						($msub, $mname, $memail, undef, $musername, $micon, undef) = split(/\|/, $utdnewthread[0], 7);
 					}
-					$newmessindex[$i] = qq~$mnum|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$mstate\n~;
+					$yyThreadLine = $newmessindex[$i] = qq~$mnum|$msub|$mname|$memail|${$newthreadid}{'lastpostdate'}|${$newthreadid}{'replies'}|$musername|$micon|$mstate\n~;
 					${$BoardTotals{$mnum}}[6] = $mstate;
 				}
 			}
@@ -631,34 +653,42 @@ sub Split_Splice_2 {
 
 	# update current board totals
 	# BoardTotals- tags => (board threadcount messagecount lastposttime lastposter lastpostid lastreply lastsubject lasticon lasttopicstate)
-	&BoardTotals("load", $curboard);
-	if ($FORM{'newthread'} eq 'new' && $curboard eq $newboard) { ${$uid.$curboard}{'threadcount'}++; }
-	if ($leavemess == 0) {
-		if ($curboard ne $newboard) { ${$uid.$curboard}{'messagecount'} -= $#postnum; }
-		else { ${$uid.$curboard}{'messagecount'} += ($forcenewinfo ? 2 : 1); }
-	} elsif ($leavemess == 1 && $curboard eq $newboard) {
-		${$uid.$curboard}{'messagecount'} += $#postnum + ($forcenewinfo ? 1 : 0);
-	} elsif ($leavemess == 2 && $curboard ne $newboard && @utdcurthread) {
-		${$uid.$curboard}{'messagecount'} -= @postnum;
+	#&BoardTotals("load", $curboard); - Load this at top now to detect if newest board post is being moved - Unilat
+	if (${$BoardTotals{$curthreadid}}[6] =~ /m/) { # Moved-Info thread
+		if ($curboard ne $newboard) {
+			${$uid.$curboard}{'threadcount'}--;
+			${$uid.$curboard}{'messagecount'} -= @postnum;
+		}
+		&BoardSetLastInfo($curboard,\@curmessindex);
+	} else {
+		if ($FORM{'newthread'} eq 'new' && $curboard eq $newboard) { ${$uid.$curboard}{'threadcount'}++; }
+		if ($leavemess == 0) {
+			if ($curboard ne $newboard) { ${$uid.$curboard}{'messagecount'} -= $#postnum; }
+			else { ${$uid.$curboard}{'messagecount'} += ($forcenewinfo ? 2 : 1); }
+		} elsif ($leavemess == 1 && $curboard eq $newboard) {
+			${$uid.$curboard}{'messagecount'} += $#postnum + ($forcenewinfo ? 1 : 0);
+		} elsif ($leavemess == 2 && $curboard ne $newboard && @utdcurthread) {
+			${$uid.$curboard}{'messagecount'} -= @postnum;
+		}
+		if ($newest_post || (((${$uid.$curboard}{'threadcount'} == 1 && @utdcurthread) || ${$BoardTotals{$curthreadid}}[0] >= ${$uid.$curboard}{'lastposttime'}) && ($curboard ne $newboard || ${$BoardTotals{$curthreadid}}[0] >= ${$BoardTotals{$newthreadid}}[0]))) {
+			${$uid.$curboard}{'lastposttime'}   = ${$BoardTotals{$curthreadid}}[0];
+			${$uid.$curboard}{'lastposter'}     = ${$BoardTotals{$curthreadid}}[1] eq 'Guest' ? "Guest-${$BoardTotals{$curthreadid}}[4]" : ${$BoardTotals{$curthreadid}}[1];
+			${$uid.$curboard}{'lastpostid'}     = $curthreadid;
+			${$uid.$curboard}{'lastreply'}      = ${$BoardTotals{$curthreadid}}[2]--;
+			${$uid.$curboard}{'lastsubject'}    = ${$BoardTotals{$curthreadid}}[3];
+			${$uid.$curboard}{'lasticon'}       = ${$BoardTotals{$curthreadid}}[5];
+			${$uid.$curboard}{'lasttopicstate'} = ${$BoardTotals{$curthreadid}}[6];
+		} elsif (${$BoardTotals{$newthreadid}}[0] >= ${$uid.$curboard}{'lastposttime'} && $curboard eq $newboard) {
+			${$uid.$curboard}{'lastposttime'}   = ${$BoardTotals{$newthreadid}}[0];
+			${$uid.$curboard}{'lastposter'}     = ${$BoardTotals{$newthreadid}}[1] eq 'Guest' ? "Guest-${$BoardTotals{$newthreadid}}[4]" : ${$BoardTotals{$newthreadid}}[1];
+			${$uid.$curboard}{'lastpostid'}     = $newthreadid;
+			${$uid.$curboard}{'lastreply'}      = ${$BoardTotals{$newthreadid}}[2]--;
+			${$uid.$curboard}{'lastsubject'}    = ${$BoardTotals{$newthreadid}}[3];
+			${$uid.$curboard}{'lasticon'}       = ${$BoardTotals{$newthreadid}}[5];
+			${$uid.$curboard}{'lasttopicstate'} = ${$BoardTotals{$newthreadid}}[6];
+		}
+		&BoardTotals("update", $curboard);
 	}
-	if (((${$uid.$curboard}{'threadcount'} == 1 && @utdcurthread) || ${$BoardTotals{$curthreadid}}[0] >= ${$uid.$curboard}{'lastposttime'}) && ($curboard ne $newboard || ${$BoardTotals{$curthreadid}}[0] >= ${$BoardTotals{$newthreadid}}[0])) {
-		${$uid.$curboard}{'lastposttime'}   = ${$BoardTotals{$curthreadid}}[0];
-		${$uid.$curboard}{'lastposter'}     = ${$BoardTotals{$curthreadid}}[1] eq 'Guest' ? "Guest-${$BoardTotals{$curthreadid}}[4]" : ${$BoardTotals{$curthreadid}}[1];
-		${$uid.$curboard}{'lastpostid'}     = $curthreadid;
-		${$uid.$curboard}{'lastreply'}      = ${$BoardTotals{$curthreadid}}[2]--;
-		${$uid.$curboard}{'lastsubject'}    = ${$BoardTotals{$curthreadid}}[3];
-		${$uid.$curboard}{'lasticon'}       = ${$BoardTotals{$curthreadid}}[5];
-		${$uid.$curboard}{'lasttopicstate'} = ${$BoardTotals{$curthreadid}}[6];
-	} elsif (${$BoardTotals{$newthreadid}}[0] >= ${$uid.$curboard}{'lastposttime'} && $curboard eq $newboard) {
-		${$uid.$curboard}{'lastposttime'}   = ${$BoardTotals{$newthreadid}}[0];
-		${$uid.$curboard}{'lastposter'}     = ${$BoardTotals{$newthreadid}}[1] eq 'Guest' ? "Guest-${$BoardTotals{$newthreadid}}[4]" : ${$BoardTotals{$newthreadid}}[1];
-		${$uid.$curboard}{'lastpostid'}     = $newthreadid;
-		${$uid.$curboard}{'lastreply'}      = ${$BoardTotals{$newthreadid}}[2]--;
-		${$uid.$curboard}{'lastsubject'}    = ${$BoardTotals{$newthreadid}}[3];
-		${$uid.$curboard}{'lasticon'}       = ${$BoardTotals{$newthreadid}}[5];
-		${$uid.$curboard}{'lasttopicstate'} = ${$BoardTotals{$newthreadid}}[6];
-	}
-	&BoardTotals("update", $curboard);
 
 	# update new board totals if needed
 	if ($curboard ne $newboard) {
@@ -772,13 +802,15 @@ sub Split_Splice_2 {
 	delete $yyuserlog{"$curthreadid--unread"};
 	&dumplog($curthreadid); # Save threads/boards as read
 
+	chomp $yyThreadLine;
+
 	if ($INFO{'moveit'} == 1) {
 		$currentboard = $curboard;
 		return;
 	}
 	if ($INFO{'ss_submit'}) {
 		$currentboard = $newboard;
-		$INFO{'num'} = $newthreadid;
+		$INFO{'num'} = $INFO{'thread'} = $FORM{'threadid'} = $curnum = $newthreadid;
 		&redirectinternal;
 	}
 	if ($debug == 1 or ($debug == 2 && $iamadmin)) {

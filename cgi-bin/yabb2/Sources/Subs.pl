@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$subsplver = 'YaBB 2.4 $Revision: 1.132 $';
+$subsplver = 'YaBB 2.5 AE $Revision: 1.133 $';
 if ($debug) { &LoadLanguage('Debug'); }
 
 use subs 'exit';
@@ -78,16 +78,11 @@ sub getnewid {
 }
 
 sub undupe {
-	@in  = @_;
-	@out = ();
-	foreach $check (@in) {
+	my (@out,$duped,$check);
+	foreach $check (@_) {
 		$duped = 0;
-		foreach $checkout (@out) {
-			if ($checkout eq $check) { $duped = 1; last; }
-		}
-		if ($duped == 0) {
-			push(@out, $check);
-		}
+		foreach (@out) { if ($_ eq $check) { $duped = 1; last; } }
+		if (!$duped) { push(@out, $check); }
 	}
 	return @out;
 }
@@ -194,7 +189,21 @@ sub template {
 
 	$yystyle  = qq~<link rel="stylesheet" href="$forumstylesurl/$usestyle.css" type="text/css" />\n~;
 	$yystyle  =~ s~$usestyle\/~~g;
+	$yystyle  .= qq~<link rel="stylesheet" href="$yyhtml_root/shjs/styles/sh_style.css" type="text/css" />\n~;
 	$yystyle .= $yyinlinestyle; # This is for the Help Center and anywhere else that wants to add inline CSS.
+$yysyntax_js = qq~
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_main.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_cpp.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_css.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_html.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_java.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_javascript.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_pascal.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_perl.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_php.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_sql.js"></script>
+<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/YaBB.js"></script>
+~;
 
 	# add 'back to top' Button on the end of each page
 	$yynavback .= qq~<img src="$imagesdir/tabsep211.png" border="0" alt="" style="vertical-align: middle;" />~ if !$yynavback;
@@ -216,7 +225,7 @@ sub template {
 	}
 
 	$yyboardname = "$mbname";
-	$yyboardlink = qq~<a href="$scripturl" class="nav">$mbname</a>~;
+	$yyboardlink = qq~<a href="$scripturl">$mbname</a>~;
 
 	# static/dynamic clock
 	$yytime = &timeformat($date, 1);
@@ -229,6 +238,13 @@ sub template {
 		$yyjavascript .= qq~\n\nvar OurTime = ~ . ($date + (3600 * $toffs)) . qq~000;\nvar YaBBTime = new Date();\nvar TimeDif = YaBBTime.getTime() - (YaBBTime.getTimezoneOffset() * 60000) - OurTime - 1000; // - 1000 compromise to transmission time~;
 	}
 
+	$yyjavascript .= qq~
+
+	function txtInFields(thefield, defaulttxt) {
+		if (thefield.value == defaulttxt) thefield.value = "";
+		else { if (thefield.value == "") thefield.value = defaulttxt; }
+	}
+	~;
 	if ($output =~ /\{yabb tabmenu\}/) {
 		require "$sourcedir/TabMenu.pl";
 		&mainMenu;
@@ -365,7 +381,7 @@ sub template {
 		<input type="hidden" name="numberreturned" value="$maxsearchdisplay" />
 		<input type="hidden" name="oneperthread" value="1" />
 		<input type="hidden" name="searchboards" value="!all" />
-		<input type="text" name="search" size="16" style="font-size: 11px; vertical-align: middle;" />
+		<input type="text" name="search" size="16" id="search1" value="$img_txt{'182'}" style="font-size: 11px;" onfocus="txtInFields(this, '$img_txt{'182'}');" onblur="txtInFields(this, '$img_txt{'182'}')" />
 		<input type="image" src="$imagesdir/search.gif" style="border: 0; background-color: transparent; margin-right: 5px; vertical-align: middle;" />
 		</form>
 		~;
@@ -391,11 +407,74 @@ sub template {
 					var stepdelay = "$stepdelay";
 					var fadelinks = $fadelinks;
 					var delay = "$fadedelay";
-					var bcolor = "$color{'faderbg'}";
-					var tcolor = "$color{'fadertext'}";
+					function convProp(thecolor) {
+						if(thecolor.charAt(0) == "#") {
+							if(thecolor.length == 4) thecolor=thecolor.replace(/(\\#)([a-f A-F 0-10]{1,1})([a-f A-F 0-10]{1,1})([a-f A-F 0-10]{1,1})\/i, "\$1\$2\$2\$3\$3\$4\$4");
+							var thiscolor = new Array(HexToR(thecolor), HexToG(thecolor), HexToB(thecolor));
+							return thiscolor;
+						}
+						else if(thecolor.charAt(3) == "(") {
+							thecolor=thecolor.replace(/rgb\\((\\d+?\\%*?)\\,(\\s*?)(\\d+?\\%*?)\\,(\\s*?)(\\d+?\\%*?)\\)/i, "\$1|\$3|\$5");
+							var thiscolor = thecolor.split("|");
+							return thiscolor;
+						}
+						else {
+							thecolor=thecolor.replace(/\\"/g, "");
+							thecolor=thecolor.replace(/maroon/ig, "128|0|0");
+							thecolor=thecolor.replace(/red/i, "255|0|0");
+							thecolor=thecolor.replace(/orange/i, "255|165|0");
+							thecolor=thecolor.replace(/olive/i, "128|128|0");
+							thecolor=thecolor.replace(/yellow/i, "255|255|0");
+							thecolor=thecolor.replace(/purple/i, "128|0|128");
+							thecolor=thecolor.replace(/fuchsia/i, "255|0|255");
+							thecolor=thecolor.replace(/white/i, "255|255|255");
+							thecolor=thecolor.replace(/lime/i, "00|255|00");
+							thecolor=thecolor.replace(/green/i, "0|128|0");
+							thecolor=thecolor.replace(/navy/i, "0|0|128");
+							thecolor=thecolor.replace(/blue/i, "0|0|255");
+							thecolor=thecolor.replace(/aqua/i, "0|255|255");
+							thecolor=thecolor.replace(/teal/i, "0|128|128");
+							thecolor=thecolor.replace(/black/i, "0|0|0");
+							thecolor=thecolor.replace(/silver/i, "192|192|192");
+							thecolor=thecolor.replace(/gray/i, "128|128|128");
+							var thiscolor = thecolor.split("|");
+							return thiscolor;
+						}
+					}
 
-					var startcolor = new Array(HexToR(bcolor), HexToG(bcolor), HexToB(bcolor));
-					var endcolor = new Array(HexToR(tcolor), HexToG(tcolor), HexToB(tcolor));\n\n~;
+					if (ie4 || DOM2) document.write('$newstitle<div class="windowbg2" id="fadestylebak" style="display: none;"><div class="newsfader" id="fadestyle" style="display: none;"> </div></div>');
+
+					if (document.getElementById('fadestyle').currentStyle) {
+						tcolor = document.getElementById('fadestyle').currentStyle['color'];
+						bcolor = document.getElementById('fadestyle').currentStyle['backgroundColor'];
+						fntsize = document.getElementById('fadestyle').currentStyle['fontSize'];
+						fntstyle = document.getElementById('fadestyle').currentStyle['fontStyle'];
+						fntweight = document.getElementById('fadestyle').currentStyle['fontWeight'];
+						fntfamily = document.getElementById('fadestyle').currentStyle['fontFamily'];
+						txtdecoration = document.getElementById('fadestyle').currentStyle['textDecoration'];
+					}
+					else if (window.getComputedStyle) {
+						tcolor = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('color');
+						bcolor = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('background-color');
+						fntsize = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('font-size');
+						fntstyle = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('font-style');
+						fntweight = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('font-weight');
+						fntfamily = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('font-family');
+						txtdecoration = window.getComputedStyle(document.getElementById('fadestyle'), null).getPropertyValue('text-decoration');
+					}
+					if (bcolor == "transparent" || bcolor == "rgba\\(0\\, 0\\, 0\\, 0\\)") {
+						if (document.getElementById('fadestylebak').currentStyle) {
+							tcolor = document.getElementById('fadestylebak').currentStyle['color'];
+							bcolor = document.getElementById('fadestylebak').currentStyle['backgroundColor'];
+						}
+						else if (window.getComputedStyle) {
+							tcolor = window.getComputedStyle(document.getElementById('fadestylebak'), null).getPropertyValue('color');
+							bcolor = window.getComputedStyle(document.getElementById('fadestylebak'), null).getPropertyValue('background-color');
+						}
+					}
+					txtdecoration = txtdecoration.replace(/\'/g, "");
+					var endcolor = convProp(tcolor);
+					var startcolor = convProp(bcolor);~;
 			my $greybox = $img_greybox;
 			$img_greybox = 0;
 			for (my $j = 0; $j < @newsmessages; $j++) {
@@ -404,7 +483,7 @@ sub template {
 				if ($enable_ubbc) {
 					if (!$yyYaBBCloaded) { require "$sourcedir/YaBBC.pl"; }
 					&DoUBBC;
-					$message =~ s/ style="display:none"/ style="display:visible"/g;
+					$message =~ s/ style="display:none"/ style="display:block"/g;
 				}
 				&wrap2;
 				$message =~ s/"/\\"/g;
@@ -413,7 +492,7 @@ sub template {
 			}
 			$img_greybox = $greybox;
 			$yynews .= qq~
-					if (ie4 || DOM2) document.write('$newstitle<div id="fscroller"></div>');
+					if (ie4 || DOM2) document.write('<div style="font-size: ' + fntsize + '\\; font-weight: ' + fntweight + '\\; font-style: ' + fntstyle + '\\; font-family: ' + fntfamily + '\\; text-decoration: ' + txtdecoration + '\\;" id="fscroller"></div>');
 
 					if (window.addEventListener)
 						window.addEventListener("load", changecontent, false);
@@ -430,7 +509,7 @@ sub template {
 			if ($enable_ubbc) {
 				if (!$yyYaBBCloaded) { require "$sourcedir/YaBBC.pl"; }
 				&DoUBBC;
-				$message =~ s/ style="display:none"/ style="display:visible"/g;
+				$message =~ s/ style="display:none"/ style="display:block"/g;
 			}
 			&wrap2;
 			&ToChars($message);
@@ -448,7 +527,7 @@ sub template {
 	while ($output =~ s~(<|{)yabb\s+(\w+)(}|>)~${"yy$2"}~g) {}
 	$output =~ s~(a href=\S+?action=viewprofile;username=.+?)>~$1 rel="nofollow">~isg;
 	if ($imagesdir ne $defaultimagesdir) {
-		$output =~ s~img src=("|')$imagesdir/(.+?)('|")~ "img src=$1" . &ImgLoc($2) . $3 ~eisg;
+		$output =~ s~img src=(\\*"|')$imagesdir/(.+?)(\1)~ "img src=$1" . &ImgLoc($2) . $3 ~eisg;
 		$output =~ s~\.src='$imagesdir/(.+?)'~ ".src='" . &ImgLoc($1) . "'" ~eisg; # For Javascript generated images
 		$output =~ s~input type="image" src="$imagesdir/(.+?)"~ 'input type="image" src="' . &ImgLoc($1) . '"' ~eisg; # For input images
 		$output =~ s~option value="$imagesdir/(.+?)"~ 'option value="' . &ImgLoc($1) . '"' ~eisg; # For the post page
@@ -985,7 +1064,7 @@ sub WrapChars {
 		$char    = $curword;
 		$length  = 0;
 		$curword = '';
-		while ($char) {
+		while ($char ne '') {
 			if   ( $char =~ s/^(&#?[a-z\d]+;)//i ) { $curword .= $1; }
 			else { $char =~ s/^(.)//;                $curword .= $1; }
 			$length++;
@@ -1120,26 +1199,26 @@ sub Split_Splice_Move {
 		$mover = &decloak($mover);
 		&LoadUser($mover);
 		$board{$destboard} =~ /^(.+?)\|/;
-		return (qq~<b>$maintxt{'160'} </b><a href="$scripturl?num=$dest"><i><b>$1</b></i></a><b> $maintxt{'525'} <i>${$uid.$mover}{'realname'}</i></b>~,1);
+		return (qq~<b>$maintxt{'160'} <a href="$scripturl?num=$dest"><b>$maintxt{'160a'}</b></a> $maintxt{'160b'}</b> <a href="$scripturl?board=$destboard"><i><b>$1</b></i></a><b> $maintxt{'525'} <i>${$uid.$mover}{'realname'}</i></b>~,$dest);
 
 	} elsif ($s_s_m =~ /\[m by=(.+?) dest=(.+?)\]/) { # 'The contents of this Topic have been moved to''this Topic'
 		my($mover, $dest) = ($1, $2); # Who moved the topic; destination id number
 		$mover = &decloak($mover);
 		&LoadUser($mover);
-		return (qq~<b>$maintxt{'160a'} </b><a href="$scripturl?num=$dest"><i><b>$maintxt{'160b'}</b></i></a><b> $maintxt{'525'} <i>${$uid.$mover}{'realname'}</i></b>~,1);
+		return (qq~<b>$maintxt{'160c'}</b> <a href="$scripturl?num=$dest"><i><b>$maintxt{'160d'}</b></i></a><b> $maintxt{'525'} <i>${$uid.$mover}{'realname'}</i></b>~,$dest);
 
 	} elsif ($s_s_m =~ /^\[m\]/) { # Old style topic that was moved/spliced before this code
 		fopen(MOVEDFILE, "$datadir/$_[1].txt");
 		(undef, undef, undef, undef, undef, undef, undef, undef, $s_s_m, undef) = split(/\|/, <MOVEDFILE>, 10);
 		fclose(MOVEDFILE);
 		&ToChars($s_s_m);
-		$ssm += 1;
+		$ssm = 1;
 	}
 
-	$ssm += $s_s_m =~ s/\[spliced\]/$maintxt{'160a'}/g; # The contents of this Topic have been moved to
-	$ssm += $s_s_m =~ s/\[splicedhere\]|\[splithere\]/$maintxt{'160b'}/g; # this Topic
-	$ssm += $s_s_m =~ s/\[split\]/$maintxt{'160c'}/g; # Off-Topic replies have been moved to
-	$ssm += $s_s_m =~ s/\[splithere_end\]/$maintxt{'160d'}/g; # .
+	$ssm += $s_s_m =~ s/\[spliced\]/$maintxt{'160c'}/g; # The contents of this Topic have been moved to
+	$ssm += $s_s_m =~ s/\[splicedhere\]|\[splithere\]/$maintxt{'160d'}/g; # this Topic
+	$ssm += $s_s_m =~ s/\[split\]/$maintxt{'160e'}/g; # Off-Topic replies have been moved to
+	$ssm += $s_s_m =~ s/\[splithere_end\]/$maintxt{'160f'}/g; # .
 	$ssm += $s_s_m =~ s/\[moved\]/$maintxt{'160'}/g; # This Topic has been moved to
 	$ssm += $s_s_m =~ s/\[movedhere\]/$maintxt{'161'}/g; # This Topic was moved here from
 	$ssm += $s_s_m =~ s/\[postsmovedhere1\]/$maintxt{'161a'}/g; # The last
@@ -1162,9 +1241,10 @@ sub elimnests {
 }
 
 sub unwrap {
-	$unwrapped = $_[0];
+	$codelang = $_[0];
+	$unwrapped = $_[1];
 	$unwrapped =~ s~<yabbwrap>~~g;
-	$unwrapped = qq~\[code\]$unwrapped\[\/code\]~;
+	$unwrapped = qq~\[code$codelang\]$unwrapped\[\/code\]~;
 	return $unwrapped;
 }
 
@@ -1192,7 +1272,7 @@ sub wrap {
 		}
 		$message .= "$cur ";
 	}
-	$message =~ s~\[code\](.*?)\[\/code\]~&unwrap($1)~eisg;
+	$message =~ s~\[code((?:\s*).*?)\](.*?)\[\/code\]~&unwrap($1,$2)~eisg;
 	$message =~ s~ <yabbbr> ~\n~g;
 	$message =~ s~<yabbwrap>~\n~g;
 
@@ -1728,7 +1808,7 @@ sub check_existence {
 	my $filext = $2;
 	my $numdelim = "_";
 	my $filenumb = 0;
-	while ( -e "$dir/$filename") {
+	while (-e "$dir/$filename") {
 			$filenumb = sprintf("%03d", ++$filenumb);
 			$filename = qq~$origname$numdelim$filenumb$filext~;
 	}
@@ -1918,37 +1998,33 @@ sub old_decloak {
 	return $user;
 }
 
-# this is the one from InstantMessage.pl, given a facelift.
+# run through the log.txt and return the online/offline/away string near by the username
+my %users_online;
 sub userOnLineStatus {
 	my $userToCheck = $_[0];
-	if ($userToCheck eq 'Guest') { return ''; }
-	## run through the log. If the username is found, return 'on'. If the user isn't there, return 'off'
-	my $online = qq~<span class="useroffline">$maintxt{'61'}</span>~;
+
+	return '' if $userToCheck eq 'Guest';
+	if (exists $users_online{$userToCheck}) {
+		return $users_online{$userToCheck} if $users_online{$userToCheck};
+	} else {
+		map { $users_online{(split(/\|/, $_, 2))[0]} = 0 } @logentries;
+	}
+
 	&LoadUser($userToCheck);
-	if (!${$uid.$userToCheck}{'stealth'} || $iamadmin || $iamgmod) {
-		foreach (@logentries) {
-			if ((split(/\|/, $_, 2))[0] eq $userToCheck) {
-				$online = qq~<span class="useronline">$maintxt{'60'}</span>~ . (${$uid.$userToCheck}{'stealth'} ? "*" : "");
-				${$uid.$userToCheck}{'offlinestatus'} = 'online';
-				last;
-			}
-		}
+
+	if (exists $users_online{$userToCheck} && (!${$uid.$userToCheck}{'stealth'} || $iamadmin || $iamgmod)) {
+		${$uid.$userToCheck}{'offlinestatus'} = 'online';
+		$users_online{$userToCheck} = qq~<span class="useronline">$maintxt{'60'}</span>~ . (${$uid.$userToCheck}{'stealth'} ? "*" : "");
+	} else {
+		$users_online{$userToCheck} = qq~<span class="useroffline">$maintxt{'61'}</span>~;
 	}
-	if ($enable_MCstatusStealth && ${$uid.$userToCheck}{'offlinestatus'} ne 'offline') {
-		# enable 'away' indicator 0=Off 1=Staff to Staff 2=Staff to all 3=Members
-		if ($enable_MCaway > 0 && ${$uid.$userToCheck}{'offlinestatus'} eq 'away' && !$iamguest) {
-			#enable for staff
-			if ($enable_MCaway == 1 && ($iamadmin || $iamgmod || $iammod)) {
-				$online = qq~<span class="useraway">$maintxt{'away'}</span>~;
-			}
-			## enabled for all
-			if ($enable_MCaway > 1) {
-				$online = qq~<span class="useraway">$maintxt{'away'}</span>~;
-			}
-		}
-		## if the useris 'away' but the above conditions are not met, they show as 'offline'
+	# enable 'away' indicator $enable_MCaway: 0=Off; 1=Staff to Staff; 2=Staff to all; 3=Members
+	if (!$iamguest && $enable_MCstatusStealth &&
+	    (($enable_MCaway == 1 && $staff) || $enable_MCaway > 1) &&
+	    ${$uid.$userToCheck}{'offlinestatus'} eq 'away') {
+		$users_online{$userToCheck} = qq~<span class="useraway">$maintxt{'away'}</span>~;
 	}
-	$online;
+	$users_online{$userToCheck};
 }
 
 ## moved from Register.pl so we can use for guest browsing

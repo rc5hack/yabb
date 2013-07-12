@@ -3,18 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5 Anniversary Edition                                #
+# Packaged:       July 04, 2010                                               #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
 # Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$loadplver = 'YaBB 2.4 $Revision: 1.42 $';
+$loadplver = 'YaBB 2.5 AE $Revision: 1.43 $';
 
 sub LoadBoardControl {
 	my ($cntcat, $cntboard, $cntpic, $cntdescription, $cntmods, $cntmodgroups, $cnttopicperms, $cntreplyperms, $cntpollperms, $cntzero, $dummy, $dummy, $dummy, $cnttotals);
@@ -164,7 +164,10 @@ sub LoadUser {
 			for (my $i = 0; $i < @settings; $i++) {
 				if ($settings[$i] =~ /'(.*?)',"(.*?)"/) {
 					${$uid.$user}{$1} = $2;
-					$settings[$i] =~ s/\d+/$date/ if $1 eq 'lastonline';
+					if($1 eq 'lastonline' && $INFO{'action'} ne "login2") {
+						${$uid.$user}{$1} = $date;
+						$settings[$i] = qq~'lastonline',"$date"\n~;
+					}
 				}
 			}
 			seek LOADUSER, 0, 0;
@@ -301,7 +304,7 @@ sub LoadUserDisplay {
 		$skypeimg = qq~<img src="$imagesdir/skype.gif" alt="${$uid.$user}{'skype'}" title="${$uid.$user}{'skype'}" border="0" />~;
 		$myspaceimg = qq~<img src="$imagesdir/myspace.gif" alt="${$uid.$user}{'myspace'}" title="${$uid.$user}{'myspace'}" border="0" />~;
 		$facebookimg = qq~<img src="$imagesdir/facebook.gif" alt="${$uid.$user}{'facebook'}" title="${$uid.$user}{'facebook'}" border="0" />~;
-		$msnimg = qq~<img src="$imagesdir/msn3.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=setmsn;msnname=$themsnuser','','height=80,width=340,menubar=no,toolbar=no,scrollbars=no'); return false" alt="$themsnname" title="$themsnname" border="0" />~;
+		$msnimg = qq~<img src="$imagesdir/msn.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=setmsn;msnname=$themsnuser','','height=80,width=340,menubar=no,toolbar=no,scrollbars=no'); return false" alt="$themsnname" title="$themsnname" border="0" />~;
 		$gtalkimg = qq~<img src="$imagesdir/gtalk2.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=setgtalk;gtalkname=$thegtalkuser','','height=80,width=340,menubar=no,toolbar=no,scrollbars=no'); return false" alt="$thegtalkname" title="$thegtalkname" border="0" />~;
 		$icqimg = qq~<img src="http://web.icq.com/whitepages/online?icq=${$uid.$user}{'icq'}&#38;img=5" alt="${$uid.$user}{'icq'}" title="${$uid.$user}{'icq'}" border="0" />~;
 	} elsif ($UseMenuType == 1) {
@@ -329,7 +332,7 @@ sub LoadUserDisplay {
 	${$uid.$user}{'aim'} = ${$uid.$user}{'aim'} ? qq~<a href="aim:goim?screenname=${$uid.$user}{'aim'}&#38;message=Hi.+Are+you+there?">$aimimg</a>~ : '';
 	${$uid.$user}{'skype'} = ${$uid.$user}{'skype'} ? qq~<a href="javascript:void(window.open('callto://${$uid.$user}{'skype'}','skype','height=80,width=340,menubar=no,toolbar=no,scrollbars=no'))">$skypeimg</a>~ : '';
 	${$uid.$user}{'myspace'} = ${$uid.$user}{'myspace'} ? qq~<a href="http://www.myspace.com/${$uid.$user}{'myspace'}" target="_blank">$myspaceimg</a>~ : '';
-	${$uid.$user}{'facebook'} = ${$uid.$user}{'facebook'} ? qq~<a href="http://www.facebook.com/profile.php?id=${$uid.$user}{'facebook'}" target="_blank">$facebookimg</a>~ : '';
+	${$uid.$user}{'facebook'} = ${$uid.$user}{'facebook'} ? qq~<a href="http://www.facebook.com/~ . (${$uid.$user}{'facebook'} !~ /\D/ ? "profile.php?id=" : "") . qq~${$uid.$user}{'facebook'}" target="_blank">$facebookimg</a>~ : '';
 	${$uid.$user}{'msn'} = ${$uid.$user}{'msn'}   ? $msnimg : '';
 	${$uid.$user}{'gtalk'} = ${$uid.$user}{'gtalk'} ? $gtalkimg : '';
 	$yimon{$user} = $yimon{$user} ? qq~<img src="http://opi.yahoo.com/online?u=${$uid.$user}{'yim'}&#38;m=g&#38;t=0" border="0" alt="" />~ : '';
@@ -463,7 +466,7 @@ sub LoadMiniUser {
 					if ($aattachperms == 1) { $attachperms = 1; }
 					${$uid.$user}{'perms'} = "$viewperms|$topicperms|$replyperms|$pollperms|$attachperms";
 				}
-				if ($anoshow && $iamadmin) {
+				if ($anoshow && ($iamadmin || ($iamgmod && $gmod_access2{"profileAdmin"}))) {
 					$addmembergroup{$user} .= qq~($atitle)<br />~;
 				} elsif (!$anoshow) {
 					$addmembergroup{$user} .= qq~$atitle<br />~;
@@ -517,21 +520,25 @@ sub QuickLinks {
 	if ($iamguest) { return ($_[1] ? ${$uid.$user}{'realname'} : $format{$user}); }
 
 	if ($iamadmin || $iamgmod || $lastonlineinlink) {
-		$lastonline = $date - ${$uid.$user}{'lastonline'};
-		my $days  = int($lastonline / 86400);
-		my $hours = sprintf("%02d", int(($lastonline - ($days * 86400)) / 3600));
-		my $mins  = sprintf("%02d", int(($lastonline - ($days * 86400) - ($hours * 3600)) / 60));
-		my $secs  = sprintf("%02d", ($lastonline - ($days * 86400) - ($hours * 3600) - ($mins * 60)));
-		if (!$mins) {
-			$lastonline = "00:00:$secs";
-		} elsif (!$hours) {
-			$lastonline = "00:$mins:$secs";
-		} elsif (!$days) {
-			$lastonline = "$hours:$mins:$secs";
+		if(${$uid.$user}{'lastonline'}) {
+			$lastonline = $date - ${$uid.$user}{'lastonline'};
+			my $days  = int($lastonline / 86400);
+			my $hours = sprintf("%02d", int(($lastonline - ($days * 86400)) / 3600));
+			my $mins  = sprintf("%02d", int(($lastonline - ($days * 86400) - ($hours * 3600)) / 60));
+			my $secs  = sprintf("%02d", ($lastonline - ($days * 86400) - ($hours * 3600) - ($mins * 60)));
+			if (!$mins) {
+				$lastonline = "00:00:$secs";
+			} elsif (!$hours) {
+				$lastonline = "00:$mins:$secs";
+			} elsif (!$days) {
+				$lastonline = "$hours:$mins:$secs";
+			} else {
+				$lastonline = "$days $maintxt{'11'} $hours:$mins:$secs";
+			}
+				$lastonline = qq~ title="$maintxt{'10'} $lastonline $maintxt{'12'}."~;
 		} else {
-			$lastonline = "$days $maintxt{'11'} $hours:$mins:$secs";
+			$lastonline = qq~ title="$maintxt{'13'}."~;
 		}
-		$lastonline = qq~ title="$maintxt{'10'} $lastonline $maintxt{'12'}."~;
 	}
 	if ($usertools) {
 		$qlcount++;
