@@ -486,3 +486,6 @@ select optgroup {
 .sortingblock {
 	width: 100%;
 }
+.green {
+display:none;
+}

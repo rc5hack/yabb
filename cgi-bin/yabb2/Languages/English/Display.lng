@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$displaylngver = 'YaBB 2.5 AE $Revision: 1.16 $';
+$displaylngver = 'YaBB 2.5.2 $Revision: 1.1 $';
 
 %display_txt = (
 '10' => 'Permalink for this article',
@@ -64,7 +62,7 @@ $displaylngver = 'YaBB 2.5 AE $Revision: 1.16 $';
 'split_confirm' => 'Are you sure you want to split messages?',
 'alertmod_confirm' => 'Are you sure you want to alert moderator about this Message?',
 'reverse' => 'Click here if you want to change the order topics are shown in.',
-'sendtopicemail' => 'Click [OK] if you want to send the Email through your Email program, otherwise the forums Email program will be used.',
+'sendtopicemail' => 'Click [OK] if you want to send the e-mail through your e-mail program, otherwise the forums e-mail program will be used.',
 );
 
 1;

@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$maintenanceplver = 'YaBB 2.5 AE $Revision: 1.3 $';
+$maintenanceplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub RebuildMessageIndex {
@@ -161,7 +159,7 @@ sub RebuildMessageIndex {
 				&RebuildMessageIndexText($INFO{'rebuild'},$j,$totalthreads);
 			}
 		}
-	
+
 		foreach (keys %rebuildboards) {
 			fopen(REBBOARD, ">>$boardsdir/$_.tmp") || &admin_fatal_error('cannot_open', "$boardsdir/$_.tmp", 1);
 			print REBBOARD @{$rebuildboards{$_}};
@@ -435,6 +433,7 @@ sub RebuildMemList {
 		chomp $member;
 
 		&LoadUser($member);
+		&FromChars(${$uid.$member}{'realname'});
 
 		$savesettings = 0;
 		@grpexist = ();
@@ -848,7 +847,7 @@ sub RebuildNotifications {
 	if (!$exitloop) {
 		my @temp = keys %members;
 		while (@temp) {
-			$user = pop @temp; 
+			$user = pop @temp;
 
 			&LoadUser($user,$members{$user});
 			# update notification method. Not used by YaBB versions >= 2.2.3

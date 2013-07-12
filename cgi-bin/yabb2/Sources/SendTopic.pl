@@ -3,19 +3,19 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$sendtopicplver = 'YaBB 2.5 AE $Revision: 1.11 $';
+$sendtopicplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
+
+if (!$sendtopicmail || $sendtopicmail == 2) { &fatal_error("not_allowed"); }
 
 if ($regcheck) { require "$sourcedir/Decoder.pl"; }
 
@@ -27,6 +27,7 @@ sub SendTopic {
 	$board = ${$topic}{'board'};
 	&fatal_error("no_board_send") unless ($board ne '' && $board ne '_' && $board ne ' ');
 	&fatal_error("no_topic_send") unless ($topic ne '' && $topic ne '_' && $topic ne ' ');
+	if ($iamguest) { $focus_y_name = qq~document.sendtopic.y_name.focus();~; }
 
 	unless (ref($thread_arrayref{$topic})) {
 		fopen(FILE, "$datadir/$topic.txt") || &fatal_error("cannot_open","$datadir/$topic.txt", 1);
@@ -36,7 +37,7 @@ sub SendTopic {
 	$subject = (split(/\|/, ${$thread_arrayref{$topic}}[0], 2))[0];
 
 	$yymain .= qq~
-<form action="$scripturl?action=sendtopic2" method="post">
+<form action="$scripturl?action=sendtopic2" method="post" name="sendtopic" onsubmit="return CheckSendTopicFields();">
 <table width="70%" border="0" align="center" cellspacing="0" cellpadding="3">
 	<tr>
 		<td class="titlebg" colspan="2">
@@ -92,7 +93,41 @@ sub SendTopic {
 	</tr>
 </table>
 </form>
-~;
+<script type="text/javascript" language="JavaScript">
+<!--
+    $focus_y_name
+
+    function CheckSendTopicFields() {
+        if (document.sendtopic.y_name.value == '') {
+            alert("$sendtopic_txt{'error_sender_name'}");
+            document.sendtopic.y_name.focus();
+        return false;
+        }
+        if (document.sendtopic.y_email.value == '') {
+            alert("$sendtopic_txt{'error_sender_email'}");
+            document.sendtopic.y_email.focus();
+        return false;
+        }
+        if (document.sendtopic.r_name.value == '') {
+            alert("$sendtopic_txt{'error_recipient_name'}");
+            document.sendtopic.r_name.focus();
+        return false;
+        }
+        if (document.sendtopic.r_email.value == '') {
+            alert("$sendtopic_txt{'error_recipient_email'}");
+            document.sendtopic.r_email.focus();
+        return false;
+        }
+        ~ . ($regcheck ? qq~
+        if (document.sendtopic.verification.value == '') {
+            alert("$sendtopic_txt{'error_verification'}");
+            document.sendtopic.verification.focus();
+            return false;
+        }~ : '') . qq~
+        return true;
+    }
+//-->
+</script>~;
 	$yytitle = "$sendtopic_txt{'707'}&nbsp; &#171; $subject &#187; &nbsp;$sendtopic_txt{'708'}";
 	$yynavigation = qq~&rsaquo; $sendtopic_txt{'707'}~;
 	&template;
@@ -117,10 +152,6 @@ sub SendTopic2 {
 	$remail =~ s/\A\s+//;
 	$remail =~ s/\s+\Z//;
 
-	if ($regcheck) {
-		&validation_check($FORM{'verification'});
-	}
-
 	&fatal_error("no_name","$sendtopic_txt{'335'}") unless ($yname ne '' && $yname ne '_' && $yname ne ' ');
 	&fatal_error("sendname_too_long","$sendtopic_txt{'335'}") if (length($yname) > 25);
 	&fatal_error("no_email","$sendtopic_txt{'336'}") if ($yemail eq '');
@@ -131,6 +162,9 @@ sub SendTopic2 {
 	&fatal_error("no_email","$sendtopic_txt{'718'}") if ($remail eq '');
 	&fatal_error("invalid_character","$sendtopic_txt{'718'} $sendtopic_txt{'241'}") if ($remail !~ /[\w\-\.\+]+\@[\w\-\.\+]+\.(\w{2,4}$)/);
 	&fatal_error("invalid_email","$sendtopic_txt{'718'}")                                            if (($remail =~ /(@.*@)|(\.\.)|(@\.)|(\.@)|(^\.)|(\.$)/) || ($remail !~ /^.+@\[?(\w|[-.])+\.[a-zA-Z]{2,4}|[0-9]{1,4}\]?$/));
+	if ($regcheck) {
+		&validation_check($FORM{'verification'});
+	}
 
 	unless (ref($thread_arrayref{$topic})) {
 		fopen(FILE, "$datadir/$topic.txt") || &fatal_error("cannot_open","$datadir/$topic.txt", 1);

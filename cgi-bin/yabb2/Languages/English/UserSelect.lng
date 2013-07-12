@@ -3,32 +3,30 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$userselectlngver = 'YaBB 2.5 AE $Revision: 1.19 $';
+$userselectlngver = 'YaBB 2.5.2 $Revision: 1.0 $';
 
 %usersel_txt = (
 'addselected' => 'Add Selected',
 'instruct' => 'Double click on a name or select one or more names in the list and click on the "Add Selected" button to add to the',
 'instruct0' => 'Type the first characters of the new moderator in the upper form field, then double click on the name or select one or more names in the list and click on the "Add Selected" button to add to the',
 'instruct1' => 'Double click on a name or select a name in the list and click on the "Add Selected" button to add to the',
-'instruct2' => 'Find member by Name or Email:',
+'instruct2' => 'Find member by Name or e-mail:',
 'instruct3' => 'In the search box at the top you can use a wildcard character (only one *) anywhere in your search string.',
 'instruct4' => 'Select Member Groups',
 'wildcardinfo' => 'Use * for wildcard',
 'searchresult' => 'Search Result:',
 'nofound' => 'Sorry - no matches found for',
-'pmpagetitle' => 'Select PM Reciepients',
-'grouppagetitle' => 'Select BC Reciepient Groups',
+'pmpagetitle' => 'Select PM Recipients',
+'grouppagetitle' => 'Select BC Recipient Groups',
 'modpagetitle' => 'Select Moderators',
 'buddypagetitle' => 'Select your buddies',
 'ignorepagetitle' => 'Select members to Ignore',
@@ -37,7 +35,7 @@ $userselectlngver = 'YaBB 2.5 AE $Revision: 1.19 $';
 'recentlist' => 'Recent List',
 'alllist' => 'Member List',
 'gobutton' => 'Go',
-'reciepientlist' => 'Reciepient List',
+'reciepientlist' => 'Recipient List',
 'moderatorlist' => 'Moderator List',
 'buddylist' => 'Buddy List',
 'groups' => 'Member Groups',

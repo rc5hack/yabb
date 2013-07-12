@@ -3,19 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$instantmessageplver = 'YaBB 2.5 AE $Revision: 1.108 $';
+$instantmessageplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
+$set_subjectMaxLength ||= 50;
 
 ## create the send IM section of the screen
 
@@ -37,7 +36,7 @@ if ($action eq 'detailedversion') { return 1; }
 ## parentmid = stays same
 ## reply# = increments for replies, so we can build conversation threads
 
-## storefolder = name of storage folder. Start with in & out for everyone. 
+## storefolder = name of storage folder. Start with in & out for everyone.
 #1	$mnum = 3;
 #2	$imnewcount = 0;
 #3	$moutnum = 17;
@@ -124,7 +123,7 @@ sub buildIMsend {
 		if (!$fontsizemax) { $fontsizemax = 72; }
 		if (!$fontsizemin) { $fontsizemin = 6; }
 
-		# this defines what the top area of the post box will look like: 
+		# this defines what the top area of the post box will look like:
 		## if this is a reply , load the 'from' name off the message
 		if ($INFO{'reply'} || $INFO{'quote'}) { $INFO{'to'} = $mfrom; }
 		if (!$INFO{'to'} && $FORM{'to'} ne '') { $INFO{'to'} = $FORM{'to'}; }
@@ -212,7 +211,7 @@ sub buildIMsend {
 	</tr>
 		~;
 	}
-	
+
 	if ($replyguest) {
 		$imsend .= qq~
 	<tr>
@@ -242,7 +241,7 @@ sub buildIMsend {
 				<tr>
 					<td align="left">
 					<div id="bnttoto" style="float: left; padding: 5px;" class="windowbg2"><a href="javascript:void(0);" onclick="changeRecepientTab('to'); return false;">$inmes_txt{'324'}:</a></div>
-		~;	
+		~;
 		if ($PMenable_cc) {
 			$yyjavascripttoform .= qq~
 				document.getElementById('userscc').style.display = 'none';
@@ -250,7 +249,7 @@ sub buildIMsend {
 			~;
 			$imsend .= qq~
 					<div id="bnttocc" style="float: left; padding: 5px;" class="windowbg"><a href="javascript:void(0);" onclick="changeRecepientTab('cc'); return false;">$inmes_txt{'325'}:</a></div>
-			~;	
+			~;
 		}
 		if ($PMenable_bcc) {
 			$yyjavascripttoform .= qq~
@@ -259,7 +258,7 @@ sub buildIMsend {
 			~;
 			$imsend .= qq~
 					<div id="bnttobcc" style="float: left; padding: 5px;" class="windowbg"><a href="javascript:void(0);" onclick="changeRecepientTab('bcc'); return false;">$inmes_txt{'326'}:</a></div>
-			~;	
+			~;
 		}
 		$yyjavascripttoform .= qq~
 				document.getElementById('users' + tabto).style.display = 'inline';
@@ -278,7 +277,7 @@ sub buildIMsend {
 				<tr>
 					<td width="60%" valign="top" align="left">\n~;
 
-	# now uses a multi-line select 
+	# now uses a multi-line select
 	&ProcIMrecs;
 
 	$toname = $INFO{'forward'} ? '' : $INFO{'to'};
@@ -378,7 +377,7 @@ sub buildIMsend {
 		if (!$sendBMess) {
 			if ($PMenable_cc) {
 				$JSandInput .= qq~
-					var oList = document.getElementById('toshowcc') 
+					var oList = document.getElementById('toshowcc')
 					for (var i = 0; i < oList.options.length; i++){ oList.options[i].selected = true; }
 				~;
 				$imsend .= qq~
@@ -423,7 +422,7 @@ sub buildIMsend {
 						$imsend .= qq~<option selected="selected" value="$useraccount{$touser}">${$uid.$touser}{'realname'}</option>\n~;
 					}
 				}
-				$imsend .= qq~				</select> 
+				$imsend .= qq~				</select>
 				</div>
 				~;
 			}
@@ -447,7 +446,7 @@ sub buildIMsend {
 					</td>
 					</tr>
 				</table>
-			</td> 
+			</td>
 		</tr>
 		~;
 
@@ -469,7 +468,7 @@ sub buildIMsend {
 					</td>
 				</tr>
 				</table>
-			</td> 
+			</td>
 		</tr>
 		~;
 	}
@@ -619,13 +618,16 @@ sub buildIMsend {
 					}
 				}
 			}
-		
+
 			function showbullets(bullet) {
 				AddSelText("[list "+bullet+"][*]", "\\n[/list]");
 			}
 
 			function olist() {
 				AddSelText("[olist][*]", "\\n[/olist]");
+			}
+			function ulist() {
+			      AddSelText("[list][*]", "\\n[/list]");
 			}
 
 			// Palette
@@ -640,7 +642,7 @@ sub buildIMsend {
 					idiff = eval(ihex + '-(' + itmp + '*16)');
 					a2 = itohex(idiff) + a2;
 					ihex = itmp;
-				} 
+				}
 				a1 = itohex(ihex);
 				return a1 + a2 ;
 			}
@@ -763,7 +765,7 @@ sub buildIMsend {
 		<img id="dragImg2" src="$defaultimagesdir/resize_hb.gif" class="drag" style="position: absolute; top: $draghpos; left: 0px; z-index: 4; width: $dwidth; height: 3px; cursor: n-resize;"  alt="resize_hb" />
 		</div>
 		<div class="ubboptions" id="bullets" style="position: absolute; top: -22px; left: 345px; width: 63px; border: 1px solid #666666; padding: 2px; text-align: center; background-color: #CCCCCC; display: none;">
-			<input type="button" value="$npf_txt{'default'}" style="width: 56px; margin: 3px 0px 0px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="list(), bulletset()" /><br />
+			<input type="button" value="$npf_txt{'default'}" style="width: 56px; margin: 3px 0px 0px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="ulist(), bulletset()" /><br />
 			<input type="button" value="$npf_txt{'ordered'}" style="width: 56px; margin: 3px 0px 3px 0px; font-size: 9px; padding: 0px; text-align: center;" onclick="olist(), bulletset()" /><br />
 			<img src="$defaultimagesdir/bull-redball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redball'), bulletset()" /><img src="$defaultimagesdir/bull-greenball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greenball'), bulletset()" /><img src="$defaultimagesdir/bull-blueball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blueball'), bulletset()" /><img src="$defaultimagesdir/bull-blackball.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blackball'), bulletset()" /><br />
 			<img src="$defaultimagesdir/bull-redsq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-redsq'), bulletset()" /><img src="$defaultimagesdir/bull-greensq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-greensq'), bulletset()" /><img src="$defaultimagesdir/bull-bluesq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-bluesq'), bulletset()" /><img src="$defaultimagesdir/bull-blacksq.gif" style="width: 8px; height: 8px; background-color: #CCCCCC; margin: 3px; cursor: pointer;" onclick="showbullets('bull-blacksq'), bulletset()" /><br />
@@ -981,7 +983,6 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 				}
 
 				HAND = "style='cursor: pointer;'"; // non valid css 'cursor: hand;' removed by the ContextHelp mod
-				HAND += " onmouseover='contextTip(event, this.alt)' onmouseout='contextTip(event, this.alt)' oncontextmenu='if(!showcontexthelp(this.src, this.alt)) return false;'";
 				document.write("<img src='$imagesdir/smiley.gif' onclick='smiley();' "+HAND+" align='bottom' alt='$post_txt{'287'}' title='$post_txt{'287'}' border='0'> ");
 				document.write("<img src='$imagesdir/wink.gif' onclick='wink();' "+HAND+" align='bottom' alt='$post_txt{'292'}' title='$post_txt{'292'}' border='0'> ");
 				document.write("<img src='$imagesdir/cheesy.gif' onclick='cheesy();' "+HAND+" align='bottom' alt='$post_txt{'289'}' title='$post_txt{'289'}' border='0'> ");
@@ -1045,7 +1046,7 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 	<tr>
 		<td class="windowbg">~;
 
-	if ($INFO{'quote'} || $INFO{'reply'} || $FORM{'reply'}) { # if this is a reply, need to pass the reply # forward 
+	if ($INFO{'quote'} || $INFO{'reply'} || $FORM{'reply'}) { # if this is a reply, need to pass the reply # forward
 		$imsend .= qq~
 			<input type="hidden" name="reply" id="reply" value="$INFO{'quote'}$INFO{'reply'}$FORM{'reply'}" />~;
 	}
@@ -1075,7 +1076,7 @@ var GB_ROOT_DIR = "$yyhtml_root/greybox/";
 		</td>
 	</tr>
 	~;
-	
+
 	#these are the buttons to submit
 	my $sendBMessFlag;
 	if ($sendBMess || $isBMess) {
@@ -1385,7 +1386,7 @@ sub IMsendMessage {
 	# set size of messagebox and text
 	${$uid.$username}{'postlayout'} = qq~$FORM{'messageheight'}|$FORM{'messagewidth'}|$FORM{'txtsize'}|$FORM{'col_row'}~;
 
-	# receipts for IM are now handled by "toshow" only, so we need to switch to the right 
+	# receipts for IM are now handled by "toshow" only, so we need to switch to the right
 	# test for no recipient. also switch on flag to stop us going back to the form all the time
 	# if there is only the one (intended) recipient, 'to' must contain the name
 	if ((!$FORM{'toshow'} && !$INFO{'to'}) && !$FORM{'draft'}) { $error = $error_txt{'no_recipient'}; }
@@ -1503,7 +1504,7 @@ sub IMsendMessage {
 				}
 			} else { $sendAutoReply = 0; }
 
-			if (!-e ("$memberdir/$UserTo.vars")) { 
+			if (!-e ("$memberdir/$UserTo.vars")) {
 				# adds invalid user's name to array which error list will be built from later
 				push(@nouser, $UserTo);
 				$ignored = 1;
@@ -1515,7 +1516,7 @@ sub IMsendMessage {
 				my @inmessages = <INBOX>;
 				fclose(INBOX);
 				fopen(INBOX, ">$memberdir/$UserTo.msg");
-				print INBOX "$messageid|$username|$FORM{'toshow'}|$FORM{'toshowcc'}|$FORM{'toshowbcc'}|$subject|$date|$message|$messageid|0|$ENV{'REMOTE_ADDR'}|$FORM{'status'}|u||\n";	
+				print INBOX "$messageid|$username|$FORM{'toshow'}|$FORM{'toshowcc'}|$FORM{'toshowbcc'}|$subject|$date|$message|$messageid|0|$ENV{'REMOTE_ADDR'}|$FORM{'status'}|u||\n";
 				print INBOX @inmessages;
 				fclose(INBOX);
 
@@ -1532,7 +1533,7 @@ sub IMsendMessage {
 					print INBOX @myinmessages;
 					fclose(INBOX);
 				}
-				## relocated sender's msg out of the loop
+				## relocated sender msg out of the loop
 
 				# Send notification (Will only work if Admin has allowed the Email Notification)
 				if (${$uid.$UserTo}{'notify_me'} > 1 && $enable_notifications > 1) {
@@ -1540,6 +1541,7 @@ sub IMsendMessage {
 					$language = ${$uid.$UserTo}{'language'};
 					&LoadLanguage('Email');
 					&LoadLanguage('Notify');
+					&LoadCensorList;
 					$useremail = ${$uid.$UserTo}{'email'};
 					$useremail =~ s/[\n\r]//g;
 					if ($useremail ne '') {
@@ -1547,9 +1549,11 @@ sub IMsendMessage {
 						$fromname = ${$uid.$username}{'realname'};
 						&FromHTML($msubject);
 						&ToChars($msubject);
+						$msubject = &Censor($msubject);
 						my $chmessage = $message;
 						&FromHTML($chmessage);
 						&ToChars($chmessage);
+						$chmessage = &Censor($chmessage);
 						$chmessage =~ s~<br.*?>~\n~gi;
 						$chmessage =~ s~\[b\](.*?)\[/b\]~*$1*~isg;
 						$chmessage =~ s~\[i\](.*?)\[/i\]~/$1/~isg;
@@ -1600,7 +1604,7 @@ sub IMsendMessage {
 	# the sep users now live together
 	my $messFlag = '';
 	if ($isBMess) { $messFlag = 'b'; }
-	if ($replyguest) { 
+	if ($replyguest) {
 		$messFlag = 'gr';
 
 		$FORM{'toguest'} =~ s/ /%20/g;
@@ -1662,7 +1666,7 @@ sub IMsendMessage {
 		fopen(DRAFTFILE, ">$memberdir/$username.imdraft");
 		seek DRAFTFILE,0,0;
 		foreach my $draftmess (@draftPM) {
-			chomp $draftmess; 
+			chomp $draftmess;
 			if ((split /\|/, $draftmess)[0] != $FORM{'draftid'}) {
 				print DRAFTFILE "$draftmess\n";
 			} elsif ($FORM{'draftleave'}) {
@@ -1671,7 +1675,7 @@ sub IMsendMessage {
 		}
 		fclose(DRAFTFILE);
 	}
-	# invalid users 
+	# invalid users
 	#if there were invalid usernames in the recipient list, these names are listed after all valid users have been IMed
 	if (!$FORM{'draft'}) {
 		if (@nouser) {
@@ -1709,7 +1713,7 @@ sub ProcIMrecs {
 		}
 		$toshowList = join(',', @multiple);
 		$toshowList = qq~to:$toshowList~;
-		$toshowList =~ s/,/,to:/g; 
+		$toshowList =~ s/,/,to:/g;
 		push(@allto, split(/\,/,$toshowList));
 		$FORM{'toshow'} = join(',', @multiple);
 		$FORM{'toshowcc'} =~ s/ //g;
@@ -1726,7 +1730,7 @@ sub ProcIMrecs {
 			}
 			$toshowccList = join(',', @multiplecc);
 			$toshowccList = qq~cc:$toshowccList~;
-			$toshowccList =~ s/,/,cc:/g; 
+			$toshowccList =~ s/,/,cc:/g;
 			push(@allto, split(/\,/,$toshowccList));
 			$FORM{'toshowcc'} = join(',', @multiplecc);
 		}
@@ -1788,7 +1792,7 @@ sub pageLinksList {
 	if ($pagenumb > 1 || $all) {
 		if ($userthreadpage == 1 ) {
 			$pagetxtindexst = qq~<span class="small" style="float: left; height: 21px; margin: 0px; margin-top: 2px;">~;
-			$pagetxtindexst .= qq~<a href="$scripturl?pmaction=$action$bmesslink;start=$start;action=pmpagetext$viewfolderinfo"><img src="$imagesdir/index_togl.gif" border="0" alt="$display_txt{'19'}" title="$display_txt{'19'}" style="vertical-align: middle;" /></a> $display_txt{'139'}: ~; 
+			$pagetxtindexst .= qq~<a href="$scripturl?pmaction=$action$bmesslink;start=$start;action=pmpagetext$viewfolderinfo"><img src="$imagesdir/index_togl.gif" border="0" alt="$display_txt{'19'}" title="$display_txt{'19'}" style="vertical-align: middle;" /></a> $display_txt{'139'}: ~;
 			if ($startpage > 0) { $pagetxtindex = qq~<a href="$scripturl?action=$action$bmesslink/0$viewfolderinfo" style="font-weight: normal;">1</a>&nbsp;...&nbsp;~; }
 			if ($startpage == $maxmessagedisplay) { $pagetxtindex = qq~<a href="$scripturl?action=$action$bmesslink;start=0$viewfolderinfo" style="font-weight: normal;">1</a>&nbsp;~; }
 			for ($counter = $startpage; $counter < $endpage; $counter += $maxmessagedisplay) {
@@ -1963,7 +1967,7 @@ sub DoShowIM {
 
 		if ($mstatus eq 'g') {
 			my ($guestName, $guestEmail) = split(/ /, $musername);
-			$guestName =~ s/%20/ /g; 
+			$guestName =~ s/%20/ /g;
 			$usernamelinkfrom = qq~$guestName (<a href="mailto:$guestEmail">$guestEmail</a>)~;
 		} else {
 			&LoadValidUserDisplay($musername);
@@ -1984,7 +1988,7 @@ sub DoShowIM {
 				}
 			} else {
 				my ($guestName, $guestEmail) = split(/ /, $mtousers);
-				$guestName =~ s/%20/ /g; 
+				$guestName =~ s/%20/ /g;
 				$usernamelinkto = qq~$guestName (<a href="mailto:$guestEmail">$guestEmail</a>)~;
 			}
 			$toTitle = qq~$inmes_txt{'324'}:~;
@@ -1993,7 +1997,7 @@ sub DoShowIM {
 				if ($uname eq 'all') { $usernamelinkto .= qq~<b>$inmes_txt{'bmallmembers'}</b>~ . ', ';
 				} elsif ($uname eq 'mods') { $usernamelinkto .= qq~<b>$inmes_txt{'bmmods'}</b>~ . ', ';
 				} elsif ($uname eq 'gmods') { $usernamelinkto .= qq~<b>$inmes_txt{'bmgmods'}</b>~ . ', ';
-				} elsif ($uname eq 'admins') { $usernamelinkto .= qq~<b>$inmes_txt{'bmadmins'}</b>~ . ', ';				
+				} elsif ($uname eq 'admins') { $usernamelinkto .= qq~<b>$inmes_txt{'bmadmins'}</b>~ . ', ';
 				} else {
 					my ($title, undef) = split(/\|/, $NoPost{$uname}, 2);
 					$usernamelinkto .= qq~<b>$title</b>~ . ', ';
@@ -2028,7 +2032,7 @@ sub DoShowIM {
 				}
 			} else {
 				my ($guestName, $guestEmail) = split(/ /, $mtousers);
-				$guestName =~ s/%20/ /g; 
+				$guestName =~ s/%20/ /g;
 				$usernamelinkto = qq~$guestName (<a href="mailto:$guestEmail">$guestEmail</a>)~;
 			}
 			$toTitle = qq~$inmes_txt{'324'}:~;
@@ -2065,7 +2069,7 @@ sub DoShowIM {
 
 		if ($mstatus eq 'g') {
 			my ($guestName, $guestEmail) = split(/ /, $musername);
-			$guestName =~ s/%20/ /g; 
+			$guestName =~ s/%20/ /g;
 			$usernamelinkfrom = qq~$guestName (<a href="mailto:$guestEmail">$guestEmail</a>)~;
 		} else {
 			&LoadValidUserDisplay($musername);
@@ -2196,7 +2200,7 @@ sub DoShowIM {
 	if ($iamadmin || $iamgmod && $gmod_access2{'ipban2'} eq 'on') { $imip = $imip; }
 	else { $imip = $inmes_txt{'511'}; }
 
-	my $postMenuTemp = $sendEmail . $sendPM . $membAdInfo . "&nbsp;"; 
+	my $postMenuTemp = $sendEmail . $sendPM . $membAdInfo . "&nbsp;";
 	$postMenuTemp =~ s/\Q$menusep//i;
 
 	$showIM .= qq~

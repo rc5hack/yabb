@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$attachmentsplver = 'YaBB 2.5 AE $Revision: 1.15 $';
+$attachmentsplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub Attachments {
@@ -152,7 +150,7 @@ sub RemoveOldAttachments {
 				$info .= qq~<br /><i>$attachments[$a]</i> $fatxt{'1'} = $age $admin_txt{'122'}.~;
 			}
 
-			if ($time_to_jump < time() && ($a + 1) < @attachments) { 
+			if ($time_to_jump < time() && ($a + 1) < @attachments) {
 				# save the $info of this run until the end of 'RemoveOldAttachments'
 				fopen(FILE, ">>$vardir/rem_old_attach.tmp") || &admin_fatal_error('cannot_open', "$vardir/rem_old_attach.tmp", 1);
 				print $info;
@@ -232,7 +230,7 @@ sub RemoveBigAttachments {
 				$info .= qq~<br /><i>$attachments[$a]</i> $fatxt{'1'} = $size KB~;
 			}
 
-			if ($time_to_jump < time() && ($a + 1) < @attachments) { 
+			if ($time_to_jump < time() && ($a + 1) < @attachments) {
 				# save the $info of this run until the end of 'RemoveBigAttachments'
 				fopen(FILE, ">>$vardir/rem_big_attach.tmp") || &admin_fatal_error('cannot_open', "$vardir/rem_big_attach.tmp", 1);
 				print $info;

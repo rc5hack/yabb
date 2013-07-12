@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$managecatsplver = 'YaBB 2.5 AE $Revision: 1.11 $';
+$managecatsplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub DoCats {
@@ -106,7 +104,7 @@ sub AddCats {
     <td class="windowbg" align="center"><label for="allowcol$i"><b>$exptxt{'6'}</b></label></td>
   </tr><tr>~;
 		if ($INFO{"action"} eq 'catscreen') {
-			$yymain .= qq~			
+			$yymain .= qq~
 			<td class="windowbg" align="left" valign="middle"><label for="theid$i"><b>$admin_txt{'61a'}</b></label></td>
 			<td class="windowbg2" valign="middle"><br /><input type="hidden" name="theid$i" id="theid$i" value="$id" />$id<br /><br />~;
 		} else {

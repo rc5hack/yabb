@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 5, 2012                                             #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mediacenterplver = 'YaBB 2.5 AE $Revision: 1.23 $';
+$mediacenterplver = 'YaBB 2.5.2 $Revision: 1.3 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub embed {
@@ -42,22 +40,22 @@ sub embed {
 		# file extensions that open windows media player for video
 		if ($media_url =~ m/(\.wmv|\.wpl|\.asf|\.avi|\.mpg|\.mpeg|\.divx|\.xdiv)$/i) {
 			if ($player_version == 6){
-				$video = $embed_wmv6; 
+				$video = $embed_wmv6;
 			} elsif ($player_version == 10){
-				$video = $embed_wmv10; 
+				$video = $embed_wmv10;
 			} else {
-				$video = $embed_wmv6; 
+				$video = $embed_wmv6;
 			}
 			$controlheight = 45;
 
 		# file extensions that open windows media player for audio
 		} elsif ($media_url =~ m/(\.wma|\.wax|\.asx|\.mp3|\.mid|\.wav|\.kar|\.rmi)$/i) {
 			if ($player_version == 6){
-				$video = $embed_wma6; 
+				$video = $embed_wma6;
 			} elsif ($player_version == 10){
-				$video = $embed_wma10; 
+				$video = $embed_wma10;
 			} else {
-				$video = $embed_wma6; 
+				$video = $embed_wma6;
 			}
 
 		# file extensions that open flash player
@@ -82,8 +80,14 @@ sub embed {
 			$controlheight = 42;
 
 		} elsif ($media_url =~ m/youtube\.com/i) {
-			$media_url =~ s~watch\?v=~v\/~g;
-			$video = $embed_flash;
+		      ($media_url, undef) = split /\&/g, $media_url;
+            	$media_url =~ s~watch\?v=~v\/~g;
+            	$video = $embed_youtube;
+			$controlheight = 36;
+
+		} elsif ($media_url =~ m/youtu\.be/i) {
+			$media_url =~ s~youtu\.be\/~www\.youtube\.com\/v\/~g;
+			$video = $embed_youtube;
 			$controlheight = 36;
 
 		# added Clipfish video url support
@@ -216,7 +220,7 @@ sub flashconvert{
 	my ($fl_url,$fl_size) = @_;
 	$fl_size =~ s/ //g;
 	my ($fl_width, undef) = split (/\,/ , $fl_size);
-	"\[media width\=$fl_width\]$fl_url\[/media\]"; 
+	"\[media width\=$fl_width\]$fl_url\[/media\]";
 }
 
 ## Windows Media Player 6.4 Video
@@ -297,6 +301,14 @@ $embed_flash = qq~
 		<embed src="_media_" width="_width_" height="_height_" loop="_loop_" bgcolor="#FFFFFF" quality="high" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" />
 	</object>
 ~;
+
+$embed_youtube = qq~
+    <object width="_width_" height="_height_">
+        <param name="movie" value="_media_&hl=en_US&feature=player_embedded&version=3" />
+        <param name="allowFullScreen" value="true" />
+        <param name="allowScriptAccess" value="always" />
+        <embed src="_media_&hl=en_US&feature=player_embedded&version=3" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="_width_" height="_height_" />
+    </object>~;
 
 $embed_flv = qq~
 	<embed src="$yyhtml_root/mediaplayer.swf" allowfullscreen="true" allowscriptaccess="always" width="_width_" height="_height_" flashvars="&file=_media_&height=_height_&width=_width_&autostart=_autostart_" />~;

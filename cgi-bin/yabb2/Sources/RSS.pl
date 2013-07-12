@@ -5,18 +5,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$rssplver = 'YaBB 2.5 AE $Revision: 1.29 $';
+$rssplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Change the error routine for here.
@@ -132,12 +130,13 @@ sub RSS_board {
 			(undef, undef, undef, undef, $musername, undef, undef, undef, $message, $ns) = split(/\|/, $post);
 		}
 		if ($showauthor) {
-			# The spec really wants us to include their email.
-			# That's not adviseable for us (spambots anyone?). So we skip author if the email hidden flag is on for that user.
 			if (-e "$memberdir/$musername.vars") {
-				&LoadUser($musername); 
+				&LoadUser($musername);
 				if (!${$uid.$musername}{'hidemail'}){
 					$yymain .= qq~<author>~ . &RSSDescriptionTrim("${$uid.$musername}{'email'} (${$uid.$musername}{'realname'})") . qq~</author>~;
+				}
+				else {
+					$yymain .= qq~			<author><name>~ . &RSSDescriptionTrim("(${$uid.$musername}{'realname'})") . qq~</name></author>\n~;
 				}
 			}
 		}
@@ -249,7 +248,7 @@ sub RSS_recent {
 
 		# Does it need to be returned as a 304?
 		if($i == 0) { # Do this for the first request only
-			$cachedate = &RFC822Date($mdate); 
+			$cachedate = &RFC822Date($mdate);
 			if($ENV{'HTTP_IF_NONE_MATCH'} eq qq~"$cachedate"~ || $ENV{'HTTP_IF_MODIFIED_SINCE'} eq $cachedate) {
 				&Send304NotModified(); # Comment this out to test with caching disabled
 			}
@@ -292,7 +291,7 @@ sub RSS_recent {
 			$post = <TOPIC>;
 		}
 		fclose(TOPIC);
-		
+
 		if ($post ne ''){
 			(undef, undef, undef, undef, $musername, undef, undef, undef, $message, $ns) = split(/\|/, $post);
 		}
@@ -301,9 +300,12 @@ sub RSS_recent {
 			# The spec really wants us to include their email.
 			# That's not adviseable for us (spambots anyone?). So we skip author if the email hidden flag is on for that user.
 			if (-e "$memberdir/$musername.vars") {
-				&LoadUser($musername); 
+				&LoadUser($musername);
 				if (!${$uid.$musername}{'hidemail'}){
 					$yymain .= qq~			<author>~ . &RSSDescriptionTrim("${$uid.$musername}{'email'} (${$uid.$musername}{'realname'})") . qq~</author>\n~;
+				}
+				else {
+					$yymain .= qq~			<author><name>~ . &RSSDescriptionTrim("${$uid.$musername}{'realname'}") . qq~</name></author>\n~;
 				}
 			}
 		}

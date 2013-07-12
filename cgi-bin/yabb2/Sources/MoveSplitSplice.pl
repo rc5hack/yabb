@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$movesplitspliceplver = 'YaBB 2.5 AE $Revision: 1.4 $';
+$movesplitspliceplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('MoveSplitSplice');
@@ -606,7 +604,7 @@ sub Split_Splice_2 {
 
 			my ($msub,$mname,$memail,$musername,$micon);
 			($msub, $mname, $memail, undef, $musername, $micon, undef) = split(/\|/, $utdnewthread[0], 7);
-			if ($old_mstate =~ /a/i) { 
+			if ($old_mstate =~ /a/i) {
 				if ($newboard ne $annboard) { $old_mstate =~ s/a//gi; }
 			} elsif ($newboard eq $annboard) {
 				$old_mstate .= "a";
@@ -687,7 +685,7 @@ sub Split_Splice_2 {
 			${$uid.$curboard}{'lasticon'}       = ${$BoardTotals{$newthreadid}}[5];
 			${$uid.$curboard}{'lasttopicstate'} = ${$BoardTotals{$newthreadid}}[6];
 		}
-		&BoardTotals("update", $curboard);
+		&BoardSetLastInfo($curboard,\@curmessindex);
 	}
 
 	# update new board totals if needed

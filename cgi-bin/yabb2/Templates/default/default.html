@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<!-- YaBB 2.5 AE $Revision: 1.20 $ -->
+<!-- YaBB 2.5.2 $Revision: 1.0 $ -->
 <title>{yabb title}</title>
 <meta http-equiv="Content-Type" content="text/html; charset={yabb charset}" />
 {yabb style}
@@ -11,83 +11,70 @@
 <!--
 //force no cache
 if ((navigator.appVersion.substring(0,1) == "5" && navigator.userAgent.indexOf('Gecko') != -1) || navigator.userAgent.search(/Opera/) != -1) {
-	document.write('<meta http-equiv="pragma" CONTENT="no-cache" />');
+      document.write('<meta http-equiv="pragma" CONTENT="no-cache" />');
 }
 {yabb javascript}
 // -->
 </script>
 </head>
 <body>
+<div id="ImageAlert" style="visibility:hidden; position:fixed; background-color:#AAAAAA; width:200px; top:30%; left:41%">
+      <div id="ImageAlertText" style="background-color:#EEEEEE; text-align:center; padding: 3px; margin:1px;"> </div>
+      <div id="ImageAlertPic" style="background-color:#FFFFFF; text-align:center; margin:1px;"> </div>
+</div>
+<a name="pagetop">&nbsp;</a><br />
 <div id="maincontainer">
 <div id="container">
-<div id="ImageAlert" style="visibility:hidden; position:fixed; background-color:#AAAAAA; width:200px; top:30%; left:41%">
-	<div id="ImageAlertText" style="background-color:#EEEEEE; text-align:center; padding: 3px; margin:1px;"> </div>
-	<div id="ImageAlertPic" style="background-color:#FFFFFF; text-align:center; margin:1px;"> </div>
-</div>
-
-
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="menutop">
-	<tr>
-		<td class="small" align="left" valign="middle" width="2%" height="23">&nbsp;</td>
-		<td class="small" align="left" valign="middle" width="48%" height="23"><div id="yabbclock">{yabb time}</div></td>
-		<td class="small" align="right" valign="middle" width="48%" height="23">{yabb langChooser}</td>
-		<td class="small" align="left" valign="middle" width="2%" height="23">&nbsp;</td>
-	</tr>
+      <tr>
+            <td class="small" align="left" valign="middle" width="2%" height="23">&nbsp;</td>
+            <td class="small" align="left" valign="middle" width="48%" height="23"><div id="yabbclock">{yabb time}</div></td>
+            <td class="small" align="right" valign="middle" width="48%" height="23">{yabb langChooser}</td>
+            <td class="small" align="left" valign="middle" width="2%" height="23">&nbsp;</td>
+      </tr>
 </table>
 <table class="windowbg2" width="100%" cellpadding="4" cellspacing="0" border="0">
-	<tr>
-		<td align="left" valign="top" width="1%" height="40">&nbsp;</td>
-		<td align="left" valign="middle" height="40">{yabb uname}<br />{yabb im}{yabb admin_alert}</td>
-		<td align="center" valign="middle" width="460" height="100" rowspan="2"><a href="http://www.yabbforum.com"><img src="{yabb images}/yabblogo.png" alt="YaBB - Yet another Bulletin Board" title="YaBB - Yet another Bulletin Board" border="0" /></a></td>
-	</tr>
-	<tr>
-		<td align="left" valign="top" width="1%" height="60">&nbsp;</td>
-		<td class="small" align="left" valign="top" height="60">{yabb news}</td>
-	</tr>
+      <tr>
+            <td align="left" valign="top" width="1%" height="40">&nbsp;</td>
+            <td align="left" valign="middle" height="40">{yabb uname}<br />{yabb im}{yabb admin_alert}</td>
+            <td align="center" valign="middle" width="460" height="100" rowspan="2"><a href="http://www.yabbforum.com"><img src="{yabb images}/yabblogo.png" alt="YaBB - Yet another Bulletin Board" title="YaBB - Yet another Bulletin Board" border="0" /></a></td>
+      </tr>
+      <tr>
+            <td align="left" valign="top" width="1%" height="60">&nbsp;</td>
+            <td class="small" align="left" valign="top" height="60">{yabb news}</td>
+      </tr>
 </table>
-
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td class="menutop" height="22" align="left">&nbsp;</td>
-	</tr>
+      <tr>
+            <td class="menutop" height="22" align="left">&nbsp;</td>
+      </tr>
 </table>
-
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td class="tabmenuleft" width="40">&nbsp;</td>
-		<td class="tabmenu">{yabb tabmenu}</td>
-		<td class="tabmenu" valign="top">{yabb tabadd}</td>
-		<td class="tabmenu" width="40" valign="top"><div style="float: left; width: 40px; height: 16px; text-align: center; padding-top: 6px; display: inline;">{yabb rss}</div></td>
-		<td class="tabmenuright" width="45">&nbsp;</td>
-		<td class="rightbox" width="160" valign="top"><div style="float: left; width: 160px; height: 16px; text-align: center; padding-top: 3px; display: inline;">{yabb searchbox}</div></td>
-	</tr>
+      <tr>
+            <td class="tabmenuleft" width="40">&nbsp;</td>
+            <td class="tabmenu">{yabb tabmenu}</td>
+            <td class="tabmenu" valign="top">{yabb tabadd}</td>
+            <td class="tabmenu" width="40" valign="top"><div style="float: left; width: 40px; height: 18px; text-align: center; padding-top: 6px; display: inline;">{yabb rss}</div></td>
+            <td class="tabmenuright" width="45">&nbsp;</td>
+            <td class="rightbox" width="160" valign="top"><div style="float: left; width: 160px; height: 21px; text-align: center; padding-top: 3px; display: inline;">{yabb searchbox}</div></td>
+      </tr>
 </table>
 {yabb addtab}
-
-<a name="pagetop">&nbsp;</a><br />
-
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td class="nav" height="30" width="2%" align="left">&nbsp;</td>
-		<td class="nav" height="30" align="left">{yabb boardlink} {yabb navigation}</td>
-	</tr>
+      <tr>
+            <td class="nav" height="30" width="2%" align="left">&nbsp;</td>
+            <td class="nav" height="30" align="left">{yabb boardlink} {yabb navigation}</td>
+      </tr>
 </table>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td>
 <div style="width: 96%; margin-left: auto; margin-right: auto; text-align: left;">{yabb main}</div>
- </td>
-		
-	</tr>
-</table>
+<div style="width: 96%; margin-left: auto; margin-right: auto; text-align: right; padding-top: 10px;">{yabb forumjump}&nbsp;</div>
 
-<div class="menutop">
+<div class="mainbottom">
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td class="tabtitle" height="22" width="2%" align="left">&nbsp;</td>
-		<td class="tabtitle" height="22" align="left">{yabb navback}</td>
-                                <td class="tabtitle" height="22" align="right">{yabb forumjump}</td>
-	</tr>
+      <tr>
+            <td class="nav" height="22" width="2%" align="left">&nbsp;</td>
+            <td class="nav" height="22" align="left">{yabb navback}</td>
+      </tr>
 </table>
 </div>
 

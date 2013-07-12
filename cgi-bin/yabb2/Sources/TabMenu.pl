@@ -3,18 +3,17 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
 #               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$tabmenuplver = 'YaBB 2.5 AE $Revision: 1.20 $';
+$tabmenuplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('TabMenu');
@@ -87,7 +86,7 @@ sub mainMenu {
 		$tab{'logout'} = qq~<span |><a href="$scripturl?action=logout" title = "$img_txt{'108'}" style="padding: 3px 0 4px 0;">$tabfill$img_txt{'108'}$tabfill</a></span>~;
 	}
 
-	# Advanced Tabs starts here 
+	# Advanced Tabs starts here
 	for (my $i = 0; $i < @AdvancedTabs; $i++) {
 		if ($AdvancedTabs[$i] =~ /\|/) {
 			my ($tab_key,$tmptab_url, $isaction, $username_req, $tab_access, $tab_newwin, $exttab_url) = split(/\|/, $AdvancedTabs[$i]);

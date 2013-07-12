@@ -21,7 +21,7 @@ $SectionBody1 = qq~If you feel a topic is inappropriate, in violation of the mem
 </ul></li></ul><br />
 <ul>
 <li>If &quot;Multi-Checkbox&quot; enabled in Forum Settings/Staff
-<ul><li>At the end of the row for each post, you will have 5 small checkboxs with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Remove&quot; icon for each topic you wish to remove.</li>
+<ul><li>At the end of the row for each post, you will have 5 small checkboxes with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Remove&quot; icon for each topic you wish to remove.</li>
 <li>If removing all topics, check the &quot;Check All&quot; box below all topics.</li>
 <li>Click the button titled &quot;Go&quot;, next to the move drop-down box.</li>
 </ul></li></ul><br />
@@ -55,7 +55,7 @@ $SectionBody2 = qq~When you feel a topic can no longer serve a good purpose or y
 </ul></li></ul><br />
 <ul>
 <li>If &quot;Multi-Checkbox&quot; enabled in Forum Settings/Staff
-<ul><li>At the end of the row for each post, you will have 5 small checkboxs with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Remove&quot; icon for each topic you wish to remove.</li>
+<ul><li>At the end of the row for each post, you will have 5 small checkboxes with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Remove&quot; icon for each topic you wish to remove.</li>
 <li>If removing all topics, check the &quot;Check All&quot; box below all topics.</li>
 <li>Click the button titled &quot;Go&quot;, next to the move drop-down box.</li>
 </ul></li></ul><br />
@@ -97,7 +97,7 @@ $SectionBody3 = qq~If you feel a topic is very important for everyone who visits
 </ul></li></ul><br />
 <ul>
 <li>If &quot;Multi-Checkbox&quot; enabled in Forum Settings/Staff
-<ul><li>At the end of the row for each post, you will have 5 small checkboxs with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Sticky&quot; icon for each topic you wish to sticky.</li>
+<ul><li>At the end of the row for each post, you will have 5 small checkboxes with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Sticky&quot; icon for each topic you wish to sticky.</li>
 <li>If stickying all topics, check the &quot;Check All&quot; box below all topics.</li>
 <li>Click the button titled &quot;Go&quot;, next to the move drop-down box.</li>
 </ul></li></ul><br />
@@ -136,7 +136,7 @@ $SectionBody4 = qq~If you don't want to delete a topic but want to keep it invis
 </ul></li></ul><br />
 <ul>
 <li>If &quot;Multi-Checkbox&quot; enabled in Forum Settings/Staff
-<ul><li>At the end of the row for each post, you will have 5 small checkboxs with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Hide&quot; icon for each topic you wish to Hide.</li>
+<ul><li>At the end of the row for each post, you will have 5 small checkboxes with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Hide&quot; icon for each topic you wish to Hide.</li>
 <li>If hiding all topics, check the &quot;Check All&quot; box below all topics.</li>
 <li>Click the button titled &quot;Go&quot;, next to the move drop-down box.</li>
 </ul></li></ul><br />
@@ -176,7 +176,7 @@ $SectionBody5 = qq~If you don't want to delete a Topic but you think it would fi
 </ul></li></ul><br />
 <ul>
 <li>If &quot;Multi-Checkbox&quot; enabled in Forum Settings/Staff
-<ul><li>At the end of the row for each post, you will have 5 small checkboxs with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Move&quot; icon for each topic you wish to Move.</li>
+<ul><li>At the end of the row for each post, you will have 5 small checkboxes with icons above each one symbolizing  &quot;Lock&#47;;Unlock&quot;, &quot;Sticky&quot;, &quot;Hide&quot;, &quot;Move&quot; and &quot;Remove&quot;. Check the box below the &quot;Move&quot; icon for each topic you wish to Move.</li>
 <li>If moving all topics, check the &quot;Check All&quot; box below all topics.</li>
 <li>In the drop-down selection box to the right of the radio buttons, select the destination board you want to sent this topic to.</li>
 <li>Click the button titled &quot;Go&quot;, next to the move drop-down box.</li>

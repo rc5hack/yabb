@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$postplver = 'YaBB 2.5 AE $Revision: 1.144 $';
+$postplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Post');
@@ -652,7 +650,7 @@ function checkForm(theForm) {
 					idiff = eval(ihex + '-(' + itmp + '*16)');
 					a2 = itohex[idiff] + a2;
 					ihex = itmp;
-				} 
+				}
 				a1 = itohex[ihex];
 				return a1 + a2;
 			}
@@ -916,7 +914,7 @@ function checkForm(theForm) {
 					}
 				}
 			}
-		
+
 			function showbullets(bullet) {
 				AddSelText("[list "+bullet+"][*]", "\\n[/list]");
 			}
@@ -937,7 +935,7 @@ function checkForm(theForm) {
 					idiff = eval(ihex + '-(' + itmp + '*16)');
 					a2 = itohex(idiff) + a2;
 					ihex = itmp;
-				} 
+				}
 				a1 = itohex(ihex);
 				return a1 + a2 ;
 			}
@@ -1079,7 +1077,7 @@ function checkForm(theForm) {
 				</select>
 			</div>
 			</div>
-			<div style="float: left; width: 315px; text-align: left;"> 
+			<div style="float: left; width: 315px; text-align: left;">
 			<img src="$imagesdir/green1.gif" name="chrwarn" height="8" width="8" border="0" vspace="0" hspace="0" alt="" align="middle" />
 			<span class="small">$npf_txt{'03'} <input value="$MaxMessLen" size="3" name="msgCL" class="windowbg2" style="border: 0px; font-size: 11px; width: 40px; padding: 1px" readonly="readonly" /></span>
 			</div>
@@ -1713,6 +1711,7 @@ var timetext3 = "$timetxt{'3'}";
 var timetext4 = "$timetxt{'4'}";
 var jsmilieurl = new Array($smilie_url_array);
 var jsmiliecode = new Array($smilie_code_array);
+var showimageinquote = $showimageinquote;
 
 function autoPreview() {
 	if (topicfirst)  { updatTopic(); }
@@ -1727,7 +1726,7 @@ function autoPreview() {
 		vismessage=vismessage.replace(/(date=)\\d+?(\\])/i, "\$1"+qdate+"\$2");
 	}
 	if($enable_ubbc) {
-		var ubbstr = jsDoUbbc(vismessage,codestr,quotstr,squotstr,edittxt,dispname,scrpurl,imgdir,ubsmilieurl,parseflash,fontsizemax,fontsizemin,autolinkurl,Month,timeselected,splittext,dontusetoday,todaytext,yesterdaytext,timetext1,timetext2,timetext3,timetext4,jsmilieurl,jsmiliecode);
+		var ubbstr = jsDoUbbc(vismessage,codestr,quotstr,squotstr,edittxt,dispname,scrpurl,imgdir,ubsmilieurl,parseflash,fontsizemax,fontsizemin,autolinkurl,Month,timeselected,splittext,dontusetoday,todaytext,yesterdaytext,timetext1,timetext2,timetext3,timetext4,jsmilieurl,jsmiliecode,showimageinquote);
 	}
 	else {
 		var ubbstr = vismessage;
@@ -2234,7 +2233,7 @@ sub Post2 {
 	if ($testmessage eq "" && $message ne "" && $pollthread != 2) { fatal_error("useless_post","$testmessage"); }
 
 	if (!$minlinkpost){ $minlinkpost = 0 ;}
-	if (${$uid.$username}{'postcount'} < $minlinkpost && !$iamadmin && !$iamgmod && !$iammod) { 
+	if (${$uid.$username}{'postcount'} < $minlinkpost && !$iamadmin && !$iamgmod && !$iammod) {
 		if ($message =~ m~http:\/\/~ || $message =~ m~https:\/\/~ || $message =~ m~ftp:\/\/~ || $message =~ m~www.~ || $message =~ m~ftp.~ =~ m~\[url~ || $message=~ m~\[link~ || $message=~ m~\[img~ || $message=~ m~\[ftp~) {
 			&fatal_error("no_links_allowed");
 		}
@@ -2373,7 +2372,7 @@ sub Post2 {
 					 $x++;
 				}
 				# END Transliteration. Thanks to "Velocity" for this contribution.
-				$fixfile =~ s/[^0-9A-Za-z\+\-\.:_]/_/g; 
+				$fixfile =~ s/[^0-9A-Za-z\+\-\.:_]/_/g;
 			}
 
 			# replace . with _ in the filename except for the extension
@@ -2392,7 +2391,13 @@ sub Post2 {
 					&fatal_error("tsc_alert");
 				}
 			}
-
+            	if ($use_guardian && $string_on) {
+                		@bannedstrings = split(/\|/, $banned_strings);
+                		foreach (@bannedstrings) {
+                    		chomp $_;
+                    		if ($fixname =~ m/$_/i) { &fatal_error("attach_name_blocked","($_)"); }
+                		}
+            	}
 			$fixext  =~ s/\.(pl|pm|cgi|php)/._$1/i;
 			$fixname =~ s/\.(?!tar$)/_/g;
 			$fixfile = qq~$fixname$fixext~;
@@ -3346,7 +3351,7 @@ sub modAlert2 {
 	$message =~ s/([\000-\x09\x0b\x0c\x0e-\x1f\x7f])/\x0d/g;
 
 	if (-e ("$datadir/.txt")) { unlink("$datadir/.txt"); }
-	
+
 	# Find a valid random ID for it
 	$newthreadid = &getnewid;
 

@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$systemplver = 'YaBB 2.5 AE $Revision: 1.39 $';
+$systemplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 
 sub BoardTotals {
 	my ($testboard, $line, @lines, $updateboard, @boardvars, $tag, $cnt);
@@ -375,7 +373,7 @@ sub MembershipCountTotal {
 sub RegApprovalCheck {
 	## alert admins and gmods of waiting users for approval
 	if ($regtype == 1 && ($iamadmin || ($iamgmod && $allow_gmod_admin eq "on" && $gmod_access{'view_reglog'} eq "on"))) {
-		opendir(MEM,"$memberdir"); 
+		opendir(MEM,"$memberdir");
 		my @approval = (grep /.wait$/i, readdir(MEM));
 		closedir(MEM);
 		my $app_waiting = $#approval+1;
@@ -387,7 +385,7 @@ sub RegApprovalCheck {
 	}
 	## alert admins and gmods of waiting users for validations
 	if (($regtype == 1 || $regtype == 2) && ($iamadmin || ($iamgmod && $allow_gmod_admin eq "on" && $gmod_access{'view_reglog'} eq "on"))) {
-		opendir(MEM,"$memberdir"); 
+		opendir(MEM,"$memberdir");
 		my @preregged = (grep /.pre$/i, readdir(MEM));
 		closedir(MEM);
 		my $preregged_waiting = $#preregged+1;
@@ -476,7 +474,7 @@ sub keygen {
 	for (my $i; $i < $length; $i++) {
 		$randid .= $chararray[int(rand(61))];
 	}
-	if ($type eq "U") { return uc $randid; } 
+	if ($type eq "U") { return uc $randid; }
 	elsif ($type eq "L") { return lc $randid; }
 	else { return $randid; }
 }

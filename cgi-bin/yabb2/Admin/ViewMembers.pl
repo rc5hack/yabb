@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$viewmembersplver = 'YaBB 2.5 AE $Revision: 1.18 $';
+$viewmembersplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('MemberList');
@@ -40,10 +38,10 @@ sub Ml {
 	} else {
 		$barmax = $barmaxnumb;
 	}
-	
+
 	$FORM{'sortform'} ||= $INFO{'sortform'};
 	if (!$INFO{'sort'} && !$FORM{'sortform'}) { $INFO{'sort'} = $defaultml; $FORM{'sortform'} = $defaultml }
-	
+
 	if ($FORM{'sortform'} eq "username" || $INFO{'sort'} eq "mlletter" || $INFO{'sort'} eq "username") {
 		$page     = "a";
 		$showpage = "A";
@@ -426,7 +424,7 @@ sub buildIndex {
 
 				$pageindexjs = qq~
 <script language="JavaScript1.2" type="text/javascript">
-<!-- 
+<!--
 	function SelDec(decparam, visel) {
 		splitparam = decparam.split("|");
 		var vistart = parseInt(splitparam[0]);
@@ -523,7 +521,7 @@ sub buildIndex {
 		}
 		//-->
 		</script>
-		
+
 		<form name="adv_memberview" action="$adminurl?action=deletemultimembers$sortmode$sortorder$spages" method="post" style="display: inline" onsubmit="return submitproc()">
 		<input type="hidden" name="button" value="0" />
 		<table border="0" width="100%" cellspacing="1" cellpadding="3" class="bordercolor">
@@ -555,15 +553,15 @@ sub buildIndex {
 						<option value="0">$amv_txt{'35'}</option>
 						<option value="1">$amv_txt{'36'}</option>
 						<option value="2" selected="selected">$amv_txt{'37'}</option>
-					</select> 
-					<input type="text" size="5" name="number" value="30" maxlength="5" onkeyup="document.adv_memberview.check_all.checked=true;checkAll(1);" /> 
+					</select>
+					<input type="text" size="5" name="number" value="30" maxlength="5" onkeyup="document.adv_memberview.check_all.checked=true;checkAll(1);" />
 					<select name="field1" onchange="document.adv_memberview.check_all.checked=true;checkAll(1);">
 						<option value="0">$amv_txt{'30'}</option>
 						<option value="1">$amv_txt{'31'}</option>
 						<option value="2" selected="selected">$amv_txt{'32'}</option>
 						<option value="3">$amv_txt{'33'}</option>
 						<option value="4">$amv_txt{'34'}</option>
-					</select> 
+					</select>
 					<br />
 					<label for="del_mail">$amv_txt{'45'}:</label> <input type="checkbox" name="del_mail" id="del_mail" value="1" class="titlebg" style="border: 0;" />
 					</td>
@@ -579,7 +577,7 @@ sub buildIndex {
 			</table>
 		  </form>
 		<script language="JavaScript1.2" type="text/javascript">
-		<!-- 
+		<!--
 		mem_data = new Array ( "", $CheckingAll"" );
 		function checkAll(ticked) {
 			if(navigator.appName == "Microsoft Internet Explorer") {var alt_pressed = self.event.altKey; var ctrl_pressed = self.event.ctrlKey;}
@@ -597,7 +595,7 @@ sub buildIndex {
 						var check = 0;
 						if (field2 == 0 && value1 <  limit) { check = 1; }
 						if (field2 == 1 && value1 == limit) { check = 1; }
-						if (field2 == 2 && value1 >  limit) { check = 1; } 
+						if (field2 == 2 && value1 >  limit) { check = 1; }
 						if (ctrl_pressed == true) { check = 0; }
 						if (alt_pressed  == true) { check = 1; }
 						if (check == 1) document.adv_memberview.elements[i].checked = true;

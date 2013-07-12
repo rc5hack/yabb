@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$membergroupsplver = 'YaBB 2.5 AE $Revision: 1.18 $';
+$membergroupsplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub EditMemberGroups {
@@ -118,7 +116,7 @@ sub EditMemberGroups {
 <br />
 ~;
 
-	my $colspan = 6; 
+	my $colspan = 6;
 	my $width1 = '25%';
 	my $width2 = '10%';
 	my $width3 = '15%';
@@ -324,7 +322,7 @@ sub editAddGroup {
 			$noposts = $_ + 1;
 		}
 	}
-	
+
 	if ($stars !~ /\A[0-9]+\Z/) { $stars = 0; }
 
 	$otherdisable = qq~ disabled="disabled"~;
@@ -426,7 +424,7 @@ sub editAddGroup {
 			</select> &nbsp;
 			<span id="grpcolor"~ . ($color ne '' ? qq* style="color: #$color;"* : '') . qq~><label for="color2"><b>$amgtxt{'08'}</b></label></span>
 			#<input type="text" name="color2" id="color2" size="6" value="$color" maxlength="6" onkeyup="viscolor(this.value);" /> &nbsp;
-			<img src="$imagesdir/palette1.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=palette;task=templ', '', 'height=308,width=302,menubar=no,toolbar=no,scrollbars=no')" align="top" alt="" border="0" /> 
+			<img src="$imagesdir/palette1.gif" style="cursor: pointer" onclick="window.open('$scripturl?action=palette;task=templ', '', 'height=308,width=302,menubar=no,toolbar=no,scrollbars=no')" align="top" alt="" border="0" />
 		</td>
 	</tr>~;
 
@@ -530,9 +528,9 @@ function viscolor(v) {
 	if (j == 0) document.getElementById('color').options[0].selected = true;
 }
 
-function previewColor(color) {                                        
-	color = color.replace(/#/, '');                              
-	document.getElementById('color2').value = color;             
+function previewColor(color) {
+	color = color.replace(/#/, '');
+	document.getElementById('color2').value = color;
 	viscolor(color);
 }
 
@@ -699,7 +697,7 @@ sub editAddGroup2 {
 	require "$admindir/NewSettings.pl";
 	&SaveSettingsTo('Settings.pl'); # save @nopostorder, %Group, %NoPost and %Post
 
-	if ($newpostdep) { 
+	if ($newpostdep) {
 		$yySetLocation = qq~$adminurl?action=rebuildmemlist;actiononfinish=modmemgr~;
 	} else {
 		$yySetLocation = qq~$adminurl?action=modmemgr~;

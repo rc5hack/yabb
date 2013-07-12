@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$manageboardsplver = 'YaBB 2.5 AE $Revision: 1.21 $';
+$manageboardsplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub ManageBoards {
@@ -41,7 +39,7 @@ sub ManageBoards {
 	$yymain .= qq~
 <script language="JavaScript1.2" type="text/javascript">
 	<!--
-		function checkSubmit(where){ 
+		function checkSubmit(where){
 			var something_checked = false;
 			for (i=0; i<where.elements.length; i++){
 				if(where.elements[i].type == "checkbox"){
@@ -57,7 +55,7 @@ sub ManageBoards {
 				if (confirm("$admin_txt{'617'}")) {
 					return true;
 				} else {
-					return false; 
+					return false;
 				}
 			} else {
 				alert("$admin_txt{'5'}");
@@ -144,8 +142,8 @@ sub ManageBoards {
 	$yymain .= qq~
   	<tr>
       <td class="catbg" width="100%" align="center" valign="middle" $colspan> <label for="baction">$admin_txt{'52'}</label>
-    	<input type="radio" name="baction" id="baction" value="edit" checked="checked" /> $admin_txt{'53'} 
-    	<input type="radio" name="baction" value="delme" /> $admin_txt{'54'} 
+    	<input type="radio" name="baction" id="baction" value="edit" checked="checked" /> $admin_txt{'53'}
+    	<input type="radio" name="baction" value="delme" /> $admin_txt{'54'}
     	<input type="submit" value="$admin_txt{'32'}" class="button" /></td>
   	 </tr>
 </table>
@@ -157,7 +155,7 @@ sub ManageBoards {
    <table width="100%" cellspacing="1" cellpadding="4">
   <tr>
     <td class="catbg" align="center" valign="middle"><label for="amount"><b>$add: </b></label>
-	<input type="text" name="amount" id="amount" value="3" size="2" maxlength="2" /> 
+	<input type="text" name="amount" id="amount" value="3" size="2" maxlength="2" />
 	<input type="submit" value="$admintxt{'45'}" class="button" />
 	</td>
   </tr>

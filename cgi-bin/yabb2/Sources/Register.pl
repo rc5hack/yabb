@@ -3,22 +3,22 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$registerplver = 'YaBB 2.5 AE $Revision: 1.59 $';
+$registerplver = 'YaBB 2.5.2 $Revision: 1.6 $';
 if ($action eq 'detailedversion') { return 1; }
+if (!$iamguest && (!$admin && $action ne 'activate' && $action ne 'admin_descision') ) { &fatal_error("no_registration_logged_in"); }
 
 require "$sourcedir/Mailer.pl";
 &LoadLanguage('Register');
+&LoadCensorList;
 
 if ($^O =~ /Win/) {
 	my $regstyle = qq~ style="text-transform: lowercase"~;
@@ -33,14 +33,13 @@ sub Register {
 	$yynavigation = qq~&rsaquo; $register_txt{'97'}~;
 	if ($FORM{'reglanguage'}) {
 		$language = $FORM{'reglanguage'};
-		#&LoadLanguage('Main');
-		#&LoadLanguage('Menu');
 		&LoadLanguage('Register');
 	}
 	if ($FORM{'regusername'}) { $tmpregname     = $FORM{'regusername'}; }
 	if ($FORM{'regrealname'}) { $tmprealname    = $FORM{'regrealname'}; }
 	if ($FORM{'email'})       { $tmpregemail    = $FORM{'email'}; }
 	if ($FORM{'hideemail'} || !exists $FORM{'hideemail'}) { $hidechecked = qq~ checked="checked"~; }
+	if ($FORM{'add_field0'})    { $newfield       = $FORM{'add_field0'}; }
 	if ($FORM{'passwrd1'})    { $tmpregpasswrd1 = $FORM{'passwrd1'}; }
 	if ($FORM{'passwrd2'})    { $tmpregpasswrd2 = $FORM{'passwrd2'}; }
 	if ($FORM{'reason'})      { $reason         = $FORM{'reason'}; }
@@ -51,7 +50,6 @@ sub Register {
 	## moved langopt setup to subs.pl
 	if (!$langopt) { &guestLangSel; }
 
-	if (!$iamguest) { &fatal_error("no_registration_logged_in"); }
 	if (-e "$vardir/email_domain_filter.txt" ) { require "$vardir/email_domain_filter.txt"; }
 	if ($adomains) {
 		@domains = split (/\,/, $adomains);
@@ -97,15 +95,16 @@ sub Register {
 		</td>
 	</tr>~;
 	}
-
+      $newfield = q{};
 	$yymain .= qq~
+<!--user name section-->
 	<tr>
 		<td class="windowbg" align="right" valign="top">
 			<label for="regusername"><b>$register_txt{'98'}:</b><br />
-			<span class="small">$register_txt{'520'}</span></label>
+			<span class="small">$register_txt{'520'}$register_txt{'241ea'}</span></label>
 		</td>
 		<td class="windowbg2" align="left" valign="top">
-			<input type="text" name="regusername" id="regusername" onchange="checkAvail('$scripturl',this.value,'user')" size="30" value="$tmpregname" maxlength="18"$regstyle /> *
+			<input autocomplete="off" type="text" name="regusername" id="regusername" onchange="checkAvail('$scripturl',this.value,'user')" size="30" value="$tmpregname" maxlength="18"$regstyle /> *
 			<div id="useravailability"></div>
 			<input type="hidden" name="language" id="language" value="$language" />
 		</td>
@@ -136,7 +135,7 @@ sub Register {
 		$yymain .= qq~
 			<br /><input type="checkbox" name="hideemail" id="hideemail" value="1"$hidechecked /> <label for="hideemail">$register_txt{'721'}</label>
 		~;
-	} 
+	}
 	$yymain .= qq~
 		</td>
 	</tr>
@@ -410,6 +409,94 @@ sub Register {
 		</td>
 	</tr>~;
 	}
+    if ($en_spam_questions) {
+        srand;
+        fopen(SPAMQUESTIONS, "<$langdir/$language/spam.questions") || &fatal_error("cannot_open","$langdir/$language/spam.questions", 1);
+        rand($.) < 1 && ($spam_question_rand = $_) while <SPAMQUESTIONS>;
+        fclose(SPAMQUESTIONS);
+        ($spam_question_id, $spam_question, undef) = split(/\|/, $spam_question_rand);
+        if ($spam_questions_case) { $verification_question_desc = qq~<br />$register_txt{'verification_question_case'}~; }
+        $yymain .= qq~
+    <tr>
+        <td class="windowbg" align="right" valign="top">
+            <label for="verification_question"><b>$spam_question</b><br />
+			<span class="small">$register_txt{'verification_question_desc'}$verification_question_desc</span></label>
+        </td>
+        <td class="windowbg2" align="left" valign="top">
+            <input type="text" name="verification_question" id="verification_question" size="30" /> *
+            <input type="hidden" name="verification_question_id" value="$spam_question_id" />
+        </td>
+    </tr>~;
+    }
+	if ($honeypot == 1) {
+        	fopen(HONEY, "<$langdir/$language/honey.txt") || &fatal_error("cannot_open","$langdir/$language/honey.txt", 1);
+        	@honey = <HONEY>;
+        	fclose(HONEY);
+        	chomp @honey;
+	  	$hony = int rand $#honey;
+		$newfieldb = $honey[$hony];
+
+		$yymain .= qq~
+		<tr class="green">
+			<td align="right" valign="top" class="green">
+				<label for="add_field0" class="green"><b>$newfieldb</b>
+			</td>
+			<td align="left" valign="top" class="green">
+				<input type="text" name="add_field0" id="add_field0" size="30" value="$newfield" maxlength="18" class="green" /> *
+			</td>
+		</tr>~;	}
+		
+	# SpamFruits courtesy of Carsten Dalgaard #
+	if ($spamfruits == 1) {	
+		my @fruits = ($fruittxt{'2'},$fruittxt{'3'},$fruittxt{'4'},$fruittxt{'5'});
+		my $rdn = int(rand(4));
+		$fruit = $fruits[$rdn];
+		$yymain .= qq~
+		<tr>
+			<td class="windowbg" align="right" valign="top">
+				<b>$fruittxt{'1'} $fruit:</b>
+			</td>
+			<td class="windowbg2" align="left" valign="middle">
+				<input type="hidden" name="xcord" id="xcord" value="0" />
+				<input type="hidden" name="ycord" id="ycord" value="0" />
+				<input type="hidden" name="thefruit" id="thefruit" value="$fruit" />
+				<iframe id="fruits" name="fruits" width="290" height="87" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
+				<script language="JavaScript1.2" type="text/javascript">
+				<!--
+					function ShowFruits() {
+						var visfruits = "<html><head><link rel='stylesheet' href='$extpagstyle' type='text/css' /></head><body class='windowbg2'> ";
+						visfruits += "<img src='$defaultimagesdir/fruits.png' width='290' height='75' name='fruitsview' id='fruitsview' border='0' style='position: absolute; top: 0px; left: 0px; cursor: pointer;' alt='' onclick='FruitClick(event)' /> ";
+						visfruits += "<img src='$defaultimagesdir/fruitcheck.png' id='frmarker' style='z-index: 2; display: none;'> ";
+						visfruits += "<script language='JavaScript1.2' type='text/javascript'> "
+						visfruits += "var xcor = 0; "
+						visfruits += "var ycor = 0; "
+						visfruits += "var mrkpos = 30; "
+						visfruits += "function FruitClick(event) \{ "
+						visfruits += "xcor = (event.clientX); "
+						visfruits += "ycor = (event.clientY); "
+						visfruits += "if(xcor > 0) mrkpos = 30; "
+						visfruits += "if(xcor > 75) mrkpos = 100; "
+						visfruits += "if(xcor > 145) mrkpos = 170; "
+						visfruits += "if(xcor > 215) mrkpos = 240; "
+						visfruits += "document.getElementById('frmarker').style.display = 'block'; "
+						visfruits += "document.getElementById('frmarker').style.position = 'absolute'; "
+						visfruits += "document.getElementById('frmarker').style.left = mrkpos + 'px'; "
+						visfruits += "document.getElementById('frmarker').style.top = '67px'; "
+						visfruits += "parent.document.creator.ycord.value = ycor; "
+						visfruits += "parent.document.creator.xcord.value = xcor; "
+						visfruits += "\} "
+						visfruits += "<\\/script> <\\/body> <\\/html>";
+						fruits.document.open("text/html");
+						fruits.document.write(visfruits);
+						fruits.document.close();
+					}
+					ShowFruits()
+				//-->
+				</script>
+			</td>
+		</tr>
+		~;
+	}
 
 	if ($RegAgree) {
 		if ($language) {
@@ -524,7 +611,16 @@ sub Register {
 			alert("$register_txt{'error_verification'}");
 			document.creator.verification.focus();
 			return false;
-		}
+		}~ .
+
+		($en_spam_questions ? qq~
+		if (document.creator.verification_question.value == '') {
+			alert("$register_txt{'error_verification_question'}");
+			document.creator.verification_question.focus();
+			return false;
+		}~ : '')
+
+		. qq~
 		if ($regtype == 1 && document.creator.reason.value == '') {
 			alert("$register_txt{'error_reason'}");
 			document.creator.reason.focus();
@@ -535,7 +631,7 @@ sub Register {
 			return false;
 		}
 
-		if ($gender_on_reg && document.creator.gender.value < 1) {
+		if ($gender_on_reg > 1 && document.creator.gender.value) {
 			alert("$register_txt{'error_gender'}");
 			document.creator.gender.focus();
 			return false
@@ -552,8 +648,8 @@ sub Register {
 	&template;
 }
 
-sub Register2 { 
-	if (!$regtype) { &fatal_error("registration_disabled"); } 
+sub Register2 {
+	if (!$regtype) { &fatal_error("registration_disabled"); }
 	if ($RegAgree && $FORM{'regagree'} ne 'yes') { &fatal_error('no_regagree'); }
 	my %member;
 	while (($key, $value) = each(%FORM)) {
@@ -583,11 +679,19 @@ sub Register2 {
 	&fatal_error("password_is_userid") if $member{'regusername'} eq $member{'passwrd1'};
 	&fatal_error("no_reg_reason") if $member{'reason'} eq "" && $regtype == 1;
 
+	if ($spamfruits == 1) {	
+		if($member{'ycord'} < 5 || $member{'ycord'} > 70) { &fatal_error("", "$fruittxt{'6'}"); }
+		if($member{'thefruit'} eq $fruittxt{'2'} && ($member{'xcord'} < 5 || $member{'xcord'} > 75)) { &fatal_error("", "$fruittxt{'6'}"); }
+		if($member{'thefruit'} eq $fruittxt{'3'} && ($member{'xcord'} < 75 || $member{'xcord'} > 145)) { &fatal_error("", "$fruittxt{'6'}"); }
+		if($member{'thefruit'} eq $fruittxt{'4'} && ($member{'xcord'} < 145 || $member{'xcord'} > 215)) { &fatal_error("", "$fruittxt{'6'}"); }
+		if($member{'thefruit'} eq $fruittxt{'5'} && ($member{'xcord'} < 215 || $member{'xcord'} > 285)) { &fatal_error("", "$fruittxt{'6'}"); }
+	}
+
 	&FromChars($member{'regrealname'});
 	$convertstr = $member{'regrealname'};
 	$convertcut = 30;
 	&CountChars;
-	&ToChars($member{'regrealname'});
+      $member{'regrealname'} = $convertstr;
 	&fatal_error("realname_to_long","($member{'regrealname'} => $convertstr)") if $cliped;
 	&fatal_error('invalid_character', "$register_txt{'38'} $register_txt{'241re'}") if $member{'regrealname'} =~ /[^ \w\x80-\xFF\[\]\(\)#\%\+,\-\|\.:=\?\@\^]/;
 
@@ -596,6 +700,10 @@ sub Register2 {
 	if (lc $member{'regusername'} eq lc &MemberIndex("check_exist", $member{'regusername'})) { &fatal_error("id_taken","($member{'regusername'})"); }
 	if (lc $member{'email'} eq lc &MemberIndex("check_exist", $member{'email'})) { &fatal_error("email_taken","($member{'email'})"); }
 	if (lc $member{'regrealname'} eq lc &MemberIndex("check_exist", $member{'regrealname'})) { &fatal_error("name_taken"); }
+	if ( &CheckCensor($member{'regusername'}) ne "" ) { &fatal_error("censor1",&CheckCensor($member{'regusername'})); }
+	if ( &CheckCensor($member{'email'}) ne "" ) { &fatal_error("censor2",&CheckCensor($member{'email'})); }
+	if ( &CheckCensor($member{'regrealname'}) ne "" ) { &fatal_error("censor3",&CheckCensor($member{'regrealname'})); }
+	if ( $honeypot == 1 && $member{'add_field0'} ne q{}) {&fatal_error("bad_bot");}
 
 	if ($regtype == 1) {
 		$convertstr = $member{'reason'};
@@ -610,6 +718,30 @@ sub Register2 {
 	}
 
 	if ($regcheck) { require "$sourcedir/Decoder.pl"; &validation_check($member{'verification'}); }
+    if ($en_spam_questions) {
+        fopen(SPAMQUESTIONS, "<$langdir/$language/spam.questions") || &fatal_error("cannot_open","$langdir/$language/spam.questions", 1);
+        @spam_questions = <SPAMQUESTIONS>;
+        fclose(SPAMQUESTIONS);
+        foreach my $verification_question (@spam_questions) {
+            chomp $verification_question;
+            if ($verification_question =~ /$member{'verification_question_id'}/) {
+               (undef, undef, $verification_answer) = split(/\|/, $verification_question);
+            }
+        }
+        $member{'verification_question'} =~ s/\A\s+//;
+        $member{'verification_question'} =~ s/\s+\Z//;
+        unless ($spam_questions_case) {
+            $verification_answer = lc($verification_answer);
+            $member{'verification_question'} = lc($member{'verification_question'});
+        }
+        &fatal_error("no_verification_question") if $member{'verification_question'} eq '';
+        @verificationanswer = split(/,/, $verification_answer);
+        foreach (@verificationanswer) {
+            $_ =~ s/\A\s+//;
+            $_ =~ s/\s+\Z//;
+        }
+        unless (grep { $member{'verification_question'} eq $_ } @verificationanswer) { &fatal_error("wrong_verification_question"); }
+    }
 
 	if ($emailpassword) {
 		srand();
@@ -717,7 +849,7 @@ sub Register2 {
 	${$uid.$reguser}{'email'} = lc($member{'email'});
 	${$uid.$reguser}{'postcount'} = 0;
 	${$uid.$reguser}{'regreason'} = $member{'reason'};
-	${$uid.$reguser}{'usertext'} = $defaultusertxt; 
+	${$uid.$reguser}{'usertext'} = $defaultusertxt;
 	${$uid.$reguser}{'userpic'} = "blank.gif";
 	${$uid.$reguser}{'regdate'} = $registerdate;
 	${$uid.$reguser}{'regtime'} = $date;
@@ -772,10 +904,10 @@ sub Register2 {
 
 		&UserAccount($reguser, "preregister");
 		if ($do_scramble_id) { $cryptuser = &cloak($reguser); } else { $cryptuser = $reguser; }
-		fopen(INACT, ">>$memberdir/memberlist.inactive", 1);
-		print INACT "$date|$activationcode|$reguser|$member{'passwrd1'}|$member{'email'}|$user_ip\n";
+	      $regpass = encode_password($member{'passwrd1'});
+	      fopen(INACT, ">>$memberdir/memberlist.inactive", 1);
+		print INACT "$date|$activationcode|$reguser|$regpass|$member{'email'}|$user_ip\n";
 		fclose(INACT);
-
 		fopen(REGLOG, ">>$vardir/registration.log", 1);
 		print REGLOG "$date|N|$member{'regusername'}||$user_ip\n";
 		fclose(REGLOG);

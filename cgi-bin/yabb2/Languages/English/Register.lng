@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
+$registerlngver = 'YaBB 2.5.2 $Revision: 1.4 $';
 
 %register_txt = (
 '4' => 'For security reasons, it\'s advisable to have your displayed name not the same as your login ID.',
@@ -23,7 +21,7 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 '35' => 'User ID',
 '36' => 'Password',
 '38' => 'Displayed Name',
-'69' => 'Email',
+'69' => 'E-mail',
 '81' => 'Choose password',
 '82' => 'Verify password',
 '91' => 'Password field empty',
@@ -35,16 +33,17 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 '101' => 'Select which language to use:',
 '110' => 'This username ',
 '111' => 'This display name ',
-'112' => 'This email address ',
+'112' => 'This e-mail address ',
 '113' => ' is already registered.',
 '114' => ' is available!',
-'115' => 'is reserved.',
-'209' => 'I love YaBB 2.5 AE!',
+'115' => ' is reserved.',
+'209' => 'I love YaBB 2.5.2!',
 '213' => 'Passwords aren\'t the same!',
 '241' => 'field. Valid Characters are Letters(A-Z,a-z), Numbers (0-9), Spaces and ( _ ! @ # $ % ^ & * ( ) + | ` ~ - = \ : ; \' " , . / ? [ ] { } )',
 '241r' => 'field. Valid Characters are Letters(A-Z,a-z), Numbers (0-9), Spaces and ( + - . @ _ )',
 '241re' => 'field. Valid Characters are Letters, Numbers, Spaces and ( [ ] # % + , - | . : = ? @ ^ _ )',
 '241e' => 'field. Valid Characters are Letters (A-Z,a-z), Numbers (0-9), and ( + - . @ _ )',
+'241ea' => '<br />Valid Characters are Letters (A-Z,a-z), Numbers (0-9), and ( + - . @ _ )',
 '241a' => 'field!',
 '245' => 'Registration successful',
 '430' => ', you are banned from using this forum',
@@ -57,10 +56,10 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 '678' => 'Sorry',
 '679' => 'This must be a valid e-mail address.',
 '703' => 'Thank you for registration. You will receive an e-mail soon with your password. You may change the password after you login for the first time.',
-'704' => qq~<b>You may <a href="$scripturl?action=login">proceed to login</a> once you check your email.</b>~,
-'721' => 'Hide Email from public?',
+'704' => qq~<b>You may <a href="$scripturl?action=login">proceed to login</a> once you check your e-mail.</b>~,
+'721' => 'Hide e-mail from public?',
 '730' => 'The e-mail address',
-'731' => 'is being used by a registered member already! If you feel this is a mistake, please go to the login page and use the password reminder.',
+'731' => 'is already being used by a registered member. If you feel this is a mistake, please go to the login page and use the password reset.',
 '764a' => 'User Agreement',
 '765' => 'Join to MemberGroup',
 '766' => 'You can join to MemberGroup only in Registration.',
@@ -82,13 +81,15 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 'gender_reg_req' => 'Required',
 'capslock' => 'Caps lock is activated.',
 'wrong_char' => 'This character in the Password is invalid',
+'verification_question_desc' => 'Please answer the above verification question.',
+'verification_question_case' => 'Answers are case-sensitive.',
 
 # the following error_ variables are inside JavaScript!
 'error_username' => 'You must insert a user ID.',
 'error_usernameispass' => 'For security reasons, you cannot use your user ID or displayed name as your password.',
 'error_realname' => 'You must insert a displayed name.',
 'error_name_cannot_be_userid' => 'User ID and displayed name must be different.',
-'error_email' => 'You must insert your email.',
+'error_email' => 'You must insert your e-mail.',
 'error_birth_day' => 'You must insert your birthday DAY (DD) with two numbers between 01 and 31.',
 'error_birth_month' => 'You must insert your birthday MONTH (MM) with two numbers between 01 and 12.',
 'error_birth_year' => 'You must insert your birthday YEAR (YYYY) with four numbers.',
@@ -99,6 +100,7 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 'error_reason' => 'You must fill in the reason(s) for registering at our forum.',
 'error_agree' => 'You must agree to the \\"User Agreement\\" before you can be registered.',
 'error_gender' => 'You must select your gender.',
+'error_verification_question' => 'You must answer the verification question.',
 );
 
 %pwstrengthmeter_txt = (
@@ -119,7 +121,7 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 );
 
 %prereg_txt = (
-'1' => "Your account is not validated yet<br />Please validate it within $preregspan hours by clicking the link in the email you received!",
+'1' => "Your account is not validated yet<br />Please validate it within $preregspan hours by clicking the link in the e-mail you received!",
 '1a' => 'Pre-Registration Completed',
 '1b' => 'E-mail validation completed, awaiting approval',
 '2' => 'Here is your account validation code',
@@ -153,13 +155,13 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 'by' => 'by',
 'apr_id' => 'Registration UserID',
 'apr_name' => 'Chosen screen name',
-'apr_email_invalid' => 'Not validated email address',
-'apr_email_valid' => 'Validated email address',
+'apr_email_invalid' => 'Not validated e-mail address',
+'apr_email_valid' => 'Validated e-mail address',
 'apr_language' => 'Chosen language',
 'apr_ip' => 'Coming from IP address',
 'apr_reason' => 'Given reason for registering',
 'apr_admin_reason_title' => 'Staff comment',
-'apr_admin_reason' => 'Optionally give a comment on your descision',
+'apr_admin_reason' => 'Optionally give a comment on your decision',
 'apr_admin_approve' => 'Approve Membership',
 'apr_admin_reject' => 'Reject Membership',
 'apr_admin_validate' => 'Validate Account',
@@ -167,7 +169,7 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 '17' => 'Date and Time',
 '18' => 'Status',
 '19' => 'Pre-registered UserID',
-'20' => 'This is the logfile (If Pre-registartion with Email registration, &amp; Admin Approval is selected) for pre-registration of users.<br />Non activate pre-registrations can be removed, rejected, viewed, approved or activated.',
+'20' => 'This is the logfile (If Pre-registration with e-mail registration, &amp; Admin Approval is selected) for pre-registration of users.<br />Non activated pre-registrations can be removed, rejected, viewed, approved or activated.',
 'N' => 'Not Validated',
 'A' => 'Validated',
 'T' => 'Time Out Deleted',
@@ -180,4 +182,12 @@ $registerlngver = 'YaBB 2.5 AE $Revision: 1.28 $';
 'email_taken' => 'The following e-mail address is being used by a registered member already:',
 );
 
+%fruittxt = (
+'1' => 'Please click on the',
+'2' => 'Apple',
+'3' => 'Bananas',
+'4' => 'Grapes',
+'5' => 'Strawberry',
+'6' => 'You failed the fruit check!',
+);
 1;

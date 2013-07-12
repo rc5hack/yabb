@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mycenterplver = 'YaBB 2.5 AE $Revision: 1.125 $';
+$mycenterplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('InstantMessage');
@@ -34,7 +32,7 @@ $showNotifications = '';
 
 ##  here begins the user centre, from the old IMIndex
 sub mycenter {
-	if ($iamguest) { &fatal_error('im_members_only'); }
+	if ($iamguest) { &fatal_error('members_only'); }
 
 	&LoadBroadcastMessages($username); # get the BM infos
 
@@ -465,7 +463,8 @@ sub Del_Some_IM {
 				$CountStore{$imstorefolder}++;
 				if ($INFO{'caller'} != 3) {
 					${$username}{'PMstorenum'}++;
-					${$username}{'PMmnum'}--;
+					if ($INFO{'caller'} == 1) { ${$username}{'PMmnum'}--; }
+					elsif ($INFO{'caller'} == 2) { ${$username}{'PMmoutnum'}--; }
 					${$username}{'PMimnewcount'}-- if $m[12] =~ /u/;
 				}
 			}
@@ -534,7 +533,8 @@ sub CreateUserDisplayLine {
 				$sendEmail = qq~$menusep<a href="mailto:${$uid.$usrname}{'email'}">$img{'email_sm'}</a>~;
 			}
 
-			my $wwwlink = ${$uid.$usrname}{'weburl'} ? qq~$menusep${$uid.$usrname}{'weburl'}~ : '';
+            if (!$minlinkweb) { $minlinkweb = 0; }
+			my $wwwlink = (${$uid.$user}{'weburl'} && (${$uid.$user}{'postcount'} >= $minlinkweb || ${$uid.$user}{'position'} eq 'Administrator' || ${$uid.$user}{'position'} eq 'Global Moderator')) ? qq~$menusep${$uid.$usrname}{'weburl'}~ : '';
 			my $aimad = ${$uid.$usrname}{'aim'} ? qq~$menusep${$uid.$usrname}{'aim'}~ : '';
 			my $icqad = ${$uid.$usrname}{'icq'} ? qq~$menusep${$uid.$usrname}{'icq'}~ : '';
 			my $yimad = ${$uid.$usrname}{'yim'} ? qq~$menusep${$uid.$usrname}{'yim'}~ : '';
@@ -561,7 +561,7 @@ sub CreateUserDisplayLine {
 #  posting the IM
 sub IMPost {
 	if (($INFO{'bmess'} || $FORM{'isBMess'}) eq 'yes') { $sendBMess = 1; }
-	##  if user isn't a FA/gmod and has a postcount below the threshold
+	##  if user is not a FA/gmod and has a postcount below the threshold
 	if (!$staff && ${$uid.$username}{'postcount'} < $numposts) {
 		&fatal_error('im_low_postcount');
 	}
@@ -1066,7 +1066,7 @@ function insert_user (oElement,username,userid) {
 
 			if ($smiliestyle == 1) { $smiliewinlink = qq~$scripturl?action=smilieput~; }
 			else { $smiliewinlink = qq~$scripturl?action=smilieindex~; }
-			
+
 			$MCPmMenu .= qq~
 		function smiliewin() {
 			window.open("$smiliewinlink", 'list', 'width=$winwidth, height=$winheight, scrollbars=yes');
@@ -1194,7 +1194,7 @@ function insert_user (oElement,username,userid) {
 			if (${$uid.$username}{'buddylist'}) {
 				&LoadBuddyList;
 				$buddiesCurrentStatus = qq~$mycenter_txt{'buddylisttitle'}:<br />$buddiesCurrentStatus~;
-			} else { 
+			} else {
 				$buddiesCurrentStatus = $mycenter_txt{'buddylistnone'};
 			}
 		} else {
@@ -1257,7 +1257,7 @@ function insert_user (oElement,username,userid) {
 				}
 			}
 			if ($BC) { &buildIMS($username, 'update'); }
-		} else { 
+		} else {
 			$showIM = &DoShowIM($INFO{'id'});
 			if ($INFO{'caller'} == 5 && !${$username}{'PMbcRead' . $INFO{'id'}}) {
 				${$username}{'PMbcRead'} .= ${$username}{'PMbcRead'} ? ",$INFO{'id'}" : $INFO{'id'};
@@ -1310,21 +1310,21 @@ function insert_user (oElement,username,userid) {
 		if ($action eq 'shownotify') { &ShowNotifications; }
 		elsif ($action eq 'boardnotify2') { &BoardNotify2; &ShowNotifications; }
 		elsif ($action eq 'notify4') { &Notify4; }
-		$MCContent .= qq~$showNotifications 
+		$MCContent .= qq~$showNotifications
 		<br />
 		~;
 
 	} elsif ($view eq 'recentposts') {
 		require "$sourcedir/Profile.pl";
 		&usersrecentposts;
-		$MCContent .= qq~$showProfile 
+		$MCContent .= qq~$showProfile
 		<br />
 		~;
 
 	} elsif ($view eq 'favorites'){
 		require "$sourcedir/Favorites.pl";
 		&Favorites;
-		$MCContent .= qq~$showFavorites 
+		$MCContent .= qq~$showFavorites
 		<br />
 		~;
 	}
@@ -1476,7 +1476,7 @@ function insert_user (oElement,username,userid) {
 					<form action="$scripturl?action=newpmfolder" method="post" name="newpmfolder" id="newpmfolder" enctype="application/x-www-form-urlencoded" style="display:inline;"  onsubmit="return submitproc()">
 					<label for="newfolder">$inmes_imtxt{'newstorefolder'}</label><br />
 					<input type="text" name="newfolder" id="newfolder" size="15" value="$mc_folders{'foldername'}" onfocus="txtInFields(this, '$mc_folders{'foldername'}');" onblur="txtInFields(this, '$mc_folders{'foldername'}')" />
-					<input type="submit" name="addimfolder" id="addimfolder" value="$inmes_txt{'addfolder'}" class="button" /> 
+					<input type="submit" name="addimfolder" id="addimfolder" value="$inmes_txt{'addfolder'}" class="button" />
 					</form>
 				</td>
 			</tr>~;
@@ -1623,7 +1623,7 @@ sub drawPMView {
 	  </tr>
 			~;
 
-			$counterCheck = $start; 
+			$counterCheck = $start;
 		}
 		if ($viewBMess) { $stkDateSet = 1; }
 
@@ -1924,7 +1924,7 @@ sub drawPMView {
 					}
 				} else {
 					my $uname = $musernameto; # is to user
-					$uname .= ",$musernamecc" if $musernamecc; 
+					$uname .= ",$musernamecc" if $musernamecc;
 					if ($musernamebcc) {
 						if ($musername eq $username) {
 							$uname .= ",$musernamebcc";
@@ -1956,7 +1956,7 @@ sub drawPMView {
 					}
 				} else {
 					my $uname = $musernameto; # is to user
-					$uname .= ",$musernamecc" if $musernamecc; 
+					$uname .= ",$musernamecc" if $musernamecc;
 					if ($musernamebcc) {
 						if ($musername eq $username) {
 							$uname .= ",$musernamebcc";
@@ -1981,7 +1981,7 @@ sub drawPMView {
 					$usernamefrom = qq~$guestName<br />(<a href="mailto:$guestEmail">$guestEmail</a>)~;
 
 					my $uname = $musernameto; # is to user
-					$uname .= ",$musernamecc" if $musernamecc; 
+					$uname .= ",$musernamecc" if $musernamecc;
 					if ($musernamebcc) {
 						if ($musername eq $username) {
 							$uname .= ",$musernamebcc";
@@ -1994,7 +1994,7 @@ sub drawPMView {
 					foreach $uname (split(/,/, $uname)) {
 						&LoadUser($uname);
 						push(@usernameto, (${$uid.$uname}{'realname'} ? qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$uname}">${$uid.$uname}{'realname'}</a>~ : ($uname ? qq~$uname ($maintxt{'470a'})~ : $maintxt{'470a'}))); # 470a == Ex-Member
-					} 
+					}
 					$usernameto = join(', ', @usernameto);
 
 				} elsif ($messageStatus eq 'gr') {
@@ -2016,7 +2016,7 @@ sub drawPMView {
 							push(@usernameto, $title);
 						}
 					}
-					$usernameto = join(', ', @usernameto); 
+					$usernameto = join(', ', @usernameto);
 
 					&LoadUser($musername); # is from user
 					$usernamefrom = ${$uid.$musername}{'realname'} ? qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$musername}">${$uid.$musername}{'realname'}</a>~ : ($musername ? qq~$musername ($maintxt{'470a'})~ : $maintxt{'470a'}); # 470a == Ex-Member
@@ -2036,11 +2036,11 @@ sub drawPMView {
 					foreach $uname (split(/,/, $uname)) {
 						&LoadUser($uname);
 						push(@usernameto, (${$uid.$uname}{'realname'} ? qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$uname}">${$uid.$uname}{'realname'}</a>~ : ($uname ? qq~$uname ($maintxt{'470a'})~ : $maintxt{'470a'}))); # 470a == Ex-Member
-					} 
+					}
 					$usernameto = join(', ', @usernameto);
 
 					&LoadUser($musername); # is from user
-					$usernamefrom = ${$uid.$musername}{'realname'} ? qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$musername}">${$uid.$musername}{'realname'}</a>~ : ($musername ? qq~$musername ($maintxt{'470a'})~ : $maintxt{'470a'}); # 470a == Ex-Member 
+					$usernamefrom = ${$uid.$musername}{'realname'} ? qq~<a href="$scripturl?action=viewprofile;username=$useraccount{$musername}">${$uid.$musername}{'realname'}</a>~ : ($musername ? qq~$musername ($maintxt{'470a'})~ : $maintxt{'470a'}); # 470a == Ex-Member
 				}
 				$MCContent .= qq~$usernamefrom / $usernameto~; #[store other]
 			}
@@ -2059,8 +2059,8 @@ sub drawPMView {
 			my ($actionsMenu, $actionsMenuselect, $storefolderView);
 			$mreplyno++;
 			## build actionsMenu for output
-			if ($action eq 'im' && !$viewBMess) { 
-				$actionsMenu = qq~<a href="$scripturl?action=imsend;caller=$callerid;quote=$mreplyno;to=$useraccount{$musername};id=$messageid">$inmes_txt{'145'}</a>$sepa<a href="$scripturl?action=imsend;caller=$callerid;reply=$mreplyno;to=$useraccount{$musername};id=$messageid">$inmes_txt{'146'}</a>$sepa<a href="$scripturl?action=imsend;caller=$callerid;forward=1;quote=$mreplyno;id=$messageid">$inmes_txt{'147'}</a>$sepa<a href="$scripturl?action=deletemultimessages;caller=$callerid;deleteid=$messageid" onclick="return confirm('$inmes_txt{'770'}')">$inmes_txt{'remove'}</a>~; 
+			if ($action eq 'im' && !$viewBMess) {
+				$actionsMenu = qq~<a href="$scripturl?action=imsend;caller=$callerid;quote=$mreplyno;to=$useraccount{$musername};id=$messageid">$inmes_txt{'145'}</a>$sepa<a href="$scripturl?action=imsend;caller=$callerid;reply=$mreplyno;to=$useraccount{$musername};id=$messageid">$inmes_txt{'146'}</a>$sepa<a href="$scripturl?action=imsend;caller=$callerid;forward=1;quote=$mreplyno;id=$messageid">$inmes_txt{'147'}</a>$sepa<a href="$scripturl?action=deletemultimessages;caller=$callerid;deleteid=$messageid" onclick="return confirm('$inmes_txt{'770'}')">$inmes_txt{'remove'}</a>~;
 
 			## broadcast messages can only be quoted on!
 			} elsif ($action eq 'im' && $viewBMess) {
@@ -2070,14 +2070,14 @@ sub drawPMView {
 
 					$actionsMenu = qq~<a href="$scripturl?action=imsend;caller=$callerid;quote=$mreplyno;id=$messageid">$inmes_txt{'145'}</a>$sepa<a href="$scripturl?action=imsend;caller=$callerid;reply=$mreplyno;to=$useraccount{$musername};id=$messageid">$inmes_txt{'146'}</a>~;
 				}
-				if ($iamadmin || $username eq $musername) { 
+				if ($iamadmin || $username eq $musername) {
 					$actionsMenu .= qq~$sepa<a href="$scripturl?action=deletemultimessages;caller=$callerid;deleteid=$messageid" onclick="return confirm('$inmes_txt{'770'}')">$inmes_txt{'remove'}</a>~; $deleteButton = 1;
 				}
 
 			## for others
-			} elsif ($action eq 'imdraft') { 
+			} elsif ($action eq 'imdraft') {
 				$actionsMenu = qq~<a href="$scripturl?action=deletemultimessages;caller=$callerid;deleteid=$messageid" onclick="return confirm('$inmes_txt{'770'}')">$inmes_txt{'remove'}</a>~;
-			} elsif ($action eq 'imoutbox') { 
+			} elsif ($action eq 'imoutbox') {
 				$actionsMenu = qq~$callBack<a href="$scripturl?action=deletemultimessages;caller=$callerid;deleteid=$messageid" onclick="return confirm('$inmes_txt{'770'}')">$inmes_txt{'remove'}</a>~;
 			} else {
 				if ($action eq 'imstorage') { $storefolderView = ";viewfolder=$INFO{'viewfolder'}"; }
@@ -2187,7 +2187,7 @@ sub drawPMView {
 			$intext = qq~&nbsp;~;
 			$imbargfx = qq~&nbsp;~;
 		}
-		unless ($action eq 'imstorage' && $INFO{'viewfolder'} eq '') { 
+		unless ($action eq 'imstorage' && $INFO{'viewfolder'} eq '') {
 			$removeButton = qq~<input type="submit" name="imaction" value="$inmes_txt{'remove'}" class="button" onclick="return confirm('$inmes_txt{'delmultipms'}');" />~;
 			$inmes_txt{'777'} =~ s/REMOVE/$removeButton/;
 			$removeButton = $inmes_txt{'777'};
@@ -2282,7 +2282,7 @@ sub LoadBuddyList {
 			}
 
 		} else {
-			$usernamelink = $mycenter_txt{'buddydeleted'}; # Ex-Member 
+			$usernamelink = $mycenter_txt{'buddydeleted'}; # Ex-Member
 		}
 		$buddiesCurrentStatus .= qq~<tr class="$css"><td align="left">$usernamelink</td><td align="center">$online</td><td align="center">$buddypm</td><td align="center">$buddyemail</td><td align="center">$buddywww</td></tr>~;
 		$counter++;

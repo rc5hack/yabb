@@ -1,1 +1,1 @@
-YaBB 2.5 AE
+YaBB 2.5.2

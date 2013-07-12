@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$adminplver  = 'YaBB 2.5 AE $Revision: 1.82 $';
+$adminplver  = 'YaBB 2.5.2 $Revision: 1.1 $';
 
 sub Admin {
 	&is_admin_or_gmod;
@@ -57,6 +55,17 @@ sub Admin {
      <tr valign="middle">
        <td align="left" class="windowbg2"><br />
 Ron Hartendorp, Andrew Aitken, Carsten Dalgaard, Ryan Farrington, Zoltan Kovacs, Tim Ceuppens, Shoeb Omar, Torsten Mrotz, Brian Schaefer, Juvenall Wilson, Corey Chapman, Christer Jenson, Adrian Kreher, Steve Brereton, Jeffrey Man, Boris Tjuvanov, Detlef Pilzecker, Calvin Goodman<br /><br />
+      </td>
+     </tr>
+     <tr align="center" valign="middle">
+       <td align="left" class="catbg">
+        <span class="small">YaBB 2.5.2</span>
+       </td>
+     </tr>
+     <tr valign="middle">
+       <td align="left" class="windowbg2"><br />
+Jon Baker, Derek Barnstorm, Carsten Dalgaard, John G.D. McCabe, D.A. Rorabaugh.<br />Included Mods in YaBB 2.5.2 written by Derek Barnstorm, Carsten Dalgaard, and D.A. Rorabaugh.<br /><br />
+Dedicated to the memory of Ron Hartendorp, AKA Spikecity. He left us too soon. <br /><br />
       </td>
      </tr>
      <tr align="center" valign="middle">
@@ -163,7 +172,7 @@ $noBytesHarmed<br /><br />
 </form>
 </div>~;
 	}
-  
+
 	$yymain .= qq~
 </div>~;
 
@@ -390,12 +399,12 @@ sub FullStats {
         <div style="float: left; clear: left; width: 35%; text-align: left; padding-top: 2px; padding-bottom: 2px;">$admin_txt{'425'}</div>
         <div style="float: left; width: 65%; text-align: left; padding-top: 2px; padding-bottom: 2px;">
         <script language="javascript" src="http://www.yabbforum.com/update/versioncheck.js" type="text/javascript"></script>
-        <script language="JavaScript" type="text/javascript">  
-         <!-- //hide from dinosaurs  
-          document.write("$versiontxt{'4'} <b>$YaBBversion</b> - $versiontxt{'5'} <b>"+STABLE+"</b> <p>");  
+        <script language="JavaScript" type="text/javascript">
+         <!-- //hide from dinosaurs
+          document.write("$versiontxt{'4'} <b>$YaBBversion</b> - $versiontxt{'5'} <b>"+STABLE+"</b> <p>");
          // -->
         </script>
-        <noscript>$versiontxt{'1'} <img src="http://www.yabbforum.com/images/version/versioncheck.gif" alt="" /></noscript> 
+        <noscript>$versiontxt{'1'} <img src="http://www.yabbforum.com/images/version/versioncheck.gif" alt="" /></noscript>
         </div>
         <br />&nbsp;<br />
       </td>
@@ -551,7 +560,7 @@ sub ShowClickLog {
      </tr>
    </table>
  </div>~;
- 
+
 	if ($enableclicklog) {
 		$yymain .= qq~
 
@@ -954,12 +963,12 @@ sub ver_detail {
 		<td align="left" class="windowbg2" colspan="3">
 		<script language="javascript" src="http://www.yabbforum.com/update/versioncheck.js" type="text/javascript"></script>
 		$versiontxt{'4'} <b>$YaBBversion</b><br />
-		<script language="JavaScript" type="text/javascript">  
-		<!-- //hide from dinosaurs  
-			document.write("$versiontxt{'5'} <b>"+STABLE+"</b><br />$versiontxt{'7'} <b>"+BETA+"</b>");  
+		<script language="JavaScript" type="text/javascript">
+		<!-- //hide from dinosaurs
+			document.write("$versiontxt{'5'} <b>"+STABLE+"</b><br />$versiontxt{'7'} <b>"+BETA+"</b>");
 		// -->
 		</script>
-		<noscript>$versiontxt{'1'} <img src="http://www.yabbforum.com/images/version/versioncheck.gif" alt="" /></noscript> 
+		<noscript>$versiontxt{'1'} <img src="http://www.yabbforum.com/images/version/versioncheck.gif" alt="" /></noscript>
 	</td>
 	</tr>
 	<tr valign="middle">
@@ -1165,7 +1174,7 @@ sub AddMember {
 
 	$yymain .= qq~
 <script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/ajax.js"></script>
-<form action="$adminurl?action=addmember2" method="post" name="creator"> 
+<form action="$adminurl?action=addmember2" method="post" name="creator">
    <table align="center" border="0" cellspacing="1" cellpadding="3" class="bordercolor">
     <tr>
      <td colspan="2" width="100%" valign="middle" class="titlebg">
@@ -1356,7 +1365,7 @@ sub AddMember {
 <script type="text/javascript" language="JavaScript">
  <!--
 	document.creator.regusername.focus();
-	//function 
+	//function
  //-->
 </script>~;
 
@@ -1397,7 +1406,7 @@ sub AddMember2 {
 	$convertstr = $member{'regrealname'};
 	$convertcut = 30;
 	&CountChars;
-	&ToChars($member{'regrealname'});
+	$member{'regrealname'} = $convertstr;
 	&admin_fatal_error("realname_to_long","($member{'regrealname'} => $convertstr)") if $cliped;
 	&admin_fatal_error("invalid_character", "$register_txt{'38'} $register_txt{'241re'}") if $member{'regrealname'} =~ /[^ \w\x80-\xFF\[\]\(\)#\%\+,\-\|\.:=\?\@\^]/;
 

@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$newsettingsplver = 'YaBB 2.5 AE $Revision: 1.64 $';
+$newsettingsplver = 'YaBB 2.5.2 $Revision: 1.5 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Figure out what tabset to use, depending on the page= parameter.
@@ -511,15 +509,13 @@ sub SaveSettingsTo {
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.4                                                    #
-# Packaged:       April 12, 2009                                              #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2009 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012  YaBB (www.yabbforum.com) - All Rights Reserved.    #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
 ########## Board Info ##########
@@ -543,7 +539,7 @@ $templateset);						# Forum templates settings
 \$cookiepassword = "\Q$cookiepassword\E";		# Name of the password cookie
 \$cookiesession_name = "\Q$cookiesession_name\E";	# Name of the Session cookie
 
-\$regtype = $regtype;					# 0 = registration closed (only admin can register), 1 = pre registration with admin approval, 
+\$regtype = $regtype;					# 0 = registration closed (only admin can register), 1 = pre registration with admin approval,
 							# 2 = pre registration and email activation, 3 = open registration
 \$RegAgree = $RegAgree;					# Set to 1 to display the registration agreement when registering
 \$RegReasonSymbols = $RegReasonSymbols;			# Maximum allowed symbols in User reason(s) for registering
@@ -562,6 +558,7 @@ $templateset);						# Forum templates settings
 \$gender_on_reg = $gender_on_reg;			# 0: don't ask for gender on registration
 							# 1: ask for gender, no input required
 							# 2: ask for gender, input required
+\$nomailspammer = $nomailspammer;         # 1: send deleted account email
 \$lang = "\Q$lang\E";					# Default Forum Language
 \$default_template = "\Q$default_template\E";		# Default Forum Template
 
@@ -644,11 +641,14 @@ $member_groups
 \$checkallcaps = $checkallcaps;				# Set to 0 to allow ALL CAPS in posts (subject and message) or set to a value > 0 to open a JS-alert if more characters in ALL CAPS were there.
 \$set_subjectMaxLength = $set_subjectMaxLength;		# Maximum Allowed Characters in a Posts Subject
 \$MaxMessLen = $MaxMessLen;				# Maximum Allowed Characters in a Posts
+\$honeypot = $honeypot;					# Set to 1 to activate Honeypot spam deterrent
+\$spamfruits = $spamfruits;					# Set to 1 to activate SpamFruits spam deterrent
 \$speedpostdetection = $speedpostdetection;		# Set to 1 to detect speedposters and delay their spam actions
 \$spd_detention_time = $spd_detention_time;		# Time in seconds before a speedposting ban is lifted again
 \$min_post_speed = $min_post_speed;			# Minimum time in seconds between entering a post form and submitting a post
 \$minlinkpost = $minlinkpost;				# Minimum amount of posts a member needs to post links and images
 \$minlinksig = $minlinksig;				# Minimum amount of posts a member needs to create links and images in signature
+\$minlinkweb = $minlinkweb;				# Minimum amount of posts a member needs to link to a website in their profile
 \$post_speed_count = $post_speed_count;			# Maximum amount of abuses befor a user gets banned
 \$fontsizemin = $fontsizemin;				# Minimum Allowed Font height in pixels
 \$fontsizemax = $fontsizemax;				# Maximum Allowed Font height in pixels
@@ -705,7 +705,7 @@ $member_groups
 \@ext_prof_order = ($ext_prof_order);			# Order of the extended profile fields.
 \@ext_prof_fields = (
 $ext_prof_fields
-);							# Settings of the extendes profiles fields.
+);							# Settings of the extended profiles fields.
 
 ########## File Settings ##########
 
@@ -727,8 +727,10 @@ $ext_prof_fields
 							# 0 to disable, 1 to enable.
 
 \$debug = $debug;					# If set to 1 debug info is added to the template. Tag in template is {yabb debug}
+########## Anti-spam Question Settings ##########
 
-
+\$en_spam_questions = $en_spam_questions;        # Set to 1 to enable Anti-spam Questions
+\$spam_questions_case = $spam_questions_case;    # Set to 1 to enable case-sensitive answers
 
 ###############################################################################
 # Advanced Settings (old AdvSettings.txt)                                     #
@@ -822,6 +824,7 @@ $ext_prof_fields
 \$enable_MCaway = $enable_MCaway;			# enable 'away' indicator 0=Off 1=Staff to Staff 2=Staff to all 3=Members
 \$MaxAwayLen = $MaxAwayLen; 				# maximum allowed characters in Away message
 \$enable_MCstatusStealth = $enable_MCstatusStealth;	# enable 'stealth' mode for fa/gmods. Allows status label to stay at offline/away for all members viewing.
+\$self_del_user = $self_del_user;               # 1: allow member to delete own account.
 
 ########## Topic Summary Cutter ##########
 
@@ -949,7 +952,7 @@ $ext_prof_fields
 \$disallow_proxy_notify = $disallow_proxy_notify;
 \$referer_notify = $referer_notify;
 \$harvester_notify = $harvester_notify;
-\$request_notify = $request_notify; 
+\$request_notify = $request_notify;
 \$string_notify = $string_notify;
 \$union_notify = $union_notify;
 \$clike_notify = $clike_notify;
@@ -1045,7 +1048,7 @@ sub WriteSettingsTo {
 			} else { $comment .= "$_ "; }
 		}
 		$comment =~ s/ $//;
-		$comment; 
+		$comment;
 	}
 
 	# Write it out

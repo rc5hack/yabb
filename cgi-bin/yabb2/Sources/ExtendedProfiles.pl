@@ -2,18 +2,16 @@
 # ExtendedProfiles.pl                                                         #
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$extendedprofilesplver = 'YaBB 2.5 AE $Revision: 1.3 $';
+$extendedprofilesplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 ###############################################################################
@@ -39,7 +37,7 @@ if ($action eq 'detailedversion') { return 1; }
 #  ----------------------------
 #  ("name|type|options|active|comment|required_on_reg|visible_in_viewprofile|v_users|v_groups|visible_in_posts|p_users|p_groups|p_displayfieldname|visible_in_memberlist|m_users|m_groups|editable_by_user|visible_in_posts_popup|pp_users|pp_groups|pp_displayfieldname","name|type|options|active|comment|required_on_reg|visible_in_viewprofile|v_users|v_groups|visible_in_posts|p_users|p_groups|p_displayfieldname|visible_in_memberlist|m_users|m_groups|editable_by_user|visible_in_posts_popup|pp_users|pp_groups|pp_displayfieldname","name|type|options|active|comment|required_on_reg|visible_in_viewprofile|v_users|v_groups|visible_in_posts|p_users|p_groups|p_displayfieldname|visible_in_memberlist|m_users|m_groups|editable_by_user|visible_in_posts_popup|pp_users|pp_groups|pp_displayfieldname",....)
 #
-#  Here are all types with their possible type-specific options. If options contain multiple entries, seperated by ^
+#  Here are all types with their possible type-specific options. If options contain multiple entries, separated by ^
 #  - text		limit_len^width^is_numberic^default_value^allow_ubbc
 #  - text_multi		limit_len^rows^cols^allow_ubbc
 #  - select		option1^option2^option3... (first option is default)
@@ -164,7 +162,7 @@ sub ext_get_field_id {
 	$id;
 }
 
-# returns all settings of a specifig field
+# returns all settings of a specific field
 sub ext_get_field {
 	$field{'id'} = shift;
 
@@ -255,7 +253,7 @@ sub ext_timeformat {
 			$mytimeformat =~ s/(.*?)(?:\s)*$/$1/g;
 
 			if ($mytimeformat =~ m/\+/) {
-				if( $newday > 10 && $newday < 20 ) { $dayext = "<sup>$timetxt{'4'}</sup>"; } 
+				if( $newday > 10 && $newday < 20 ) { $dayext = "<sup>$timetxt{'4'}</sup>"; }
 				elsif( $newday % 10 == 1 ) { $dayext = "<sup>$timetxt{'1'}</sup>"; }
 				elsif( $newday % 10 == 2 ) { $dayext = "<sup>$timetxt{'2'}</sup>"; }
 				elsif( $newday % 10 == 3 ) { $dayext = "<sup>$timetxt{'3'}</sup>"; }
@@ -292,7 +290,7 @@ sub ext_has_access {
 			if ($group eq "Administrator" || $group eq "Moderator" || $group eq "Global Moderator") {
 				if ($usergroup eq $group) { return 1; }
 
-			# check if user is on a post-independend group
+			# check if user is on a post-independent group
 			} elsif ($group =~ m~^NoPost{(\d+)}$~) {
 				$groupid = $1;
 				# check if group exists at all
@@ -385,7 +383,7 @@ sub ext_viewprofile {
 						if ($field{'comment'} ne "") {
 							$output .= qq~
 		<td class="catbg" align="left">
-			<img src="$imagesdir/profile.gif" alt="" border="0" style="vertical-align: middle;" />&nbsp; 
+			<img src="$imagesdir/profile.gif" alt="" border="0" style="vertical-align: middle;" />&nbsp;
 			<span class="text1"><b>$field{'comment'}</b></span>
 		</td>
 	</tr>
@@ -585,13 +583,13 @@ sub ext_gen_editfield {
 
 	&ext_get_field($id);
 
-	# if username is obmitted, we'll generate the code for the registration page
+	# if username is omitted, we'll generate the code for the registration page
 	if ($pusername ne "") { $value = &ext_get($pusername,$field{'name'},1); }
 
 	&FromHTML($field{'comment'});
 
 	$template1 = qq~<tr class="windowbg"><td align="left" valign="top"><label for=""><b>$field{'name'}: </b><br /><span class="small">$field{'comment'}</span></label></td><td align="left">~;
-	if ($field{'required_on_reg'} == 1) { $template2 = " *"; }
+	if ($field{'required_on_reg'} == 1) { $template2 = " * "; }
 	$template2 .= qq~</td></tr>\n~;
 
 	# format the output dependend on field type
@@ -757,7 +755,7 @@ sub ext_validate_submition {
 
 	while (($key,$value) = each(%newprofile)) {
 		# only validate fields with prefix "ext_"
-		if ($key =~ /^ext_(\d+)$/) {
+		if ($key =~ /^ext_(\d+)/) {
 			$id = $1;
 			&ext_get_field($id);
 
@@ -765,7 +763,7 @@ sub ext_validate_submition {
 
 			# check if user is allowed to modify this setting
 			if ($action eq "register2") {
-				# if we're on registration page, igonre the 'editable_by_user' setting in case that 'required_on_reg' is set
+				# if we're on registration page, ignore the 'editable_by_user' setting in case that 'required_on_reg' is set
 				if ($field{'editable_by_user'} == 0 && $field{'required_on_reg'} == 0) {
 					$output .= $field{'name'}.": ".$lang_ext{'not_allowed_to_modify'}."<br />\n";
 				}
@@ -852,7 +850,7 @@ sub ext_validate_submition {
 		}
 	}
 
-	# check if required fields are filled and add missing fields to $newprofile, just to be on the saver side
+	# check if required fields are filled and add missing fields to $newprofile, just to be on the safe side
 	$id = 0;
 	foreach (@ext_prof_fields) {
 		&ext_get_field($id);
@@ -873,14 +871,18 @@ sub ext_validate_submition {
 			if ($field{'editable_by_user'} == 0 && $field{'required_on_reg'} == 0) {
 				$newprofile{'ext_'.$id} = $value;
 			}
-		} else {
+		}
+		else {
 			if ($field{'editable_by_user'} == 0 && !$iamadmin && (!$iamgmod || !$allow_gmod_profile)) {
 				$newprofile{'ext_'.$id} = $value;
 			}
 		}
 		# if setting didn't get submitted or field is disabled, load old value
-		if (!defined $newprofile{'ext_'.$id} || $field{'active'} == 0) { $newprofile{'ext_'.$id} = $value; }
-		if ($field{'required_on_reg'} == 1 && $newprofile{'ext_'.$id} eq "") { $output .= $field{'name'}.": ".$lang_ext{'required'}."<br />\n"; }
+		if (!defined $newprofile{'ext_'.$id} && $field{'active'} == 0 && $action eq "register2" ) { $newprofile{'ext_'.$id} = 0; }
+		elsif (!defined $newprofile{'ext_'.$id} || $field{'active'} == 0) { $newprofile{'ext_'.$id} = $value; }
+
+#		if (!defined $newprofile{'ext_'.$id} || $field{'active'} == 0) { $newprofile{'ext_'.$id} = $value; }
+		if ($field{'required_on_reg'} == 1 && $newprofile{'ext_'.$id} eq "" && $action eq "register2") { $output .= $field{'name'}.": ".$lang_ext{'required'}."<br />\n"; }
 		# only fill with default value AFTER check of requirement
 		if ($field{'type'} eq "text" && $newprofile{'ext_'.$id} eq "") {
 			@options = split(/\^/,$field{'options'});
@@ -1307,7 +1309,7 @@ $ext_template_contentstart
 		} elsif ($field{'type'} eq "text_multi") {
 			@options = split(/\^/,$field{'options'});
 			if ($options[3] == 1) { $ubbc = " checked=\"checked\"" } else { $ubbc = "" }
-			$yymain .= 
+			$yymain .=
 				&ext_admin_gen_inputfield(qq~<label for="limit_len">$lang_ext{'limit_len'}</label>~,qq~<label for="limit_len">$lang_ext{'limit_len_description'}</label>~,
 					qq~<input name="limit_len" id="limit_len" size="5" value='$options[0]' />~).
 				&ext_admin_gen_inputfield(qq~<label for="rows">$lang_ext{'rows'}</label>~,qq~<label for="rows">$lang_ext{'rows_description'}</label>~,
@@ -1321,7 +1323,7 @@ $ext_template_contentstart
 			@options = split(/\^/,$field{'options'});
 			$output = "";
 			foreach (@options) { $output .= qq~$_\n~; }
-			$yymain .= 
+			$yymain .=
 				&ext_admin_gen_inputfield(qq~<label for="options">$lang_ext{'s_options'}</label>~,qq~<label for="options">$lang_ext{'s_options_description'}</label>~,
 					qq~<textarea name="options" id="options" cols="30" rows="3">$output</textarea>~);
 
@@ -1329,7 +1331,7 @@ $ext_template_contentstart
 			@options = split(/\^/,$field{'options'});
 			$output = "";
 			foreach (@options) { $output .= qq~$_\n~; }
-			$yymain .= 
+			$yymain .=
 				&ext_admin_gen_inputfield(qq~<label for="options">$lang_ext{'s_options'}</label>~,qq~<label for="options">$lang_ext{'s_options_description'}</label>~,
 					qq~<textarea name="options" id="options" cols="30" rows="3">$output</textarea>~).
 				&ext_admin_gen_inputfield(qq~<label for="radiounselect">$lang_ext{'radiounselect'}</label>~,qq~<label for="radiounselect">$lang_ext{'radiounselect_description'}</label>~,
@@ -1339,7 +1341,7 @@ $ext_template_contentstart
 			@options = split(/\^/,$field{'options'});
 			if ($options[0] == 1) { $check2 = " checked=\"checked\""; $check1 = ""; } else {  $check2 = ""; $check1 = " checked=\"checked\""; }
 			if ($options[1] == 1) { $options[1] = " checked=\"checked\""; } else { $options[1] = ""; }
-			$yymain .= 
+			$yymain .=
 				&ext_admin_gen_inputfield(qq~<label for="hr_or_br">$lang_ext{'hr_or_br'}</label>~,qq~<label for="hr_or_br">$lang_ext{'hr_or_br_description'}</label>~,
 					qq~<input name="hr_or_br" id="hr_or_br" type="radio" value="0"$check1 />$lang_ext{'hr'}\n~.
 					qq~<input name="hr_or_br" type="radio" value="1"$check2 />$lang_ext{'br'}~).
@@ -1349,7 +1351,7 @@ $ext_template_contentstart
 		} elsif ($field{'type'} eq "image") {
 			@options = split(/\^/,$field{'options'});
 			#if ($options[3] == 1) { $ubbc = " checked=\"checked\"" } else { $ubbc = "" }
-			$yymain .= 
+			$yymain .=
 				&ext_admin_gen_inputfield(qq~<label for="image_width">$lang_ext{'image_width'}</label>~,qq~<label for="image_width">$lang_ext{'image_width_description'}</label>~,
 					qq~<input name="image_width" id="image_width" size="5" value='$options[0]' />~).
 				&ext_admin_gen_inputfield(qq~<label for="image_height">$lang_ext{'image_height'}</label>~,qq~<label for="image_height">$lang_ext{'image_height_description'}</label>~,
@@ -1358,7 +1360,7 @@ $ext_template_contentstart
 					qq~<input name="allowed_extensions" id="allowed_extensions" size="30" value='$options[2]' />~);
 		}
 
-		$yymain .= 
+		$yymain .=
 			&ext_admin_gen_inputfield(qq~<label for="comment">$lang_ext{'comment'}</label>~,qq~<label for="comment">$lang_ext{'comment_description'}</label>~,
 				qq~<input name="comment" id="comment" size="50" value='$field{'comment'}' />~).
 			&ext_admin_gen_inputfield(qq~<label for="required_on_reg">$lang_ext{'required_on_reg'}</label>~,qq~<label for="required_on_reg">$lang_ext{'required_on_reg_description'}</label>~,
@@ -1409,7 +1411,7 @@ $ext_template_contentstart
 				qq~</table>\n~);
 
 		if ($field{'type'} ne "spacer") {
-			$yymain .= 
+			$yymain .=
 				&ext_admin_gen_inputfield(qq~<label for="editable_by_user">$lang_ext{'editable_by_user'}</label>~,qq~<label for="editable_by_user">$lang_ext{'editable_by_user_description'}</label>~,
 					qq~<select name="editable_by_user" id="editable_by_user" size="1">\n~.
 					qq~  <option value="0"$editable_check[0]>$lang_ext{'page_admin'}</option>\n~.
@@ -1675,7 +1677,7 @@ sub ext_admin_convert {
 	fclose(CONVERTER);
 	chomp(@ext_prof_fields);
 
-	#check if used membergroups still exist + convert to YaBB's new format
+	#check if used membergroups still exist + convert to YaBB new format
 	for ($i = 0; $i < @ext_prof_fields; $i++) {
 		my @field = split(/\|/, $ext_prof_fields[$i]);
 		$field[8]  = &ext_admin_convert_fixgroupnames($field[8]);
@@ -1701,6 +1703,107 @@ sub ext_admin_convert {
 	$yytitle = "$lang_ext{'Profiles_Controls'} - $lang_ext{'options_title'}";
 	$action_area = "ext_admin";
 	&AdminTemplate;
+}
+
+sub ext_viewprofile_r {
+	my ($pusername, @ext_profile, $id, $output, $fieldname, @options, $value, $previous, $count, $last_field_id, $pre_output) = (shift);
+
+	if ($#ext_prof_order > 0) { $last_field_id = &ext_get_field_id($ext_prof_order[$#ext_prof_order]); }
+
+	foreach $fieldname (@ext_prof_order) {
+		$id = &ext_get_field_id($fieldname);
+		&ext_get_field($id);
+		$value = &ext_get($pusername,$fieldname);
+		if ( $field{'required_on_reg'} == 1) {
+
+			if ($output eq "" && $previous ne 1) {
+				$pre_output = qq~
+	<tr>
+		<td class="windowbg2" align="left" valign="top" colspan="2">~;
+				$previous = 1;
+			}
+			# format the output dependent on the field type
+			if (($field{'type'} eq "text" && $value ne "") ||
+			    ($field{'type'} eq "text_multi" && $value ne "") ||
+			    ($field{'type'} eq "select" && $value ne " ") ||
+			    ($field{'type'} eq "radiobuttons" && $value ne "") ||
+			    ($field{'type'} eq "date" && $value ne "") ||
+			    $field{'type'} eq "checkbox") {
+				$output .= qq~
+			<tr><td class="windowbg2" align="left" valign="top">
+			<b>$field{'name'}:</b>
+			</td><td class="windowbg2" align="left" valign="top">
+			$value&nbsp;
+			</td></tr>~;
+				$previous = 0;
+
+			} elsif ($field{'type'} eq "spacer") {
+				# only print spacer if the previous entry was no spacer of the same type and if this is not the last entry
+				if (($previous eq 0 || $field{'comment'} ne "") && $id ne $last_field_id) {
+					if ($value eq $ext_spacer_br) {
+						$output .= qq~
+			<tr><td class="windowbg2" align="left" valign="top" colspan="2">
+			$ext_spacer_br
+			</td></tr>~;
+						$previous = 0;
+					} else {
+						$output .= qq~
+		</td>
+	</tr>
+	<tr>~;
+						if ($field{'comment'} ne "") {
+							$output .= qq~
+		<td class="catbg" align="left" colspan="2">
+			<img src="$imagesdir/profile.gif" alt="" border="0" style="vertical-align: middle;" />&nbsp;
+			<span class="text1"><b>$field{'comment'}</b></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="windowbg2" align="left" valign="top" colspan="2">~;
+						} else {
+							$output .= qq~
+		<td class="windowbg2" align="left" valign="top" colspan="2">~;
+						}
+						$previous = 1;
+					}
+				}
+
+			} elsif ($field{'type'} eq "email" && $value ne "") {
+				$output .= qq~
+			<tr><td class="windowbg2" align="left" valign="top">
+			<b>$field{'name'}:</b>
+			</td><td class="windowbg2" align="left" valign="top">
+			~ . &enc_eMail($img_txt{'69'},$value,'','') . qq~
+			</td></tr>~;
+				$previous = 0;
+
+			} elsif ($field{'type'} eq "url" && $value ne "") {
+				$output .= qq~
+			<tr><td class="windowbg2" align="left" valign="top">
+			<b>$field{'name'}:</b>
+			</td><td class="windowbg2" align="left" valign="top">
+			<a href="$value" target="_blank">$value</a>
+			</td></tr>~;
+				$previous = 0;
+
+			} elsif ($field{'type'} eq "image" && $value ne "") {
+				$output .= qq~
+			<tr><td class="windowbg2" align="left" valign="top">
+			<b>$field{'name'}:</b>
+			</td><td class="windowbg2" align="left" valign="top">
+			$value
+			</td></tr>~;
+				$previous = 0;
+		}
+		}
+	}
+	# only add spacer if there there is at least one field displayed
+	if ($output ne "") {
+		$output = $pre_output . $output . qq~
+		</td>
+	</tr>~;
+	}
+	$output;
 }
 
 1;

@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$recentplver = 'YaBB 2.5 AE $Revision: 1.19 $';
+$recentplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Sub RecentTopics shows all the most recently posted topics
@@ -142,7 +140,7 @@ sub RecentTopics {
 		$msub = &Censor($msub);
 
 		if ($iamguest) {
-			$notify = ''; 
+			$notify = '';
 		} else {
 			if (${$uid.$username}{'thread_notifications'} =~ /\b$tnum\b/) {
 				$notify = qq~$menusep<a href="$scripturl?action=notify3;num=$tnum/$c;oldnotify=1">$img{'del_notify'}</a>~;
@@ -195,7 +193,7 @@ sub RecentPosts {
 
 	my $display = $FORM{'display'} ||= 10;
 	if ($display < 0) { $display = 5; }
-	elsif ($display > $maxrecentdisplay) { $display = $maxrecentdisplay; } 
+	elsif ($display > $maxrecentdisplay) { $display = $maxrecentdisplay; }
 	my (@memset, @categories, %data, $numfound, $curcat, %catid, %catname, %cataccess, %catboards, $openmemgr, @membergroups, %openmemgr, $curboard, @threads, @boardinfo, $i, $c, @messages, $tnum, $tsub, $tname, $temail, $tdate, $treplies, $tusername, $ticon, $tstate, $mname, $memail, $mdate, $musername, $micon, $mattach, $mip, $mns, $mtime, $counter, $board, $notify);
 	$numfound = 0;
 
@@ -315,7 +313,7 @@ sub RecentPosts {
 		$msub = &Censor($msub);
 
 		if ($iamguest) {
-			$notify = ''; 
+			$notify = '';
 		} else {
 			if (${$uid.$username}{'thread_notifications'} =~ /\b$tnum\b/) {
 				$notify = qq~$menusep<a href="$scripturl?action=notify3;num=$tnum/$c;oldnotify=1">$img{'del_notify'}</a>~;

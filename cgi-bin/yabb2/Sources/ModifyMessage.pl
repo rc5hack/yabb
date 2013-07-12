@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$modifymessageplver = 'YaBB 2.5 AE $Revision: 1.33 $';
+$modifymessageplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if (!$post_txt_loaded) {
@@ -391,7 +389,7 @@ sub ModifyMessage2 {
 	if ($testmessage eq "" && $message ne "" && $pollthread != 2) { fatal_error("useless_post","$testmessage"); }
 
 	if (!$minlinkpost){ $minlinkpost = 0 ;}
-	if (${$uid.$username}{'postcount'} < $minlinkpost && !$iamadmin && !$iamgmod && !$iammod && !$iamguest) { 
+	if (${$uid.$username}{'postcount'} < $minlinkpost && !$iamadmin && !$iamgmod && !$iammod && !$iamguest) {
 		if ($message =~ m~http:\/\/~ || $message =~ m~https:\/\/~ || $message =~ m~ftp:\/\/~ || $message =~ m~www.~ || $message =~ m~ftp.~ =~ m~\[url~ || $message=~ m~\[link~ || $message=~ m~\[img~ || $message=~ m~\[ftp~) {
 			&fatal_error("no_links_allowed");
 		}
@@ -464,7 +462,13 @@ sub ModifyMessage2 {
 					&fatal_error("tsc_alert");
 				}
 			}
-
+           		if ($use_guardian && $string_on) {
+                		@bannedstrings = split(/\|/, $banned_strings);
+                		foreach (@bannedstrings) {
+                    		chomp $_;
+                    		if ($fixname =~ m/$_/i) { &fatal_error("attach_name_blocked","($_)"); }
+                		}
+            	}
 			$fixext  =~ s/\.(pl|pm|cgi|php)/._$1/i;
 			$fixname =~ s/\./_/g;
 			$fixfile = qq~$fixname$fixext~;

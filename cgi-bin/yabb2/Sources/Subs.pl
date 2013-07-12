@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$subsplver = 'YaBB 2.5 AE $Revision: 1.133 $';
+$subsplver = 'YaBB 2.5.2 $Revision: 1.4 $';
 if ($debug) { &LoadLanguage('Debug'); }
 
 use subs 'exit';
@@ -60,9 +58,9 @@ sub automaintenance {
 		fopen (MAINT, ">$vardir/maintenance.lock");
 		print MAINT qq~Remove this file if your board is in maintenance for no reason\n~;
 		fclose (MAINT);
-		if ($mreason eq "low_disk"){ 
+		if ($mreason eq "low_disk"){
 			&LoadLanguage('Error');
-			&alertbox($error_txt{'low_diskspace'}); 
+			&alertbox($error_txt{'low_diskspace'});
 		}
 		$maintenance = 2 if !$maintenance;
 	} elsif (lc($maction) eq "off") {
@@ -179,8 +177,9 @@ sub ImgLoc {
 sub template {
 	&print_output_header;
 
-	if ($yytitle ne $maintxt{'error_description'}) { 
-		if (!$iamguest || ($iamguest && $guestaccess == 1)) { $yyforumjump = &jumpto; }
+	if ($yytitle ne $maintxt{'error_description'}) {
+		if ((!$iamguest || ($iamguest && $guestaccess == 1)) && !$maintenance ) { $yyforumjump = &jumpto; }
+		else { $yyforumjump = '&nbsp;'; }
 	}
 	$yyposition      = $yytitle;
 	$yytitle         = "$mbname - $yytitle";
@@ -202,7 +201,6 @@ $yysyntax_js = qq~
 <script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_perl.js"></script>
 <script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_php.js"></script>
 <script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/shjs/sh_sql.js"></script>
-<script language="JavaScript1.2" type="text/javascript" src="$yyhtml_root/YaBB.js"></script>
 ~;
 
 	# add 'back to top' Button on the end of each page
@@ -323,7 +321,7 @@ $yysyntax_js = qq~
 	my $wmessage;
 	if    ($hour >= 12 && $hour < 18) { $wmessage = $maintxt{'247a'}; } # Afternoon
 	elsif ($hour <  12 && $hour >= 0) { $wmessage = $maintxt{'247m'}; } # Morning
-	else                              { $wmessage = $maintxt{'247e'}; } # Evening 
+	else                              { $wmessage = $maintxt{'247e'}; } # Evening
 	if ($iamguest) {
 		$yyuname = qq~$maintxt{'248'} $maintxt{'28'}. $maintxt{'249'} <a href="~ . ($loginform ? "javascript:if(jumptologin>1)alert('$maintxt{'35'}');jumptologin++;window.scrollTo(0,10000);document.loginform.username.focus();" : "$scripturl?action=login") . qq~">$maintxt{'34'}</a>~;
 		$yyuname .= qq~ $maintxt{'377'} <a href="$scripturl?action=register">$maintxt{'97'}</a>~ if $regtype;
@@ -440,7 +438,7 @@ $yysyntax_js = qq~
 							var thiscolor = thecolor.split("|");
 							return thiscolor;
 						}
-					}
+					} //" make my syntax checker happy;
 
 					if (ie4 || DOM2) document.write('$newstitle<div class="windowbg2" id="fadestylebak" style="display: none;"><div class="newsfader" id="fadestyle" style="display: none;"> </div></div>');
 
@@ -482,6 +480,7 @@ $yysyntax_js = qq~
 				&wrap;
 				if ($enable_ubbc) {
 					if (!$yyYaBBCloaded) { require "$sourcedir/YaBBC.pl"; }
+					$ns = "";
 					&DoUBBC;
 					$message =~ s/ style="display:none"/ style="display:block"/g;
 				}
@@ -576,7 +575,7 @@ sub image_resize {
 			$x[2] =~ s/display:none/display:inline/;
 		} else {
 			$resize_num++;
-			$x[0] .= "_$resize_num"; 
+			$x[0] .= "_$resize_num";
 			$resize_js .= "'$x[0]',";
 		}
 		qq~"$x[0]"$x[2]~;
@@ -836,11 +835,10 @@ sub readform {
 	}
 	$action = $INFO{'action'} || $FORM{'action'};
 	# Formsession checking moved to YaBB.pl to fix a bug.
-	if ($INFO{'username'} && $do_scramble_id) { $INFO{'username'} = &decloak($INFO{'username'}); }
-	if ($FORM{'username'} && $do_scramble_id && $action ne "login2" && $action ne "reminder2" && $action ne "register2" && $action ne "profile2") { $FORM{'username'} = &decloak($FORM{'username'}); }
+	if ($INFO{'username'} && $do_scramble_id && $action ne 'view_regentry' && $action ne 'del_regentry' && $action ne 'activate' ) { $INFO{'username'} = &decloak($INFO{'username'}); }
+	if ($FORM{'username'} && $do_scramble_id && $action ne "login2" && $action ne "reminder2" && $action ne "register2" && $action ne "profile2" && $action ne 'admin_descision') { $FORM{'username'} = &decloak($FORM{'username'}); }
 	if ($INFO{'to'} && $do_scramble_id) { $INFO{'to'} = &decloak($INFO{'to'}); }
 	if ($FORM{'to'} && $do_scramble_id) { $FORM{'to'} = &decloak($FORM{'to'}); }
-
 	# Dont do this here or you get problems with foreign characters!!!!
 	#if ($action eq 'search2') { &FromHTML($FORM{'search'}); }
 	#&ToHTML($INFO{'title'});
@@ -870,7 +868,7 @@ sub readform {
 }
 
 sub getlog {
-	return if defined %yyuserlog || $iamguest || !$max_log_days_old || !-e "$memberdir/$username.log";
+	return if %yyuserlog || $iamguest || !$max_log_days_old || !-e "$memberdir/$username.log";
 
 	%yyuserlog = ();
 	fopen(GETLOG, "$memberdir/$username.log");
@@ -892,7 +890,7 @@ sub dumplog {
 		&getlog;
 		$yyuserlog{$_[0]} = $_[1] || $date;
 	}
-	if (defined %yyuserlog) {
+	if (%yyuserlog) {
 		my $name;
 		$date2 = $date;
 		fopen(DUMPLOG, ">$memberdir/$username.log");
@@ -912,7 +910,7 @@ sub jumpto {
 	## jump links to messages/favourites/notifications.
 	my $action = 'action=jump';
 	my $onchange = qq~ onchange="if(this.options[this.selectedIndex].value) window.location.href='$scripturl?' + this.options[this.selectedIndex].value;"~;
-	if ($templatejump == 1) { 
+	if ($templatejump == 1) {
 		$action = 'action=';
 		$onchange = '';
 	}
@@ -1534,7 +1532,7 @@ sub RemoveUserOnline {
 sub freespace {
 	my ($FreeBytes,$hostchecked);
 	if ($^O =~ /Win/) {
-		if ($enable_freespace_check) { 
+		if ($enable_freespace_check) {
 			my @x = qx{DIR /-C}; # Do an ordinary DOS dir command and grab the output
 			my $lastline = pop(@x); # should look like: 17 Directory(s), 21305790464 Bytes free
 			return -1 if $lastline !~ m/byte/i; # error trapping if output fails. The word byte should be in the line
@@ -1691,7 +1689,7 @@ sub Recent_Load {
 		print RLOG map "$_\t$recent{$_}\n", keys %recent;
 		fclose(RLOG);
 		unlink "$memberdir/$who_to_load.wlog";
-		&Recent_Load($who_to_load); 
+		&Recent_Load($who_to_load);
 	}
 }
 
@@ -1881,7 +1879,7 @@ sub ManageMemberinfo {
 			foreach my $user (@oldusers) {
 				delete($memberinf{$user});
 			}
-		}	
+		}
 		delete($memberinf{$user});
 	}
 	if ($todo eq "save" || $todo eq "update" || $todo eq "delete" || $todo eq "add") {
@@ -1964,7 +1962,7 @@ sub decloak {
 	my ($input) =$_[0];
 	my ($user,$ascii,$key,$dec,$hexkey);
 	if (length($input) % 2 == 0) {return &old_decloak($input);} # Old style, return it
-	elsif ($input !~ /\A[0-9A-F]+\Z/) {return $input; }         # probably a non cloacked ID as it contains non hex code
+	elsif ($input !~ /\A[0-9A-F]+\Z/) {return $input; }         # probably a non cloaked ID as it contains non hex code
 	else {$input =~ s~0$~~;}
 	$hexkey = substr($input,length($input)-2,2);
 	$key = hex($hexkey);
@@ -1982,7 +1980,7 @@ sub decloak {
 sub old_decloak {
 	my ($input) =$_[0];
 	my ($user,$ascii,$key,$dec,$hexkey,$x);
-	if ($input !~ /\A[0-9A-F]+\Z/) { return $input; }    ## probably a non cloacked ID as it contains non hex code
+	if ($input !~ /\A[0-9A-F]+\Z/) { return $input; }    ## probably a non cloaked ID as it contains non hex code
 	$hexkey = substr($input,length($input)-2,2);
 	$key = hex($hexkey);
 	$x=0;
@@ -2042,11 +2040,10 @@ sub guestLangSel {
 			$morelang++;
 		}
 	}
-	#close(DIR);
 	return $langopt;
 }
 
-##  control geust language selection. 
+##  control guest language selection.
 
 sub setGuestLang {
 	## if either 'no guest access' or 'no guest lan sel', throw the user back to the logn screen
@@ -2067,7 +2064,7 @@ sub checkUserLockBypass {
 	## work down the levels
 	if ($bypass_lock_perm eq "fa" && $iamadmin) { $canbypass = 1; }
 	elsif ($bypass_lock_perm eq "gmod" && ($iamadmin || $iamgmod)) { $canbypass = 1; }
-	elsif ($bypass_lock_perm eq "mod" && ($iamadmin || $iamgmod || $iammod)) { $canbypass = 1; } 
+	elsif ($bypass_lock_perm eq "mod" && ($iamadmin || $iamgmod || $iammod)) { $canbypass = 1; }
 	$canbypass;
 }
 
@@ -2094,7 +2091,7 @@ sub loadMyBuddy {
 }
 
 ## add user to buddy list
-## this is only for the 
+## this is only for the
 sub addBuddy {
 	my $newBuddy;
 	if ($INFO{'name'}) {
@@ -2144,7 +2141,7 @@ sub CheckUserPM_Level {
 	return if $PM_level <= 1 || $UserPM_Level{$checkuser};
 	$UserPM_Level{$checkuser} = 1;
 	if (!${$uid.$checkuser}{'password'}) { &LoadUser($checkuser); }
-	if (${$uid.$checkuser}{'position'} eq 'Administrator' || ${$uid.$checkuser}{'position'} eq 'Global Moderator') { 
+	if (${$uid.$checkuser}{'position'} eq 'Administrator' || ${$uid.$checkuser}{'position'} eq 'Global Moderator') {
 		$UserPM_Level{$checkuser} = 3;
 	} else {
 		usercheck: foreach my $catid (@categoryorder) {

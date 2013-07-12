@@ -1,5 +1,8 @@
-YABB 2.5 ANNIVERSARY EDITION RELEASE
+YABB 2.5.2 
 
-04 JULY 2010
+21 October, 2012
 
-Minor image and template fix - July 11, 2010
+Major bug fixes. Addition of Anti-spam utilities.
+Updated Setup and FixFile.
+
+2.5.2 is Dedicated to the memory of Ron Hartendorp, AKA Spikecity. His work on past YaBB software versions and his help to the YaBB Community will be sorely missed. Our thoughts are with his loved ones and friends. He left us too soon.

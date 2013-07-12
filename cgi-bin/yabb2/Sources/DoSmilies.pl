@@ -3,61 +3,68 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$dosmiliesplver = 'YaBB 2.5 AE $Revision: 1.11 $';
+$dosmiliesplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Main');
 
 sub SmiliePut {
-	&print_output_header;
-
-	$moresmilieslist   = "";
-	$evenmoresmilies   = "";
-	$more_smilie_array = "";
-	$i = 0;
-	while ($SmilieURL[$i]) {
-		if ($SmilieURL[$i] =~ /\//i) { $tmpurl = $SmilieURL[$i]; }
-		else { $tmpurl = qq~$defaultimagesdir/$SmilieURL[$i]~; }
-		$moresmilieslist .= qq~<br />~ if $i && ($i / 10) == int($i / 10);
-		$moresmilieslist .= qq~<img src="$tmpurl" align="bottom" alt="$SmilieDescription[$i]" border="0" onclick="javascript:MoreSmilies($i)" style="cursor:hand" />$SmilieLinebreak[$i]\n~;
-		$smilie_url_array .= qq~"$tmpurl", ~;
-		$tmpcode = $SmilieCode[$i];
-		$tmpcode =~ s/\&quot;/"+'"'+"/g;
-		&FromHTML($tmpcode);
-		$tmpcode =~ s/&#36;/\$/g;
-		$tmpcode =~ s/&#64;/\@/g;
-		$more_smilie_array .= qq~" $tmpcode", ~;
-		$i++;
-	}
-	if ($showsmdir eq 3 || ($showsmdir eq 2 && $detachblock eq 1)) {
-		opendir(DIR, "$smiliesdir");
-		@contents = readdir(DIR);
-		closedir(DIR);
-		$smilieslist = "";
-		foreach $line (sort { uc($a) cmp uc($b) } @contents) {
-			($name, $extension) = split(/\./, $line);
-			if ($extension =~ /gif/i || $extension =~ /jpg/i || $extension =~ /jpeg/i || $extension =~ /png/i) {
-				if ($line !~ /banner/i) {
-					$evenmoresmilies .= qq~<br />~ if $i && ($i / 10) == int($i / 10);
-					$evenmoresmilies .= qq~<img src='$smiliesurl/$line' align="bottom" alt='$name' border='0' onclick='javascript:MoreSmilies($i)' style='cursor:hand' />\n~;
-					$more_smilie_array .= qq~" [smiley=$line]", ~;
-					$i++;
-				}
-			}
-		}
-	}
-	$more_smilie_array .= qq~""~;
+    print_output_header();
+    $moresmilieslist   = q{};
+    $evenmoresmilies   = q{};
+    $more_smilie_array = q{};
+    $i                 = 0;
+    while ( $SmilieURL[$i] ) {
+        if ( $SmilieURL[$i] =~ /\//ixsm ) { $tmpurl = $SmilieURL[$i]; }
+        else { $tmpurl = qq~$defaultimagesdir/$SmilieURL[$i]~; }
+        if ( $i && ( $i / 10 ) == int( $i / 10 ) ) {
+            $moresmilieslist .= qq~</tr>\n<tr>~;
+        }
+        $moresmilieslist .=
+qq~<td><img src="$tmpurl" alt="$SmilieDescription[$i]" onclick="javascript:MoreSmilies($i)" class="moresmiles" />$SmilieLinebreak[$i]</td>\n~;
+        $smilie_url_array .= qq~"$tmpurl", ~;
+        $tmpcode = $SmilieCode[$i];
+        $tmpcode =~ s/\&quot;/"+'"'+"/gxsm;    #'; to keep my text editor happy;
+        FromHTML($tmpcode);
+        $tmpcode =~ s/&#36;/\$/gxsm;
+        $tmpcode =~ s/&#64;/\@/gxsm;
+        $more_smilie_array .= qq~" $tmpcode", ~;
+        $i++;
+    }
+    if ( $showsmdir == 3 || ( $showsmdir == 2 && $detachblock == 1 ) ) {
+        opendir DIR, "$smiliesdir";
+        @contents = readdir DIR;
+        closedir DIR;
+        $smilieslist = {};
+        foreach my $line ( sort { uc $a cmp uc $b } @contents ) {
+            ( $name, $extension ) = split /\./xsm, $line;
+            if (   $extension =~ /gif/ism
+                || $extension =~ /jpg/ism
+                || $extension =~ /jpeg/ism
+                || $extension =~ /png/ism )
+            {
+                if ( $line !~ /banner/ism ) {
+                    if ( $i && ( $i / 4 ) == int( $i / 4 ) ) {
+                        $evenmoresmilies .= qq~</tr>\n<tr>~;
+                    }
+                    $evenmoresmilies .=
+qq~<td><img src="$smiliesurl/$line" id="$name" onclick="javascript:MoreSmilies($i)" class="moresmiles" alt="moresmilies" /></td>\n~;
+                    $more_smilie_array .= qq~" [smiley=$line]", ~;
+                    $i++;
+                }
+            }
+        }
+    }
+    $more_smilie_array .= q~''~;
 
 	$output = qq~<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -65,11 +72,14 @@ sub SmiliePut {
 <title>$smiltxt{'1'}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=$yycharset" />
 <link rel="stylesheet" href="$forumstylesurl/$usestyle.css" type="text/css" />
+<style type="text/css">
+td {border: #ccc solid thin; text-align:center; height:50px; width:90px;}
+</style>
 <script language="JavaScript1.2" type="text/javascript">
 <!--
 function AddText(text) {
 	if (window.opener && !window.opener.closed) {
-		if (opener.document.postmodify.message.createTextRange && opener.document.postmodify.message.caretPos) {      
+		if (opener.document.postmodify.message.createTextRange && opener.document.postmodify.message.caretPos) {
 			var caretPos = opener.document.postmodify.message.caretPos;
 			caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ?
 			text + ' ' : text;
@@ -95,7 +105,7 @@ function MoreSmilies(i) {
 </script>
 </head>
 <body style="background: #$popback; min-width:400px;">
-<span style="color: #$poptext;">$smiltxt{'21'}</span><br /><br />~;
+<p style="color:#$poptext; text-align:center">$smiltxt{'21'}</p><table><tr>~;
 
 	if ($showadded eq 3 || ($showadded eq 2 && $detachblock eq 1)) {
 		$output .= qq~ $moresmilieslist ~;
@@ -103,6 +113,7 @@ function MoreSmilies(i) {
 
 	$output .= qq~
 	$evenmoresmilies
+</tr></table>
 </body>
 </html>~;
 

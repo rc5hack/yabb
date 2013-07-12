@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$backuplngver = 'YaBB 2.5 AE $Revision: 1.3 $';
+$backuplngver = 'YaBB 2.5.2 $Revision: 1.0 $';
 
 ($support_env_path = $ENV{'SCRIPT_FILENAME'}) =~ s~/\w+\.pl~~;
 
@@ -30,7 +28,7 @@ $backuplngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 # We don't translate directory names like Boards/.
 '7', '-- (contains category and board information and indexes)',
 '8', '-- (contains all threads/topics and included posts)',
-'9', '-- (contains member profiles, member logs, and private messages)',
+'9', '-- (contains member profiles, member logs, and personal messages)',
 '10', 'and stylesheets', # This one comes right after "Templates/ "
 '10a', '-- (contains all template files and images)',
 '11', '-- (contains all localized text and support files used by YaBB)',
@@ -82,8 +80,8 @@ $backuplngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 # Begin manage backups area
 '35', 'Manage Backups',
 '36', 'Backups available in',
-'37', 'For each available backup, you can:<ul><li>DOWNLOAD the archive file</li><li>EMAIL the archive file to',
-'37a', '</li><li>erform another (full) BACKUP with identical settings</li><li>Perform an INCREMENTAL backup with identical settings (only for files changed since the backup time)</li><li>RECOVER the backup to the live forum, if supported</li><li>DELETE the Backup</li></ul>',
+'37', 'For each available backup, you can:<ul><li>DOWNLOAD the archive file</li><li>E-MAIL the archive file to',
+'37a', '</li><li>Perform another (full) BACKUP with identical settings</li><li>Perform an INCREMENTAL backup with identical settings (only for files changed since the backup time)</li><li>RECOVER the backup to the live forum, if supported</li><li>DELETE the Backup</li></ul>',
 '38', 'No backups found',
 
 # These should've been here from the beginning...
@@ -102,9 +100,9 @@ $backuplngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 '49', 'Yes, I\'m sure',
 '50', 'No, don\'t delete it',
 '51', 'Can\'t delete',
-'52', 'EMAIL',
+'52', 'E-MAIL',
 '53', 'DELETE',
-'54', 'Are you sure you want to send this email',
+'54', 'Are you sure you want to send this e-mail',
 '55', 'The size of the attachment will be',
 '56', 'Yes, mail the attachment to',
 '57', 'No, don\'t include the attachment, just mail the link.',
@@ -149,11 +147,11 @@ $backuplngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 '131' => '<b>Now check the CHMODs again with your FTP program, just to be sure &nbsp; ;-)</b>',
 '132' => 'Back to YaBB Backup main page',
 
-# Begin email stuff.
+# Begin e-mail stuff.
 'mailsubject', "YaBB 2 Backup from $mbname",
 'mailfrom', qq~"YaBB 2 Backup Mailer" <$webmaster_email>~, # do NOT modify anything left and right from *YaBB 2 Backup Mailer*!!!
-'mailsuccess', 'Sent email successfully!',
-'mailfail', 'Sending email failed! See the error message in the info email you will receive.',
+'mailsuccess', 'Sent e-mail successfully!',
+'mailfail', 'Sending e-mail failed! See the error message in the info e-mail you will receive.',
 );
 
 # The actual messages are here.
@@ -176,14 +174,14 @@ Thanks for using YaBB!~;
 
 $backup_txt{'mailmessage3'} = qq~Hi USERNAME!
 
-Sending the email with the attached backup failed.
+Sending the e-mail with the attached backup failed.
 
 But, you can visit LINK to manually download the backup FILENAME.
 
 The system provided the following info related to the sending error:
 "SYSTEMINFO"
 
-You must have MIME::Lite installed on your server to get backups by email; you may also need other modules (see the info above). Ask your server administrator to install the module(s) on your server.  You can find further help on installing modules at: http://codex.yabbforum.com/YaBB.pl?num=1225217016
+You must have MIME::Lite installed on your server to get backups by e-mail; you may also need other modules (see the info above). Ask your server administrator to install the module(s) on your server.  You can find further help on installing modules at: http://codex.yabbforum.com/YaBB.pl?num=1225217016
 
 Thanks for using YaBB!~;
 

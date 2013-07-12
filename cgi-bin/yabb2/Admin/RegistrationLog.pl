@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$registrationlogplver = 'YaBB 2.5 AE $Revision: 1.34 $';
+$registrationlogplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Register');
@@ -95,7 +93,7 @@ sub view_reglog {
 			$cryptactid = &cloak($actid);
 			$cryptuserid = &cloak($userid);
 		} else {
-			$cryptactid = $actid; 
+			$cryptactid = $actid;
 			$cryptuserid = $userid;
 		}
 		if($userid ne $actid && $actid ne '') {
@@ -106,9 +104,9 @@ sub view_reglog {
 		}
 		if ($status eq 'AA' && &LoadUser($userid)){
 			&LoadUser($userid);
-			$linkuserid = qq~$userid (<a href="$scripturl?action=viewprofile;username=$cryptuserid">${$uid.$userid}{'realname'}</a>)~; 
-		} else { 
-			$linkuserid = $userid; 
+			$linkuserid = qq~$userid (<a href="$scripturl?action=viewprofile;username=$cryptuserid">${$uid.$userid}{'realname'}</a>)~;
+		} else {
+			$linkuserid = $userid;
 		}
 		$is_member = &check_member($userid);
 		if ($do_scramble_id){ $cryptid = &cloak($userid); } else { $cryptid = $userid; }
@@ -121,8 +119,8 @@ sub view_reglog {
 			$delrecord = qq~<a href="$adminurl?action=rej_regentry;username=$cryptid">$prereg_txt{'reject'}</a>~;
 			$delrecord .= qq~<br /><a href="$adminurl?action=view_regentry;username=$cryptid;type=approve">$prereg_txt{'view'}</a>~;
 			$delrecord .= qq~<br /><a href="$adminurl?action=apr_regentry;username=$cryptid">$prereg_txt{'apr'}</a>~;
-		} else { 
-			$delrecord = '---'; 
+		} else {
+			$delrecord = '---';
 		}
 		$loglist .= qq~
 		<tr>
@@ -308,6 +306,10 @@ sub view_registration {
    <td align="left">${$uid.$readuser}{'regreason'}</td>
  </tr>~;
 	}
+	if ($extendedprofiles) {
+		require "$sourcedir/ExtendedProfiles.pl";
+		$yymain .= &ext_viewprofile_r($readuser);
+	}
 
 	if ($viewtype eq "approve"){
 		$yymain .= qq~<tr>
@@ -323,7 +325,7 @@ sub view_registration {
 	<input type="submit" name="moda" value="$prereg_txt{'apr_admin_approve'}" onclick="return confirm('$prereg_txt{'apr_admin_approve'} ?')" class="button" />
     </td>
  </tr>~;
- 
+
 	} elsif ($viewtype eq "validate"){
 		$yymain .= qq~<tr class="catbg">
     <td height="30" valign="middle" align="center" colspan="2">
@@ -376,19 +378,45 @@ sub reject_registration {
 		fclose(APR);
 	}
 	# check if waiting user exists
-	if (-e "$memberdir/$deluser.wait") {
-		&LoadUser($deluser);
-		## send a rejection email ##
-		my $templanguage = $language;
-		$language = ${$uid.$deluser}{'language'};
-		&LoadLanguage('Email');
-		require "$sourcedir/Mailer.pl";
-		if ($admin_reason ne "") {
-			$message = &template_email($reviewrejectedemail, {'displayname' => ${$uid.$deluser}{'realname'}, 'username' => $deluser, 'reviewer' => ${$uid.$username}{'realname'}, 'reason' => $admin_reason });
-		} else {
-			$message = &template_email($instantrejectedemail, {'displayname' => ${$uid.$deluser}{'realname'}, 'username' => $deluser, 'reviewer' => ${$uid.$username}{'realname'}});
-		}
-		&sendmail(${$uid.$deluser}{'email'}, "$mailreg_txt{'apr_result_reject'} $mbname", $message,'',$emailcharset);
+    if ( -e "$memberdir/$deluser.wait" ) {
+        LoadUser($deluser);
+        ## send a rejection email ##
+        my $templanguage = $language;
+        $language = ${ $uid . $deluser }{'language'};
+        LoadLanguage('Email');
+        require "$sourcedir/Mailer.pl";
+        if ( $admin_reason ne q{} ) {
+            $message = template_email(
+                $reviewrejectedemail,
+                {
+                    'displayname' => ${ $uid . $deluser }{'realname'},
+                    'username'    => $deluser,
+                    'reviewer'    => ${ $uid . $username }{'realname'},
+                    'reason'      => $admin_reason
+                }
+            );
+        sendmail(
+            ${ $uid . $deluser }{'email'},
+            "$mailreg_txt{'apr_result_reject'} $mbname",
+            $message, q{}, $emailcharset
+        );
+        }
+        elsif ( $nomailspammer == 1 ) {
+            $message = template_email(
+                $instantrejectedemail,
+                {
+                    'displayname' => ${ $uid . $deluser }{'realname'},
+                    'username'    => $deluser,
+                    'reviewer'    => ${ $uid . $username }{'realname'}
+                }
+            );
+
+            sendmail(
+                ${ $uid . $deluser }{'email'},
+                "$mailreg_txt{'apr_result_reject'} $mbname",
+                $message, q{}, $emailcharset
+            );
+        }
 		$language = $templanguage;
 
 		## remove the registration data for the rejected user ##
@@ -490,5 +518,6 @@ sub approve_registration {
 	$yySetLocation = qq~$adminurl?action=view_reglog~;
 	&redirectexit;
 }
+
 
 1;

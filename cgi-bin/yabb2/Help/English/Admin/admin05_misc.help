@@ -17,16 +17,16 @@ $SectionBody2 = qq~These are some features in YaBB 2.2 that naturally need some 
 <li><b>RSS</b><br />
 Anyone can now use RSS (Really Simple Syndication, see <a href="http://en.wikipedia.org/wiki/RSS" title="RSS on Wikipedia">this article in Wikipedia</a>) to pull the latest headlines from your forum into an external document or to a browser.</li>
 <li><b>Permalinks</b><br />
-To make forum URIs look a bit more 'normal' you can set your forum to use permalinks.<br />Be carefull when applying the settings, even smallest mistakes may make your forum unavailable!</li>
+To make forum URIs look a bit more 'normal' you can set your forum to use permalinks.<br />Be careful when applying the settings, even smallest mistakes may make your forum unavailable!</li>
 <li><b>Separate Search Engines from ordinary users</b><br />
-In order to get a bit more accurate picture of your forum visitors, you can separate search engines spiders from ordinary guests.</li>
+In order to get a bit more accurate picture of your forum visitors, you can separate search engines' spiders from ordinary guests.</li>
 <li><b>Email Templating</b><br />
 When you wish to edit the 'system emails' more fitting to your needs, you don't need to fight with the source code anymore, just use the 'Email Messages' templating tool.</li>
 <li><b>Antispam tools</b><br />
 Since the spam is here to stay, we need stronger tools against it and now we have one.<br />
 Set your preferred spam rules to trigger a warning (and eventually a ban) based on unwanted post content, specify certain circumstances of the posting process and keep viagra sellers away.</li>
 <li><b>Captcha</b><br />
-To make it a bit harder for malicious bots entering your forum, use the captcha (visual confirmation, see <a href="http://en.wikipedia.org/wiki/Captcha" title="Captcha in Wikipedia">this article in Wikipedia</a>, but be carefull, it is possible that some human users find it hard to use.</li>
+To make it a bit harder for malicious bots entering your forum, use the captcha (visual confirmation, see <a href="http://en.wikipedia.org/wiki/Captcha" title="Captcha in Wikipedia">this article in Wikipedia</a>, but be careful, it is possible that some human users find it hard to use.</li>
 <li><b>Broadcast messages</b><br />
 Communicate with your forum staff with Broadcast Messages and send messages on group level (moderators, moderator groups, global moderators and admins).</li>
 </ul>
@@ -86,12 +86,27 @@ Allows Categories on the Board Index to be collapsed or expanded without reloadi
 <li><b>Extended Profiles</b><br />
 Allows the Administrator to add additional fields to the user Profile.  The Administrator has many options with these fields, such as making them a mandatory entry during registration, making them viewable to everyone or only certain groups, allowing users to edit them, or adding the fields to the memberlist.</li>
 <li><b>E-Mail Notifications to Admin for New Member Registrations</b><br />
-Allows the Administrator to select the option to recieve notification by e-Mail if a new member registers.  It also allows the Administrator to use the forum webmaster e-Mail address or enter one of his choosing.</li>
+Allows the Administrator to select the option to receive notification by e-Mail if a new member registers.  It also allows the Administrator to use the forum webmaster e-Mail address or enter one of his choosing.</li>
 <li><b>Spell Checker</b><br />
 Allows the Administrator to enable a spelling checker that will check spelling in Posts and in Personal Messages.</li>
 </ul>
 ~;
 #############################################
 
+### Section 4
+#############################################
+$SectionSub4 = "New_Features_in_YaBB_2.5.2";
+$SectionBody4 = qq~These are some completely new features to YaBB 2.5.2 that were added by popular request of users. These additions are:
+<ul>
+<li><b>Additional Anti-Spam Measures</b><br />
+Anti-Spam Question requires the registrant to answer a random question from a bank of questions which the Admin has the option of editing. This is a deterent against Spam registrations. More anti-spam measures can be found at: <a href="http://www.boardmod.org/yabb2/YaBB.pl?catselect=mods_y2">www.boardmod.org/yabb2/YaBB.pl?catselect=mods_y2</a><br />
+<b>Minimum number of posts a member must have before links and images can be posted</b><br />The Admin can set the minimum number of posts required to place links and/or images in posts, signatures and user profiles. This is to prevent spammers from registering and immediately posting links and images.<br />
+<b>No email on declined membership option</b><br />
+The Admin now has the option as to whether or not to send the default 'declined membership' email when using Admin Approval for memberships and removing a registration from the Registration Log screen. Why use your bandwidth sending rejection notices to email addresses that are probably bogus anyway?<br />
+<b>Memberhips Delete Lock</b><br />
+The Admin now has the option of allowing (or dis-allowing) members to remove their own accounts. In dis-allowing members to delete their own accounts, the Admin has time to discover the reasons for the member wanting to leave and also maintains the tools the Admin may need to readily delete spam posts, ban the member to keep them from registering under the same credentials, etc., depending on the situation and the needs of the forum.</li>
+</ul>
+~;
+#############################################
 
 1;

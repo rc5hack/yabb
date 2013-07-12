@@ -41,9 +41,9 @@ $SectionBody2 = qq~YaBB gives admins the ability to add multiple Boards from a s
 <ul><li>Checking this option will ensure the messages in this board are shown as important on top of every board. No matter how the Board permissions are set, only Administrators and Global Moderators can start new topics or reply. <b><u>Note:</u> YaBB only allows a single board to have this label.</b></li></ul></li>
 <li><b><u>Recycle Bin</u></b>
 <ul><li>Checking this option make this board a recycle bin for messages deleted by moderators. It can also be used as a recycle bin for Administrators by unchecking the box found in the Admin Center&#47;Configuration&#47;Forum Settings under the &quot;Staff&quot; tab. <b><u>Note:</u> YaBB only allows a single board to have this label.</b></li></ul></li>
-<li><b><u>Mininum Age to Access</u></b>
-<ul><li>Restrict access by mininum age.</li></ul></li>
-<li><b><u>Maxium Age to Access</u></b>
+<li><b><u>Minimum Age to Access</u></b>
+<ul><li>Restrict access by minimum age.</li></ul></li>
+<li><b><u>Maximum Age to Access</u></b>
 <ul><li>Restrict access by maximum age.</li></ul></li>
 <li><b><u>Gender Allowed Access</u></b>
 <ul><li>Restrict access by gender.</li></ul>
@@ -95,9 +95,9 @@ $SectionBody3 = qq~If you need to make changes to any of the boards you have cre
 <ul><li>Checking this option will ensure the messages in this board are shown as important on top of every board. No matter how the Board permissions are set, only Administrators and Global Moderators can start new topics or reply. <b><u>Note:</u> YaBB only allows a single board to have this label.</b></li></ul></li>
 <li><b><u>Recycle Bin</u></b>
 <ul><li>Checking this option make this board a recycle bin for messages deleted by moderators. It can also be used as a recycle bin for Administrators by unchecking the box found in the Admin Center&#47;Configuration&#47;Forum Settings under the &quot;Staff&quot; tab. <b><u>Note:</u> YaBB only allows a single board to have this label.</b></li></ul></li>
-<li><b><u>Mininum Age to Access</u></b>
-<ul><li>Restrict access by mininum age.</li></ul></li>
-<li><b><u>Maxium Age to Access</u></b>
+<li><b><u>Minimum Age to Access</u></b>
+<ul><li>Restrict access by minimum age.</li></ul></li>
+<li><b><u>Maximum Age to Access</u></b>
 <ul><li>Restrict access by maximum age.</li></ul></li>
 <li><b><u>Gender Allowed Access</u></b>
 <ul><li>Restrict access by gender.</li></ul>

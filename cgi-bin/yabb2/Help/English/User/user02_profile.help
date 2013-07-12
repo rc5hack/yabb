@@ -56,9 +56,9 @@ Optional. This box is available for filling in information about where you live,
 #############################################
 $SectionSub4 = "Contact_Information";
 $SectionBody4 = qq~If you would like other members of this YaBB community to be able to contact you, this section will allow you to provide this information in your profile.
-<p><u><b>e-Mail</b></u>
-<br />This must be a valid e-Mail address. It is used for system notifications such as a forgotten password, topic notifications, and forum e-Mails.</p>
-<p><u><b>Hide e-Mail from Public</b></u> <br /> Check this box if you do not want other YaBB community members to view your e-Mail address. Note: this does not hide it from Admins.</p>
+<p><u><b>E-mail</b></u>
+<br />This must be a valid e-mail address. It is used for system notifications such as a forgotten password, topic notifications, and forum e-mails.</p>
+<p><u><b>Hide e-mail from Public</b></u> <br /> Check this box if you do not want other YaBB community members to view your e-mail address. Note: this does not hide it from Admins.</p>
 <p><u><b>ICQ</b></u>
 <br />If you have an ICQ account, you may enter your UIN here.</p>
 <p><u><b>AIM</b></u>
@@ -76,7 +76,7 @@ If you have a MySpace page, you may enter it here. Note, you only need to fill i
 <p><u><b>Facebook</b></u><br />
 If you have a Facebook page, you may enter here. Note, you can either use your profile ID number or your username. For example, to use your profile ID number, if your Facebook URL is 'http://facebook.com/profile.php?id=123456', you only need to enter '123456', and to use your username, if your Facebook URL is 'http://facebook.com/yourname', you only need to enter 'yourname'.</p>
 <p><u><b>Website Title</b></u>
-<br />If you have a website, you can enter the title here. This will be the text the URL (below) will attached to.</p>
+<br />If you have a website, you can enter the title here. This will be the text the URL (below) will be attached to.</p>
 <p><u><b>Website URL</b></u>
 <br />Here you can enter the URL to your website. Note, this must be a full URL. (i.e. include http:// )</p>
 ~;
@@ -107,7 +107,7 @@ $SectionBody5 = qq~The Options section of your YaBB profile allows you to edit f
 <p><u><b>Time Offset</b></u>
 <br />Since your time may be different from the server, you can enter your correct time zone to adjust it accordingly.</p>
 <p><u><b>Enable Automatic Daylight Savings Time Change</b></u><br />
-Checking this option will add or subtract an hour from your time zone as appropriate. NOTE: Times for starting and stopping DST varies around the world, and a server located in one geographic area may not display DST corrections correctly for a user in a different geograhic zone.</p>
+Checking this option will add or subtract an hour from your time zone as appropriate. NOTE: Times for starting and stopping DST varies around the world, and a server located in one geographic area may not display DST corrections correctly for a user in a different geographic zone.</p>
 <p><u><b>Template</b></u>
 <br />If the webmaster of this YaBB forum has more than one template available for use, you may choose one from this box.</p>
 <p><u><b>Language</b></u>
@@ -119,7 +119,7 @@ Checking this option will add or subtract an hour from your time zone as appropr
 ### Section 6
 #############################################
 $SectionSub6 = "Buddy_List";
-$SectionBody6 = qq~The <u><b>Buddy List</b></u> section of the profile gives you the ability to add other members that your frequently contact to a list that will show in your User CP view.  Your Buddy List will display each name, their Online/Offline status, and link options to send the user a PM, an e-Mail, or visit the link to their website.<br />
+$SectionBody6 = qq~The <u><b>Buddy List</b></u> section of the profile gives you the ability to add other members that your frequently contact to a list that will show in your User CP view.  Your Buddy List will display each name, their Online/Offline status, and link options to send the user a PM, an e-mail, or visit the link to their website.<br />
 <ul>
 <li>Add users to your Buddy List by clicking on the link below the Buddy List display box.</li>
 <li>Delete users from your Buddy List by double-clicking on their user name inside the Buddy List display box.</li>
@@ -131,12 +131,12 @@ $SectionBody6 = qq~The <u><b>Buddy List</b></u> section of the profile gives you
 ### Section 7
 #############################################
 $SectionSub7 = "PM_Preferences";
-$SectionBody7 = qq~This section of your profile gives you the ability to customize how you view and receive Personal Pessages from other community members.
-<p><font color="#0099CC"><b><u>USER TIP:</u></b> Keep in mind that Personal Messaging is an optional feature and will only be available if the Administrator chooses to enable it.  Likewise, some of the options listed below that are underlined may not be seen in your PM Preferences list because they are also optional at the Administrator's discression and may be disabled.</font></p>
+$SectionBody7 = qq~This section of your profile gives you the ability to customize how you view and receive Personal Messages from other community members.
+<p><font color="#0099CC"><b><u>USER TIP:</u></b> Keep in mind that Personal Messaging is an optional feature and will only be available if the Administrator chooses to enable it.  Likewise, some of the options listed below that are underlined may not be seen in your PM Preferences list because they are also optional at the Administrator's discretion and may be disabled.</font></p>
 <p><b>Ignorelist</b>
 <br />This function allows you to ignore other members by preventing you from viewing any personal messages they send. Additionally, you are given a checkbox option to disable all PMs if you wish.</p>
-<p><u><b>Notify Me of New PMs by e-Mail:</b></u>
-<br />If you would like an e-Mail when a members sends you a personal message, this options allows you to enable that feature.</p>
+<p><u><b>Notify Me of New PMs by e-mail:</b></u>
+<br />If you would like an e-mail when a members sends you a personal message, this options allows you to enable that feature.</p>
 <p><b>Enable Personal Message Popup?</b><br />
 Checking this box will display a small popup window to notify you of any new Personal Messages. If <u>not</u> checked, you will see new messages in the "greeting" at the top of the forum in this format: You have X message&#40;s&#41;, and Y new message&#40;s&#41;.</p>
 <p><b>PM Popup shows PMs in new Window?</b><br />

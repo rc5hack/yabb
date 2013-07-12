@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
+$postlngver = 'YaBB 2.5.2 $Revision: 1.0 $';
 
 %post_txt = (
 '10' => 'Save',
@@ -26,12 +24,12 @@ $postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
 '66' => 'Modify',
 '66a' => 'Modify Poll',
 '68' => 'Name',
-'69' => 'Email',
+'69' => 'E-mail',
 '70' => 'Subject',
 '71' => 'Message Icon',
 '72' => 'Message',
 '75' => 'The Name field was not filled out. It is required.',
-'76' => 'The Email field was not filled out. It is required.',
+'76' => 'The E-mail field was not filled out. It is required.',
 '77' => 'The Subject field was not filled out. It is required.',
 '78' => 'The Message Body was not filled out. It is required.',
 '79' => 'It appears that you are trying to write using ALL CAPS.\\n    Please be aware this is against forum rules.',
@@ -56,7 +54,7 @@ $postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
 '255' => 'Underline',
 '256' => 'Centered',
 '257' => 'Insert Hyperlink',
-'258' => 'Insert Email',
+'258' => 'Insert E-mail',
 '259' => 'Insert Code',
 '260' => 'Insert Quote',
 '261' => 'Insert List',
@@ -95,17 +93,17 @@ $postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
 '295' => 'Cool',
 '296' => 'Huh',
 '297' => 'Add Smilies',
-# next 4 entrys for MSIE and Safari; these are inside JavaScript!!!
+# next 4 entries for MSIE and Safari; these are inside JavaScript!!!
 '329'  => 'Shortcut: Press [<i>Alt</i>]+[<i>s</i>] to Post Message or [<i>Alt</i>]+[<i>p</i>] to Preview',
 '329a' => 'Shortcut: Press [<i>Alt</i>]+[<i>s</i>] to Save Poll',
 '329b' => 'Shortcut: Press [<i>Alt</i>]+[<i>s</i>] to Send Message or [<i>Alt</i>]+[<i>d</i>] to Save as Draft',
 '329c' => 'Shortcut: Press [<i>Alt</i>]+[<i>s</i>] to Send Message, [<i>Alt</i>]+[<i>d</i>] to Save as Draft or [<i>Alt</i>]+[<i>p</i>] to Preview',
-# next 4 entrys for FF; these are inside JavaScript!!!
+# next 4 entries for FF; these are inside JavaScript!!!
 '330'  => 'Shortcut: Press [<i>Shift</i>]+[<i>Alt</i>]+[<i>s</i>] to Post Message or [<i>Shift</i>]+[<i>Alt</i>]+[<i>p</i>] to Preview',
 '330a' => 'Shortcut: Press [<i>Shift</i>]+[<i>Alt</i>]+[<i>s</i>] to Save Poll',
 '330b' => 'Shortcut: Press [<i>Shift</i>]+[<i>Alt</i>]+[<i>s</i>] to Send Message or [<i>Shift</i>]+[<i>Alt</i>]+[<i>d</i>] to Save as Draft',
 '330c' => 'Shortcut: Press [<i>Shift</i>]+[<i>Alt</i>]+[<i>s</i>] to Send Message, [<i>Shift</i>]+[<i>Alt</i>]+[<i>d</i>] to Save as Draft or [<i>Shift</i>]+[<i>Alt</i>]+[<i>p</i>] to Preview',
-# next 4 entrys for ALL browsers on Mac platforms; these are inside JavaScript!!!
+# next 4 entries for ALL browsers on Mac platforms; these are inside JavaScript!!!
 '331'  => 'Shortcut: Press [<i>Ctrl</i>]+[<i>s</i>] to Post Message or [<i>Ctrl</i>]+[<i>p</i>] to Preview',
 '331a' => 'Shortcut: Press [<i>Ctrl</i>]+[<i>s</i>] to Save Poll',
 '331b' => 'Shortcut: Press [<i>Ctrl</i>]+[<i>s</i>] to Send Message or [<i>Ctrl</i>]+[<i>d</i>] to Save as Draft',
@@ -130,7 +128,7 @@ $postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
 '470' => 'N/A',
 '470a' => '<i>Ex Member</i>',
 '473' => 'This name is already in use by another member.',
-'500' => 'Please enter a valid Email address.',
+'500' => 'Please enter a valid E-mail address.',
 '507' => 'Preview',
 '526' => 'Embarrassed',
 '527' => 'Lips Sealed',
@@ -171,7 +169,7 @@ $postlngver = 'YaBB 2.5 AE $Revision: 1.36 $';
 'addsmilies' => 'Add Smilies',
 'yabbc' => 'Add YaBBC tags',
 'name' => 'Name',
-'email' => 'Email',
+'email' => 'E-mail',
 'alertmod' => 'Send an alert to Board Moderator about this post',
 'favorite' => 'Add to your Favorites',
 'notfav' => 'Check this if you wish to add this topic to your Favorites',

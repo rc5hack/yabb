@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$smtpplver = 'YaBB 2.5 AE $Revision: 1.13 $';
+$smtpplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 eval q^
@@ -75,7 +73,7 @@ sub use_smtp {
 				&fatal_error("smtp_error","[$code]: $smtp_txt{$code}<br /><br /><b>$smtp_txt{'5'}</b><br />$sendlog");
 #				return 0;
 			}
-			
+
 			&send_line ("%s\r\n", encode_smtp64 ($authuser, ""));
 
 			($code, $text, $more) = &get_line;
@@ -95,7 +93,7 @@ sub use_smtp {
 		}
 		# Or finally PLAIN if nothing else was supported.
 		elsif ($auth_ok == 0 && ($features{'AUTH'} =~ /PLAIN/i || $smtp_auth_required == 1 || $smtp_auth_required == 4)) {
-			&send_line ("AUTH PLAIN %s\r\n", 
+			&send_line ("AUTH PLAIN %s\r\n",
 			encode_smtp64 ("$authuser\0$authuser\0$authpass", ""));
 			($code, $text, $more) = &get_line;
 			if ($code != 235 && $smtp_auth_required != 4)
@@ -112,7 +110,7 @@ sub use_smtp {
 #			return 0;
 		}
 	}
-	
+
 	# build the Date per RFC822 - uses gmtime to create date & time stamp
 	($smtpsec, $smtpmin, $smtphour, $smtpmday, $smtpmon, $smtpyear, $smtpwday, $smtpyday, $smtpisdst) = gmtime($date + (3600 * $timeoffset));
 	$smtpyear       = sprintf("%02d", ($smtpyear - 100));
@@ -148,7 +146,7 @@ sub use_smtp {
 	&send_line ("QUIT\r\n");
 	if ($smtp_from eq ""){ $proto_error = "$smtp_txt{'no_from'}<br />"; }
 	if ($smtp_to eq ""){ $proto_error .= "$smtp_txt{'no_to'}<br />"; }
-	if ($proto_error){ 
+	if ($proto_error){
 		&fatal_error("smtp_error","<br />$proto_error<br />$sendlog");
 	}
 	return 1;
@@ -181,7 +179,7 @@ sub encode_cram_md5 ($$$) {
 	my ($ticket64, $username, $password) = @_;
 	my $ticket = decode_smtp64($ticket64) or
 		die ("Unable to decode Base64 encoded string '$ticket64'\n");
-	
+
 	my $password_md5 = hmac_md5_hex($ticket, $password);
 	return encode_smtp64 ("$username $password_md5", "");
 }
@@ -267,7 +265,7 @@ sub say_hello ($) {
 	}
 	return 1;
 }
-	
+
 sub read_features ($) {
 	my ($featref) = $_[0];
 	# Empty the hash

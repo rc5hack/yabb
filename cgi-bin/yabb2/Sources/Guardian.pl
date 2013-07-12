@@ -3,22 +3,20 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$guardianplver = 'YaBB 2.5 AE $Revision: 1.12 $';
+$guardianplver = 'YaBB 2.5.2 $Revision: 1.2 $';
 
 $not_from   = qq~$webmaster_email~;
 $not_to     = qq~$webmaster_email~;
-$abuse_time = &timeformat($date,1,0,1);
+$abuse_time = &timeformat($date,1,1,1);
 $abuse_time =~ s/<.*?>(.*?)<\/.*?>/$1/g;
 
 sub guard {
@@ -117,7 +115,7 @@ sub guard {
 					$not_body .= qq~$guardian_txt{'abuse_harvester'}: $agent\n\n~;
 					$not_body .= qq~$mbname, $guardian_txt{'main'}~;
 					$not_subject =~ s~\&trade\;~~g;
-					$not_body    =~ s~\&trade\;~~g; 
+					$not_body    =~ s~\&trade\;~~g;
 					&guardian_notify($not_to, $not_subject, $not_body, $not_from);
 				}
 				if ($use_htaccess && $harvester_htaccess && !$iamadmin && !$iamgmod) {
@@ -177,7 +175,7 @@ sub guard {
 					$not_body    = qq~$guardian_txt{'string_abuse'} $guardian_txt{'abuse'} $maintxt{'30'} $abuse_time\n\n~;
 					$not_body .= qq~$guardian_txt{'abuse_user'}: $username -> (${$uid.$username}{'realname'})\n~;
 					$not_body .= qq~$guardian_txt{'abuse_ip'}: $user_ip\n~;
-					if ($use_htaccess && $string_htaccess && !$iamadmin && !$iamgmod) {
+					if ($use_htaccess && $string_htaccess && !$iamadmin && !$iamgmod && $action ne "downloadfile") {
 						$not_body .= qq~$guardian_txt{'htaccess_added'}: $user_ip,\n~;
 					}
 					$not_body .= qq~$guardian_txt{'abuse_string'}: $_\n~;

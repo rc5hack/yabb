@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$loginoutplver = 'YaBB 2.5 AE $Revision: 1.25 $';
+$loginoutplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if ($regcheck) { require "$sourcedir/Decoder.pl"; }
@@ -23,6 +21,7 @@ if ($regcheck) { require "$sourcedir/Decoder.pl"; }
 $regstyle = '';
 
 sub Login {
+	if (!$iamguest && $sessionvalid == 1) { &fatal_error("logged_in_already",$username); }
 	$sharedLogin_title = $loginout_txt{'34'};
 	$yymain .= &sharedLogin . qq~<script type="text/javascript" language="JavaScript">
 <!--
@@ -34,6 +33,7 @@ sub Login {
 }
 
 sub Login2 {
+	if (!$iamguest && $sessionvalid == 1) { &fatal_error("logged_in_already",$username); }
 	&fatal_error("no_username") if ($FORM{'username'} eq "");
 	&fatal_error("no_password") if ($FORM{'passwrd'}  eq "");
 	$username = $FORM{'username'};
@@ -109,7 +109,8 @@ sub Login2 {
 		$FORM{'sredir'} =~ s/x3B/;/g;
 		$FORM{'sredir'} =~ s/search2/search/g;
 		$FORM{'sredir'} = qq~?$FORM{'sredir'}~;
-		$FORM{'sredir'} = '' if $FORM{'sredir'} =~ /action=(register|login2)/;
+#		$FORM{'sredir'} = '' if $FORM{'sredir'} =~ /action=(register|login2)/;
+		$FORM{'sredir'} = '' if $FORM{'sredir'} =~ /action=(register|login2|reminder|reminder2)/;
 	}
 	$yySetLocation = qq~$scripturl$FORM{'sredir'}~;
 	&redirectexit;
@@ -165,8 +166,9 @@ $border
 		<td class="windowbg" width="5%" valign="middle" align="center"><img src="$imagesdir/login.gif" border="0" alt="" /></td>
 		<td class="windowbg2" align="center" valign="middle" style="padding: 10px;">~;
 	}
-	if ($maintenance || !$regtype) { $dbutton = ' disabled="disabled"'; }
-	$sharedlog .= qq~
+    if ($maintenance) { $hide_passbutton = " visibility: hidden;"; }
+    if ($maintenance || !$regtype) { $hide_regbutton = " visibility: hidden;"; }
+    	$sharedlog .= qq~
 			<form name="loginform" action="$scripturl?action=login2" method="post">
 				<input type="hidden" name="sredir" value="$INFO{'sesredir'}" />
 				<div style="width: 600px;">
@@ -179,7 +181,7 @@ $border
 					</span>
 					<span style="float: left; width: 27%; text-align: right; margin-bottom: 5px;">
 						&nbsp;<br />
-						<input type="button" value="$maintxt{'97'}"$dbutton style="width: 160px;" onclick="location.href='$scripturl?action=register'" tabindex="6" class="button" />
+                                    <input type="button" value="$maintxt{'97'}" style="width: 160px;$hide_regbutton" onclick="location.href='$scripturl?action=register'" tabindex="6" class="button" />
 					</span>
 				</div>
 				<div style="width: 600px;">
@@ -207,8 +209,8 @@ $border
 					</span>
 					<span style="float: left; width: 27%; text-align: right; margin-bottom: 5px;">
 						&nbsp;<br />
-						<input type="button" value="$loginout_txt{'315'}"$dbutton style="width: 160px;" onclick="location.href='$scripturl?action=reminder'" tabindex="5" class="button" />
-					</span>
+                                    <input type="button" value="$loginout_txt{'315'}" style="width: 160px;$hide_passbutton" onclick="location.href='$scripturl?action=reminder'" tabindex="5" class="button" />
+                              </span>
 					<br /><br />
 				</div>
 				<div style="width: 600px; text-align: left; color: red; font-weight: bold; display: none" id="shared_login">$loginout_txt{'capslock'}</div>
@@ -227,8 +229,10 @@ $border_bottom
 }
 
 sub Reminder {
+#	if (!$iamguest) { &fatal_error("logged_in_already",$username); }
+	if (!$iamguest && $sessionvalid == 1) { &fatal_error("logged_in_already",$username); }
 	$yymain .= qq~<br /><br />
-<form action="$scripturl?action=reminder2" method="post">
+<form action="$scripturl?action=reminder2" method="post" name="reminder" onsubmit="return CheckReminderField();">
 <table border="0" width="400" cellspacing="1" cellpadding="3" align="center" class="bordercolor">
 	<tr>
 	<td class="titlebg">
@@ -237,7 +241,7 @@ sub Reminder {
 	</tr><tr>
 	<td class="windowbg">
 	<label for="user"><span class="text1"><b>$loginout_txt{'35'}:</b></span></label>
-	<input type="text" name="user" id="user" $regstyle />
+	<input type="text" name="user" id="user" $regstyle size="50" />
 	</td>
 	</tr>
 ~;
@@ -267,7 +271,20 @@ sub Reminder {
 	</tr>
 </table>
 </form>
-<br /><br />
+<script type="text/javascript" language="JavaScript">
+<!--
+    document.reminder.user.focus();
+
+    function CheckReminderField() {
+        if (document.reminder.user.value == '') {
+            alert("$loginout_txt{'error_user_info'}");
+            document.reminder.user.focus();
+        return false;
+        }
+        return true;
+    }
+//-->
+</script> <br /><br />
 ~;
 
 	$yytitle = $loginout_txt{'669'};
@@ -276,7 +293,9 @@ sub Reminder {
 }
 
 sub Reminder2 {
+	if (!$FORM{'user'}) { &fatal_error("", "$loginout_txt{'error_user_info'}"); }
 	# generate random ID for password reset.
+	if (!$iamguest && $sessionvalid == 1) { &fatal_error("logged_in_already",$username); }
 	my $randid = &keygen(8,"A");
 
 	if ($regcheck) {
@@ -287,9 +306,9 @@ sub Reminder2 {
 	$user =~ s/\s/_/g;
 
 	if (!-e "$memberdir/$user.vars"){
-		$test_id = &MemberIndex("who_is", $user);
+		$test_id = &MemberIndex("who_is", $FORM{'user'});
 		if ($test_id) { $user = $test_id; }
-		else { &fatal_error("bad_credentials"); }
+		else { &fatal_error("", "$loginout_txt{'no_user_info_exists'}"); }
 	}
 
 	# Fix to make it load in their own language
@@ -335,7 +354,8 @@ sub Reminder2 {
 	<b>$loginout_txt{'192'} $FORM{'user'}</b></td>
       </tr>
 </table>
-<br /><p align="center"><a href="$scripturl">$loginout_txt{'193'}</a></p><br />
+<br /><p align="center"><a href="$scripturl">$maintxt{'go_to_board'}</a></p><br />
+
 ~;
 	$yytitle = "$loginout_txt{'669'}";
 	&template;

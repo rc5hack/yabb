@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$settings_securityplver = 'YaBB 2.5 AE $Revision: 1.16 $';
+$settings_securityplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Sessions');
@@ -100,10 +98,10 @@ if ($regcheck) {
 		},
 		{
 			description => qq~<label for="captchastyle">$floodtxt{'style'}</label>~,
-			input_html => qq~<select name="captchastyle" id="captchastyle" size="1"> 
-			<option value="L"${isselected($captchastyle eq "L")}>$floodtxt{'lower'}</option> 
-			<option value="U"${isselected($captchastyle eq "U")}>$floodtxt{'upper'}</option> 
-			<option value="A"${isselected($captchastyle eq "A")}>$floodtxt{'all'}</option> 
+			input_html => qq~<select name="captchastyle" id="captchastyle" size="1">
+			<option value="L"${isselected($captchastyle eq "L")}>$floodtxt{'lower'}</option>
+			<option value="U"${isselected($captchastyle eq "U")}>$floodtxt{'upper'}</option>
+			<option value="A"${isselected($captchastyle eq "A")}>$floodtxt{'all'}</option>
 			</select>~,
 			name => 'captchastyle',
 			validate => 'text',
@@ -170,17 +168,17 @@ if ($regcheck) {
 		},
 		{
 			description => qq~<label for="distortion">$floodtxt{'dis'}</label>~,
-			input_html => qq~<select name="distortion" id="distortion" size="1"> 
-			<option value="0"${isselected($distortion == 0)}>0</option> 
-			<option value="1"${isselected($distortion == 1)}>1</option> 
-			<option value="2"${isselected($distortion == 2)}>2</option> 
-			<option value="3"${isselected($distortion == 3)}>3</option> 
-			<option value="4"${isselected($distortion == 4)}>4</option> 
-			<option value="5"${isselected($distortion == 5)}>5</option> 
-			<option value="6"${isselected($distortion == 6)}>6</option> 
-			<option value="7"${isselected($distortion == 7)}>7</option> 
-			<option value="8"${isselected($distortion == 8)}>8</option> 
-			<option value="9"${isselected($distortion == 9)}>9</option> 
+			input_html => qq~<select name="distortion" id="distortion" size="1">
+			<option value="0"${isselected($distortion == 0)}>0</option>
+			<option value="1"${isselected($distortion == 1)}>1</option>
+			<option value="2"${isselected($distortion == 2)}>2</option>
+			<option value="3"${isselected($distortion == 3)}>3</option>
+			<option value="4"${isselected($distortion == 4)}>4</option>
+			<option value="5"${isselected($distortion == 5)}>5</option>
+			<option value="6"${isselected($distortion == 6)}>6</option>
+			<option value="7"${isselected($distortion == 7)}>7</option>
+			<option value="8"${isselected($distortion == 8)}>8</option>
+			<option value="9"${isselected($distortion == 9)}>9</option>
 			</select>~,
 			name => 'distortion',
 			validate => 'number',

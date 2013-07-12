@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 5, 2012                                             #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$managetemplatesplver = 'YaBB 2.5 AE $Revision: 1.28 $';
+$managetemplatesplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Templates');
@@ -1248,7 +1246,7 @@ function tohex(i) {
 		idiff = eval(ihex + '-(' + itmp + '*16)');
 		a2 = itohex(idiff) + a2;
 		ihex = itmp;
-	} 
+	}
 	a1 = itohex(ihex);
 	return a1 + a2 ;
 }
@@ -1526,6 +1524,7 @@ sub ModifySkin {
 	$fulltemplate =~ s/({|<)yabb admin_alert(}|>)//g;
 	$fulltemplate =~ s/({|<)yabb tabadd(}|>)//g;
 	$fulltemplate =~ s/({|<)yabb addtab(}|>)//g;
+	$fulltemplate =~ s/({|<)yabb syntax_js(}|>)//g;
 
 	if ($selectedsection eq "vboard") {
 		$boardtempl = &BoardTempl($viewboard, $tempimages, $tempimagesdir);
@@ -1567,7 +1566,7 @@ sub ModifySkin {
 	<tr valign="middle">
 		<td align="left" class="windowbg2">
 		<div style="float: left; width: 30%; padding: 3px;"><label for="templateset"><b>$templ_txt{'10'}</b></label></div>
-		
+
 		<div style="float: left; width: 69%;">
 			<input type="hidden" name="button" value="0" />
 			<select name="templateset" id="templateset" size="1" onchange="submit();">
@@ -1924,7 +1923,7 @@ sub MessageTempl {
 	$bdpic = qq~ <img src="$_[1]/boards.gif" alt="$templ_txt{'72'}" border="0" align="middle" /> ~;
 	$message_permalink = $messageindex_txt{'10'};
 	$temp_attachment = qq~<img src="$_[1]/paperclip.gif" alt="$messageindex_txt{'5'}" />~;
-	
+
 	$messageindex_template =~ s/({|<)yabb home(}|>)/$mbname/g;
 	$messageindex_template =~ s/({|<)yabb category(}|>)/$tempcatnm/g;
 	$messageindex_template =~ s/({|<)yabb board(}|>)/$tempboardnm/g;
@@ -2170,7 +2169,7 @@ sub MyCenterTempl {
 	my $tmpimagesdir = $imagesdir;
 	$imagesdir = $_[1];
 	require "$templatesdir/$_[0]/MyCenter.template";
-	
+
 	$tabsep = qq~<img src="$imagesdir/tabsep211.png" border="0" alt="" style="float: left; vertical-align: middle;" />~;
 	$tabfill = qq~<img src="$imagesdir/tabfill.gif" border="0" alt="" style="vertical-align: middle;" />~;
 
@@ -2194,7 +2193,7 @@ sub MyCenterTempl {
 	$mycenter_template =~ s/{yabb mccontent}/$MCContent/g;
 	$mycenter_template =~ s/{yabb mctitle}/$mctitle/g;
 	$mycenter_template =~ s/{yabb selecthtml}/$selecthtml/g;
-	
+
 	$mycenter_template =~ s~img src\=\"$tmpimagesdir\/(.+?)\"~&TmpImgLoc($1, $_[1], $_[2])~eisg;
 	$mycenter_template =~ s~img src\=\"$_[1]\/(.+?)\"~&TmpImgLoc($1, $_[1], $_[2])~eisg;
 	$imagesdir = $tmpimagesdir;

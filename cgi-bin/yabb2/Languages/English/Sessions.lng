@@ -3,27 +3,25 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 5, 2012                                             #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$sessionslngver = 'YaBB 2.5 AE $Revision: 1.8 $';
+$sessionslngver = 'YaBB 2.5.2 $Revision: 1.1 $';
 
 %session_txt = (
 '1' => 'Activate Session ID\'s?',
-'2' => 'This protects the Administrative Functions based on a three part Session Key based on IP address',
+'2' => 'This protects the Administrative Functions using a three part Session Key based on IP address',
 '3' => "Your Session has expired, as you entered the forum from a different IP address ($user_ip)",
 '4' => 'To check your credentials answer the following question you entered in your profile',
 '6' => 'You failed to validate your credentials and are logged out',
 '8' => 'Select your Session Revalidation Question here',
-'9' => 'To check your credentials select a question and provide an answer to Revalidate an Admin session',
+'9' => 'To check your credentials select a question and provide an answer to revalidate your session',
 '9a' => 'If you select your password as validation you can leave the field empty.',
 '10' => 'You did not select a Session Question in your profile<br />so the only way to check your credentials is your password.',
 );

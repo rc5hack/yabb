@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$yabbcplver = 'YaBB 2.5 AE $Revision: 1.40 $';
+$yabbcplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Post');
@@ -30,7 +28,7 @@ sub MakeSmileys {
 	$message =~ s/(\W|^)\[smil(ie|ey)=(\S+?\.(gif|jpg|png|bmp))\]/$1<img src="$smiliesurl\/$3" border="0" alt="$post_txt{'287'}" title="$post_txt{'287'}" \/>/ig;
 	$message =~ s/(\W|^);-?\)/$1<img src="$imagesdir\/wink.gif" border="0" alt="$post_txt{'292'}" title="$post_txt{'292'}" \/>/g;
 	$message =~ s/(\W|^);D/$1<img src="$imagesdir\/grin.gif" border="0" alt="$post_txt{'293'}" title="$post_txt{'293'}" \/>/g;
-	$message =~ s/(\W|^):'\(/$1<img src="$imagesdir\/cry.gif" border="0" alt="$post_txt{'530'}" title="$post_txt{'530'}" \/>/g;
+	$message =~ s/(\W|^):'\(/$1<img src="$imagesdir\/cry.gif" border="0" alt="$post_txt{'530'}" title="$post_txt{'530'}" \/>/g; #' make my text editor happy;
 	$message =~ s/(\W|^):-\//$1<img src="$imagesdir\/undecided.gif" border="0" alt="$post_txt{'528'}" title="$post_txt{'528'}" \/>/g;
 	$message =~ s/(\W|^):-X/$1<img src="$imagesdir\/lipsrsealed.gif" border="0" alt="$post_txt{'527'}" title="$post_txt{'527'}" \/>/g;
 	$message =~ s/(\W|^):-\[/$1<img src="$imagesdir\/embarassed.gif" border="0" alt="$post_txt{'526'}" title="$post_txt{'526'}" \/>/g;
@@ -61,7 +59,7 @@ sub MakeSmileys {
 
 	$i = 0;
 	while ($message =~ s/\[HTML$i\]/$HTMLtags[$i]/s) { $i++; }
-	
+
 	return $message;
 }
 
@@ -90,7 +88,7 @@ sub quotemsg {
 			&LoadUser($qauthor); # it was an old style user id which could be loaded and screen name set to final author
 			$fqauthor = ${$uid.$qauthor}{'realname'};
 		}
-		$qmessage =~ s~\/me\s+(.*?)(\n|\Z)(.*?)~<span style="color: #FF0000;">* $fqauthor $1</span>$2$3~ig;
+		$qmessage =~ s~\/me\s+(.*?)(\n|\Z)(.*?)~<i><span style="color: #FF0000;"><b>$fqauthor says:</b><\/span> $1<\/i>$2$3~ig;
 	}
 	# next 2 lines: for display names in Quotes in LivePreview
 	$usernames_life_quote{$usernames_life_quote{'temp_quote_autor'}} = $fqauthor;
@@ -102,7 +100,7 @@ sub quotemsg {
 	elsif ($qlink eq 'impost') {
 		$_ = $daytxt ? $post_txt{'600a_d'} : $post_txt{'600a'};
 		$_ =~ s~AUTHOR2~$scripturl?action=viewprofile;username=$useraccount{$qauthor}~g; }
-	elsif ($GLOBAL::ACTION ne 'imshow' && $GLOBAL::ACTION ne 'imsend' && $GLOBAL::ACTION ne 'imsend2') { $_ = $daytxt ? $post_txt{'600_d'} : $post_txt{'600'}; }
+	elsif ($action ne 'imshow' && $action ne 'imsend' && $action ne 'imsend2') { $_ = $daytxt ? $post_txt{'600_d'} : $post_txt{'600'}; }
 	else  { $_ = $daytxt ? $post_txt{'599_d'} : $post_txt{'599'}; }
 	$_ =~ s~AUTHOR~$fqauthor~g;
 	$_ =~ s~QUOTELINK~$scripturl?num=$qlink~g;
@@ -117,7 +115,7 @@ sub parseimgflash {
 	my $char_160  = chr(160);
 	my $hardspace = qq~&nbsp;~;
 	if (!$showimageinquote) {
-		$tmp_message =~ s~\[img(.+?)\]~[img\]~isg;
+		$tmp_message =~ s~\[img (.+?)\]~[img\]~isg;
 		$tmp_message =~ s~\[img\](?:\s|\t|\n|$hardspace|$char_160)*(http\:\/\/)*(.+?)(?:\s|\t|\n|$hardspace|$char_160)*\[/img\]~\[url\]$1$2\[\/url\]~isg;
 	}
 	$tmp_message;
@@ -194,8 +192,8 @@ sub sizefont {
 
 	sub noparse {
 		my $noubbc = $_[0];
-		$noubbc =~ s~([\/\]\[\.])~$killhash{$1}~g;
-		$noubbc;
+        $noubbc =~ s~([;!\(\)\-\.\/:\?\[\\\]\^D])~$killhash{$1}~g;
+		return $noubbc;
 	}
 }
 
@@ -219,12 +217,12 @@ sub imagemsg {
 	$attribut =~ s/(\s|$char_160)+/ /g;
 	foreach (split(/ +/, $attribut)) {
 		my ($key, $value) = split(/=/, $_);
-		$value =~ s/["']//g;
+		$value =~ s/["']//g; #" make my text editor happy;
 		$parameter{$key} = $value;
 	}
 
 	$parameter{'name'} = $type ? 'signat_img_resize' : 'post_img_resize';
-	$parameter{'alt'} =~ s/[<>"]/*/g;
+	$parameter{'alt'} =~ s/[<>"]/*/g; #" make my text editor happy;
 	$parameter{'alt'} ||= "...";
 	$parameter{'align'}  =~ s~[^a-z]~~ig;
 	$parameter{'width'}  =~ s~\D~~g;
@@ -237,48 +235,36 @@ sub imagemsg {
 	$rest . ((!$linkedimg && $img_greybox) ? qq~<a href="$url" rel="gb_image[nice_pics]" title="$parameter{'alt'}">~ : '') . qq~<img src="$url" name="$parameter{'name'}" alt="$parameter{'alt'}" title="$parameter{'alt'}"$parameter{'align'}$parameter{'width'}$parameter{'height'} border="0" style="display:none" />~ . ((!$linkedimg && $img_greybox) ? '</a>' : '');
 }
 
+#greybox image bug fixed;
 sub DoUBBC {
-    my $msg = _do_ubbc($message);
-	$message = $msg;
-}
-
-sub _do_ubbc {
-    my $message = join "", @_;
-	return $message if $ns eq "NS" || $message =~ s/#nosmileys//isg;
-
 	my $image_type = $_[0];
+	if ( $ns eq 'NS' || $message =~ s/#nosmileys//isgm ) { return $message; }
 
-	if($message =~ m{(.*?)\[noparse\](.*)}) {
-		my ($beginning, $temp, $middle, $end) = (undef, undef, undef, undef);
-		($beginning, $temp) = ($1, $2);
-		if($temp =~ m{(.*?)\[/noparse\](.*)}) {
-			my ($middle, $end) = ($1, $2);
-			return _do_ubbc($beginning).noparse($middle)._do_ubbc($end);			
-		}
-		else {
-			return _do_ubbc($beginning).noparse($temp);
-		}
-	}
+    $message =~ s/\[noparse\](.*?)(\[\/noparse\]|$)/noparse($1)/eisgm;
+    $message =~ s/\[code\]/ \[code\]/igsm;
+    $message =~ s/\[\/code\]/ \[\/code\]/igsm;
+    $message =~ s/\[quote\]/ \[quote\]/igsm;
+    $message =~ s/\[\/quote\]/ \[\/quote\]/igsm;
+    $message =~ s/\[glow\]/ \[glow\]/igsm;
+    $message =~ s/\[\/glow\]/ \[\/glow\]/igsm;
+    $message =~ s/<br>|<br \/>/\n/igsm;
+    $message =~ s/<br>\x1f|<br \/>\x1f/\n/igsm;
+    $message =~ s/\[code\s*(.*?)\]\n*(.+?)\n*\[\/code\]/&codemsg($2,$1)/eisgm
+      ;    # [code] must come at first! At least before image transformation!
 
-	$message =~ s~\[code\]~ \[code\]~ig;
-	$message =~ s~\[/code\]~ \[/code\]~ig;
+    $message =~ s/\[([^\]\[]{0,30})\n([^\]\[]{0,30})\]/\[$1$2\]/gsm;
+    $message =~ s/\[\/([^\]\[]{0,30})\n([^\]\[]{0,30})\]/\[\/$1$2\]/gsm;
 
-	$message =~ s~\[quote\]~ \[quote\]~ig;
-	$message =~ s~\[/quote\]~ \[/quote\]~ig;
-	$message =~ s~\[glow\]~ \[glow\]~ig;
-	$message =~ s~\[/glow\]~ \[/glow\]~ig;
-	$message =~ s~<br>|<br />~\n~ig;
-	$message =~ s~\[code\s*(.*?)\]\n*(.+?)\n*\[/code\]~&codemsg($2,$1)~eisg; # [code] must come at first! At least before image transformation!
-
-	$message =~ s~\[([^\]\[]{0,30})\n([^\]\[]{0,30})\]~\[$1$2\]~g;
-	$message =~ s~\[/([^\]\[]{0,30})\n([^\]\[]{0,30})\]~\[/$1$2\]~g;
-	#$message =~ s~(\w+://[^<>\s\n\"\]\[]+)\n([^<>\s\n\"\]\[]+)~$1\n$2~g;
-	$message =~ s~\[b\](.*?)\[/b\]~<b>$1</b>~isg;
-	$message =~ s~\[i\](.*?)\[/i\]~<i>$1</i>~isg;
-	$message =~ s~\[u\](.*?)\[/u\]~<u>$1</u>~isg;
-	$message =~ s~\[s\](.*?)\[/s\]~<s>$1</s>~isg;
-	$message =~ s~\[glb\](.*?)\[/glb\]~<div style="display:inline; font-weight: bold;">$1</div>~isg;
-	$message =~ s~( |&nbsp;)*\[move\](.*?)\[/move\]~<marquee>$2</marquee>~isg;
+    #$message =~ s~(\w+://[^<>\s\n\"\]\[]+)\n([^<>\s\n\"\]\[]+)~$1\n$2~g;
+    $message =~ s/\[b\](.*?)\[\/b\]/<b>$1<\/b>/isgm;
+    $message =~ s/\[i\](.*?)\[\/i\]/<i>$1<\/i>/isgm;
+    $message =~ s/\[u\](.*?)\[\/u\]/<span class="u">$1<\/span>/isgm;
+    $message =~
+s/\[s\](.*?)\[\/s\]/<span style="text-decoration: line-through">$1<\/span>/isgm;
+    $message =~ s/\[glb\](.*?)\[\/glb\]/<div class="glb">$1<\/div>/isgm;
+#    $message =~
+#s/( |&nbsp;)*\[move\](.*?)\[\/move\]/<div style="overflow: auto; overflow-style: marquee-line; white-space:nowrap">$2<\/div>/isg;
+	$message =~ s/( |&nbsp;)*\[move\](.*?)\[\/move\]/<marquee>$2<\/marquee>/isg;
 
 	# Quote message
 	while ($message =~ s~\[quote(\s+author=(.*?)\s+link=(.*?)\s+date=(.*?)\s*)?\]\n*(.*?)\n*\[/quote\]~ &quotemsg($2,$3,$4,$5) ~eisg) { }
@@ -395,7 +381,8 @@ sub _do_ubbc {
 
 	$message =~ s~\[edit\](.*?)\[/edit\]~<b>$post_txt{'603'}: </b><br /><div class="editbg" style="overflow: auto;">$1</div>~isg;
 
-	$message =~ s~/me ~<i>$displayname</i> ~ig;
+#	$message =~ s~/me ~<i>$displayname</i> ~ig;
+	$message =~ s~/me\s+(.*)~<i><span style="color: #FF0000;"><b>$displayname  says:</b></span> '$1'</i>~ig;
 
 	if($message =~ /\[media/ || $message =~ /\[flash/) {
 		require "$sourcedir/MediaCenter.pl";

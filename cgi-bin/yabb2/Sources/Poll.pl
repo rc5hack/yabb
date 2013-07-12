@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$pollplver = 'YaBB 2.5 AE $Revision: 1.18 $';
+$pollplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Poll');
@@ -78,7 +76,7 @@ sub DoVote {
 	print FILE "$user_ip|$username|$vote|$date\n";
 	print FILE @polled;
 	fclose(FILE);
-			
+
 	if ($start) { $start = "/$start"; }
 	if ($INFO{'scp'}) {
 		$yySetLocation = qq~$scripturl~;
@@ -152,7 +150,7 @@ sub UndoVote {
 	fopen(FILE, ">$datadir/$pollnum.polled");
 	print FILE @polled;
 	fclose(FILE);
-			
+
 	if ($start) { $start = "/$start"; }
 	if ($INFO{'scp'}) {
 		$yySetLocation = qq~$scripturl~;
@@ -266,14 +264,14 @@ sub votedetails {
 	}
 	&ToChars($boardname);
 	$yytitle = $polltxt{'42'};
-	
+
 	$template_home = qq~<a href="$scripturl" class="nav">$mbname</a>~;
 	$template_cat = qq~<a href="$scripturl?catselect=$curcat" class="nav">$cat</a>~;
 	$template_board = qq~<a href="$scripturl?board=$currentboard" class="nav">$boardname</a>~;
 	$curthreadurl = qq~<a href="$scripturl?num=$pollnum" class="nav">$psub</a> &rsaquo; $polltxt{'42'}~;
-	
+
 	$yynavigation = qq~&rsaquo; $template_cat &rsaquo; $template_board &rsaquo; $curthreadurl~;
-	
+
 	$yymain .= qq~
 <br />
 <form action="$scripturl?action=undovote;num=$pollnum$start" method="post" style="display: inline;">

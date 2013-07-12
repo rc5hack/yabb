@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mainlngver = 'YaBB 2.5 AE $Revision: 1.31 $';
+$mainlngver = 'YaBB 2.5.2 $Revision: 1.0 $';
 
 $yycharset = 'ISO-8859-1';
 $abbr_lang = 'en-us';
@@ -33,7 +31,7 @@ $abbr_lang = 'en-us';
 'board' => 'Board',
 'cat' => 'Category',
 '0' => 'Send PM to',
-'1' => 'Send Email to',
+'1' => 'Send E-mail to',
 '2' => 'View',
 '3' => '\'s Profile',
 '4' => 'Add',
@@ -137,6 +135,7 @@ $abbr_lang = 'en-us';
 'redirecttext' => 'If you see this message, it means that the redirection didn\'t work.',
 'redirectlink' => 'Click here',
 'noscript' => 'You must enable JavaScript to get full functionality for this forum!',
+'go_to_board' => 'Go to the Board Index', 
 );
 
 %load_txt = (
@@ -235,8 +234,8 @@ $abbr_lang = 'en-us';
 'recentposts' => ' &raquo; 10 most recent Posts',
 );
 
-## pm to email forward
-$forwardedpm = qq~This alert was forwarded as Email~;
+## pm to e-mail forward
+$forwardedpm = qq~This alert was forwarded as e-mail~;
 
 %reg_txt = (
 'reason' => 'Please state your reason(s) for applying for membership in this forum',
@@ -255,6 +254,7 @@ $forwardedpm = qq~This alert was forwarded as Email~;
 );
 
 
-$yycopyright = qq~<span class="copyright"><a href="$boardurl/$yyexec.$yyext" class="copyright">$mbname</a> &#187; Powered by <a href="http://www.yabbforum.com" class="copyright">$YaBBversion</a>!<br />\n<a href="http://www.yabbforum.com" class="copyright">YaBB Forum Software</a> &copy; 2000-2010. All Rights Reserved.</span>~;
+timetostring($date);
+$yycopyright = qq~<span class="copyright"><a href="$boardurl/$yyexec.$yyext" class="copyright">$mbname</a> &#187; Powered by <a href="http://www.yabbforum.com" class="copyright">$YaBBversion</a>!<br />\n<a href="http://www.yabbforum.com" class="copyright">YaBB Forum Software</a> &copy; 2000-$year. All Rights Reserved.</span>~;
 
 1;

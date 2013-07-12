@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$displayplver = 'YaBB 2.5 AE $Revision: 1.62 $';
+$displayplver = 'YaBB 2.5.2 $Revision: 1.2 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('Display');
@@ -131,7 +129,7 @@ sub Display {
 		$showmodgroups =~ s/, \Z/)/;
 	}
 
-	## now we've established credentials,
+	## now we have established credentials,
 	## can this user bypass locks?
 	## work out who can bypass locked thread post only if bypass switched on
 	if ($mstate =~ /l/i) {
@@ -158,7 +156,7 @@ sub Display {
 	if ((!$iamguest || $enable_guestposting) && &AccessCheck($currentboard, 2) eq 'granted') {
 		$replybutton = qq~$menusep<a href="~ . ($enable_quickreply && $enable_quickjump ? 'javascript:document.postmodify.message.focus();' : qq~$scripturl?action=post;num=$viewnum;virboard=$vircurrentboard;title=PostReply~);
 		$bypassReplyButton = $replybutton . qq~" onclick="return confirm('$display_txt{'posttolocked'}');">$img{'reply'}</a> ~;
-		$replybutton .= qq~">$img{'reply'}</a> ~;
+		$replybutton .= qq~">$img{'reply'}</a> ~; #" make my text-editor happy;
 	}
 
 	$threadclass = 'thread';
@@ -528,11 +526,13 @@ sub Display {
 					$attach_gif{$ext} = ($ext && -e "$forumstylesdir/$useimages/$ext.gif") ? "$ext.gif" : "paperclip.gif";
 				}
 				my $filesize = -s "$uploaddir/$_";
+				$urlname = $_;
+				$urlname =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
 				if ($filesize) {
 					if ($_ =~ /\.(bmp|jpe|jpg|jpeg|gif|png)$/i && $amdisplaypics == 1) {
-						$showattach .= qq~<div class="small" style="float:left; margin:8px;"><a href="$scripturl?action=downloadfile;file=$_" target="_blank"><img src="$imagesdir/$attach_gif{$ext}" border="0" align="bottom" alt="" /> $_</a> (~ . int($filesize / 1024) . qq~ KB | <acronym title='$attach_count{$_} $fatxt{'41a'}' class="small">$attach_count{$_}</acronym> )<br />~ . ($img_greybox ? ($img_greybox == 2 ? qq~<a href="$scripturl?action=downloadfile;file=$_" rel="gb_imageset[nice_pics]" title="$_">~ : qq~<a href="$scripturl?action=downloadfile;file=$_" rel="gb_image[nice_pics]" title="$_">~) : qq~<a href="$scripturl?action=downloadfile;file=$_" target="_blank">~) . qq~<img src="$uploadurl/$_" name="attach_img_resize" alt="$_" title="$_" border="0" style="display:none" /></a></div>\n~;
+						$showattach .= qq~<div class="small" style="float:left; margin:8px;"><a href="$scripturl?action=downloadfile;file=$urlname" target="_blank"><img src="$imagesdir/$attach_gif{$ext}" border="0" align="bottom" alt="" /> $_</a> (~ . int($filesize / 1024) . qq~ KB | <acronym title='$attach_count{$_} $fatxt{'41a'}' class="small">$attach_count{$_}</acronym> )<br />~ . ($img_greybox ? ($img_greybox == 2 ? qq~<a href="$scripturl?action=downloadfile;file=$urlname" rel="gb_imageset[nice_pics]" title="$_">~ : qq~<a href="$scripturl?action=downloadfile;file=$urlname" rel="gb_image[nice_pics]" title="$_">~) : qq~<a href="$scripturl?action=downloadfile;file=$urlname" target="_blank">~) . qq~<img src="$uploadurl/$_" name="attach_img_resize" alt="$_" title="$_" border="0" style="display:none" /></a></div>\n~;
 					} else {
-						$attachment .= qq~<div class="small"><a href="$scripturl?action=downloadfile;file=$_"><img src="$imagesdir/$attach_gif{$ext}" border="0" align="bottom" alt="" /> $_</a> (~ . int($filesize / 1024) . qq~ KB | <acronym title='$attach_count{$_} $fatxt{'41a'}' class="small">$attach_count{$_}</acronym> )</div>~;
+						$attachment .= qq~<div class="small"><a href="$scripturl?action=downloadfile;file=$urlname"><img src="$imagesdir/$attach_gif{$ext}" border="0" align="bottom" alt="" /> $_</a> (~ . int($filesize / 1024) . qq~ KB | <acronym title='$attach_count{$_} $fatxt{'41a'}' class="small">$attach_count{$_}</acronym> )</div>~;
 					}
 				} else {
 					$attachment .= qq~<div class="small"><img src="$imagesdir/$attach_gif{$ext}" border="0" align="bottom" alt="" />  $_ ($fatxt{'1'}~ . (exists $attach_count{$_} ? qq~ | <acronym title='$attach_count{$_} $fatxt{'41a'}' class="small">$attach_count{$_}</acronym> ~ : '') . qq~)</div>~;
@@ -592,6 +592,7 @@ sub Display {
 			$memberinfo = "$memberinfo{$musername}$addmembergroup{$musername}";
 
 			$aimad = ${$uid.$musername}{'aim'} ? qq~$menusep${$uid.$musername}{'aim'}~ : '';
+			$memailad = ${ $uid . $musername }{'email'} ? qq~$menusep${$uid.$musername}{'email'}~ : q{};
 			$icqad = ${$uid.$musername}{'icq'} ? qq~$menusep${$uid.$musername}{'icq'}~ : '';
 			$yimad = ${$uid.$musername}{'yim'} ? qq~$menusep${$uid.$musername}{'yim'}~ : '';
 			$msnad = ${$uid.$musername}{'msn'} ? qq~$menusep${$uid.$musername}{'msn'}~ : '';
@@ -616,14 +617,14 @@ sub Display {
 			$memberinfo = $display_txt{'28'};
 			$usernamelink = qq~<b>$mname</b>~;
 			$displayname = $mname;
-			$cryptmail = &scramble($memail, $musername);
+			$cryptmail = &scramble($memailad, $musername);
 		}
 		$usernames_life_quote{$useraccount{$musername}} = $displayname; # for display names in Quotes in LivePreview
 
 		# Insert 2
 		if ((!${$uid.$musername}{'hidemail'} || $iamadmin || $allow_hide_email != 1 || $musername eq 'Guest') && !$exmem) {
-			$template_email = $menusep . &enc_eMail($img{'email_sm'},$memail,'','');
-			if ($iamadmin) { $template_email =~ s~title=\\"$img_txt{'69'}\\"~title=\\"$memail\\"~; }
+			$template_email = $menusep . &enc_eMail($img{'email_sm'},$memailad,'','');
+			if ($iamadmin) { $template_email =~ s~title=\\"$img_txt{'69'}\\"~title=\\"$memailad\\"~; }
 		}
 		if ($iamguest) { $template_email = ''; }
 
@@ -687,7 +688,7 @@ sub Display {
 					}
 				}
 			}
-			if ($sessionvalid == 1 && ($iamadmin || $iamgmod || $iammod || ($username eq $musername && !$exmem && (!$tlnomodflag || $date < $mdate + ($tlnomodtime * 3600 * 24))))) {
+			if ($sessionvalid == 1 && ($iamadmin || $iamgmod || $iammod || ($username eq $musername && (!$tlnomodflag || $date < $mdate + ($tlnomodtime * 3600 * 24))))) {
 				$template_modify = qq~$menusep<a href="$scripturl?board=$currentboard;action=modify;message=$counter;thread=$viewnum">$img{'modify'}</a>~;
 			} else {
 				$template_modify = '';
@@ -695,7 +696,7 @@ sub Display {
 			if ($counter > 0 && ($iamadmin || $iamgmod || $iammod) && $sessionvalid == 1) {
 				$template_split = qq~$menusep<a href="$scripturl?action=split_splice;board=$currentboard;thread=$viewnum;oldposts=~ . join(',%20', ($counter .. $mreplies)) . qq~;leave=0;newcat=$curcat;newboard=$currentboard;newthread=new;ss_submit=1" onclick="return confirm('$display_txt{'split_confirm'}');">$img{'admin_split'}</a>~;
 			}
-			if ($sessionvalid == 1 && ($iamadmin || $iamgmod || $iammod || ($username eq $musername && !$exmem && (!$tlnodelflag || $date < $mdate + ($tlnodeltime * 3600 * 24))))) {
+			if ($sessionvalid == 1 && ($iamadmin || $iamgmod || $iammod || ($username eq $musername && (!$tlnodelflag || $date < $mdate + ($tlnodeltime * 3600 * 24))))) {
 				$template_delete = qq~$menusep<span style="cursor: pointer; cursor: hand;" onclick="if(confirm('$display_txt{'rempost'}')) {uncheckAllBut($counter);}">$img{'delete'}</span>~;
 				if ((($iammod && $mdmod == 1) || ($iamadmin && $mdadmin == 1) || ($iamgmod && $mdglobal == 1)) && $sessionvalid == 1) {
 					$template_admin = qq~<input type="checkbox" class="$css" style="border: 0px;" name="del$counter" value="$counter" />~;

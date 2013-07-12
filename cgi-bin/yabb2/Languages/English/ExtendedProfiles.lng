@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$extendedprofileslngver = 'YaBB 2.5 AE $Revision: 1.3 $';
+$extendedprofileslngver = 'YaBB 2.5.2 $Revision: 1.1 $';
 
 %lang_ext = (
 'true' => 'yes',
@@ -39,9 +37,9 @@ $extendedprofileslngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 'reorder fields' => 'reorder fields',
 'reorder_title' => 'Reorder Profile Fields',
 'create_new_title' => 'Create New Profile Field',
-'admin_description' => 'Welcome to the Extended Profiles Administration Controls. Here you can add, modify, remove and reorder additional profile fields for your members. But before you start, you should know a couple of things:<br /><br />Before you start adding fields wildly, make sure to think about what fields you really want/need. Try to avoid late and big changes because your members may have to modify their profiles according to these changes everytime they are made. Also note that as more fields you add, as bigger your profiles will be.<br /><br />Finally make sure your board is in <b>maintenance mode</b> before adding or deleting fields to avoid users who change their profile while changes are made.',
-'create_new_description' => 'Here you can create new profile fields. Before you create a field, be sure which type you want. Although it is possible to change the type afterwards, it is not recommented. After you created a new field, make sure to goto the options screen for more advanced settings. The field name can be choosen freely, there are no limitations. You can even use html.<br /><br />Using the \'Create Profile\' button may take some time since it has to go through all profile files.',
-'edit_description' => 'Apply modifications to existing profile fields here. You can change the active state and the name without much concern. But <b>before you modify the field type</b>, you should know the following: <br /><br />Changing the fieldtype from radiobuttons to dropdown lists and the other way around is no problem. However if you for example turn a radiobutton field to textbox, you should concern this modifcation does not affect the data which users may already have entered in their profiles. So if a user has choosen the first option and you turn it into a textbox, he will have a 0 in this field until he changes his profile.<br />To clear whatever the user had in this field, you should rather delete the whole field and than add a new one. That\'s the only way to clear a specific field\'s content.<br />Also make sure to change the options of this field since different types may have different options available.<br /><br />Using the \'Delete\' button may take some time since it has to go through all profile files.',
+'admin_description' => 'Welcome to the Extended Profiles Administration Controls. Here you can add, modify, remove and reorder additional profile fields for your members. But before you start, you should know a couple of things:<br /><br />Before you start adding fields wildly, make sure to think about what fields you really want/need. Try to avoid late and big changes because your members may have to modify their profiles according to these changes every time they are made. Also note that as more fields you add, as bigger your profiles will be.<br /><br />Finally make sure your board is in <b>maintenance mode</b> before adding or deleting fields to avoid users who change their profile while changes are made.',
+'create_new_description' => 'Here you can create new profile fields. Before you create a field, be sure which type you want. Although it is possible to change the type afterwards, it is not recommended. After you created a new field, make sure to goto the options screen for more advanced settings. The field name can be chosen freely, there are no limitations. You can even use html.<br /><br />Using the \'Create Profile\' button may take some time since it has to go through all profile files.',
+'edit_description' => 'Apply modifications to existing profile fields here. You can change the active state and the name without much concern. But <b>before you modify the field type</b>, you should know the following: <br /><br />Changing the fieldtype from radiobuttons to dropdown lists and the other way around is no problem. However if you for example turn a radiobutton field to textbox, you should concern this modification does not affect the data which users may already have entered in their profiles. So if a user has chosen the first option and you turn it into a textbox, he will have a 0 in this field until he changes his profile.<br />To clear whatever the user had in this field, you should rather delete the whole field and than add a new one. That\'s the only way to clear a specific field\'s content.<br />Also make sure to change the options of this field since different types may have different options available.<br /><br />Using the \'Delete\' button may take some time since it has to go through all profile files.',
 'no_additional_fields_set' => 'no additional fields set',
 'active' => 'Active',
 'field_name' => 'Field Name',
@@ -53,7 +51,7 @@ $extendedprofileslngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 'radiobuttons' => 'Radiobuttons',
 'checkbox' => 'Checkbox',
 'date' => 'Date',
-'email' => 'Email',
+'email' => 'E-mail',
 'url' => 'Url',
 'spacer' => 'Spacer',
 'apply' => 'Apply',
@@ -79,24 +77,24 @@ $extendedprofileslngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 'req1' => 'required',
 'req2' => 'not required but show on registration anyway',
 'visible_in_viewprofile' => 'Visible In ViewProfile',
-'visible_in_viewprofile_description' => 'Check if you want this field to be displayed on the viewprofile page. You can limit it to certain users and/or groups by entering names in the fields on the right. Seperate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
+'visible_in_viewprofile_description' => 'Check if you want this field to be displayed on the viewprofile page. You can limit it to certain users and/or groups by entering names in the fields on the right. Separate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
 'v_users' => 'limit to users',
 'v_groups' => 'limit to groups',
 'visible_in_posts' => 'Visible In Posts',
-'visible_in_posts_description' => 'Check if you want this field to be displayed in post view, right under the author information. You can limit it to certain users and/or groups by entering names in the fields on the right. Seperate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
+'visible_in_posts_description' => 'Check if you want this field to be displayed in post view, right under the author information. You can limit it to certain users and/or groups by entering names in the fields on the right. Separate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
 'visible_in_posts_popup' => 'Visible In Posts (as popup)',
-'visible_in_posts_popup_description' => 'Check if you want this field to be displayed in post view as a popup window, right under the authors name. You can limit it to certain users and/or groups by entering names in the fields on the right. Seperate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
+'visible_in_posts_popup_description' => 'Check if you want this field to be displayed in post view as a popup window, right under the authors name. You can limit it to certain users and/or groups by entering names in the fields on the right. Separate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
 'p_users' => 'limit to users',
 'p_groups' => 'limit to groups',
 'display_fieldname' => 'display fieldname',
 'visible_in_memberlist' => 'Visible In Memberlist',
-'visible_in_memberlist_description' => 'Check if you want this field to be displayed in the memberlist. You can limit it to certain users and/or groups by entering names in the fields on the right. Seperate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
+'visible_in_memberlist_description' => 'Check if you want this field to be displayed in the memberlist. You can limit it to certain users and/or groups by entering names in the fields on the right. Separate by comma if you have multiple. Example: username1,username2. Leave the fields empty if you want the information to be visible for all.',
 'm_users' => 'limit to users',
 'm_groups' => 'limit to groups',
 'editable_by_user' => 'Editable By User',
 'editable_by_user_description' => 'Here you can choose if only admin should be able to change this setting. In that case, it will become invisible for the user in editprofile. You can also choose on what profile page to display this setting.',
 'limit_len' => 'Limit Length',
-'limit_len_description' => 'Limits the maximum amount of characters. Set to 0 or leave empty to disable the limit. <b>Warning</b>: It is recommented to set a limit. Anything else can cause VERY big profile files.',
+'limit_len_description' => 'Limits the maximum amount of characters. Set to 0 or leave empty to disable the limit. <b>Warning</b>: It is recommended to set a limit. Anything else can cause VERY big profile files.',
 'width' => 'Display Width',
 'width_description' => 'This controls the \'width\' setting of the input box. Leave empty to use the browser\'s default value.',
 'is_numeric' => 'Value Must Be Numeric',
@@ -134,8 +132,8 @@ $extendedprofileslngver = 'YaBB 2.5 AE $Revision: 1.3 $';
 'image_height' => 'Height',
 'image_height_description' => 'Set a value if you want to limit the image height to a specific value. Leave blank to disable limit.',
 'allowed_extensions' => 'Allowed Extensions',
-'allowed_extensions_description' => 'Limit this field to specific file extensions by entering a list of extensions seperated by spaces. E.g. \'jpg jpeg gif png bmp\'. Leave blank to disable limit.',
-'converter_missing_vars' => 'Can\'t open the old Variables folder you specified. PLease make sure that your input is correct and that the permissions are set properly (777 for the folder and 666 for all its files).',
+'allowed_extensions_description' => 'Limit this field to specific file extensions by entering a list of extensions separated by spaces. E.g. \'jpg jpeg gif png bmp\'. Leave blank to disable limit.',
+'converter_missing_vars' => 'Can\'t open the old Variables folder you specified. Please make sure that your input is correct and that the permissions are set properly (777 for the folder and 666 for all its files).',
 'converter_missing_fields' => 'File extended_profiles_fields.txt does not exist in the folder you specified',
 'converter_missing_order' => 'File extended_profiles_order.txt does not exist in the folder you specified',
 'converter_notcreated_fields' => 'Couldn\'t create new extended_profiles_fields.txt, please check permissions (777) on your Variables folder.',

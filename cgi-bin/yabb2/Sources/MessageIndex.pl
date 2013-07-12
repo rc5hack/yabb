@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$messageindexplver = 'YaBB 2.5 AE $Revision: 1.52 $';
+$messageindexplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 &LoadLanguage('MessageIndex');
@@ -194,7 +192,7 @@ sub MessageIndex {
 
 			$pageindexjs = qq~
 <script language="JavaScript1.2" type="text/javascript">
-<!-- 
+<!--
 	function SelDec(decparam, visel) {
 		splitparam = decparam.split("|");
 		var vistart = parseInt(splitparam[0]);
@@ -328,7 +326,7 @@ sub MessageIndex {
 		}
 
 		$permlinkboard = ${$mnum}{'board'} eq $annboard ? $annboard : $currentboard;
-		my $permdate = &permtimer($_);
+		my $permdate = &permtimer($mnum);
 		my $message_permalink = qq~<a href="http://$perm_domain/$symlink$permdate/$permlinkboard/$mnum">$messageindex_txt{'10'}</a>~;
 
 		$threadclass = 'thread';
@@ -464,7 +462,7 @@ sub MessageIndex {
 		my $alt = $attachments{$mnum} == 1 ? $messageindex_txt{'5'} : $messageindex_txt{'4'};
 		$temp_attachment = $attachments{$mnum} ?
 			(($guest_media_disallowed && $iamguest) ?
-				qq~<img src="$imagesdir/paperclip.gif" alt="$messageindex_txt{'3'} $attachments{$mnum} $alt" title="$messageindex_txt{'3'} $attachments{$mnum} $alt" />~ : 
+				qq~<img src="$imagesdir/paperclip.gif" alt="$messageindex_txt{'3'} $attachments{$mnum} $alt" title="$messageindex_txt{'3'} $attachments{$mnum} $alt" />~ :
 				qq~<a href="javascript:void(window.open('$scripturl?action=viewdownloads;thread=$mnum','_blank','width=800,height=650,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,top=150,left=150'))">~ . qq~<img src="$imagesdir/paperclip.gif" alt="$messageindex_txt{'3'} $attachments{$mnum} $alt" title="$messageindex_txt{'3'} $attachments{$mnum} $alt" style="border-style:none;" /></a>~) :
 			"";
 
@@ -823,7 +821,7 @@ sub MarkRead { # Mark all threads in this board as read.
 
 sub ListPages {
 	my ($pcount, $maxvalue, $tlink);
-	if ($INFO{'num'} ne '') { 
+	if ($INFO{'num'} ne '') {
 		$tlink = $INFO{'num'};
 		$pcount = ${$INFO{'num'}}{'replies'} + 1;
 		$maxvalue = $maxmessagedisplay;
@@ -854,7 +852,7 @@ sub ListPages {
 </head>
 <body style="min-width: 350px;">
 	<script language="JavaScript1.2" type="text/javascript">
-	<!-- 
+	<!--
 	function opp_page(tid,pid) {
 		opener.location= "$scripturl?$jcode" + tid + "/" + pid;
 		self.close();

@@ -3,20 +3,18 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
 # Many thanks to AK108 (http://fkp.jkcsi.com/) for his contibution to the YaBB community
 
-$backupplver = 'YaBB 2.5 AE $Revision: 1.3 $';
+$backupplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Add in support for Archive::Tar in the Modules directory and binaries in different places
@@ -39,7 +37,7 @@ my %dirs = (
 	    'html' => "yabbfiles",
 	    'upld' => "yabbfiles/Attachments $backup_txt{'and'} yabbfiles/avatars/UserAvatars",
 	    );
-	    
+
 &is_admin_or_gmod;
 
 sub backupsettings {
@@ -224,7 +222,7 @@ sub backupsettings {
      </tr>~;
 
 	my $label_id;
-	foreach $module qw(Compress::Zlib Compress::Bzip2) {
+	foreach $module (qw(Compress::Zlib Compress::Bzip2)) {
 		$label_id++;
 		$input = qq~name="tarmodulecompress" id="label_$label_id" value="$module" $methodchecklist{$module}~;
 		eval "use $module();";
@@ -258,7 +256,7 @@ sub backupsettings {
        </td>
      </tr>~;
 
-	foreach $command qw(/bin/gzip /bin/bzip2) {
+	foreach $command (qw(/bin/gzip /bin/bzip2)) {
 		$label_id++;
 		$input = qq~name="bintarcompress" id="label_$label_id" value="$command" $methodchecklist{$command}~;
 		$newcommand = &CheckPath($command);
@@ -339,7 +337,7 @@ sub backupsettings {
      </tr>~;
 
 	# Display the modules that we can use
-	foreach $module qw(Archive::Tar Archive::Zip) {
+	foreach $module (qw(Archive::Tar Archive::Zip)) {
 		$i++;
 		$input = qq~name="backupmethod" id="backupmethod3_$i" value="$module" onclick="domodulecheck('$module')" $methodchecklist{$module}~;
 		eval "use $module();";
@@ -461,7 +459,11 @@ $presetjavascriptcode
 		if ($lastbackupfiletime && $lastbackup == $lastbackupfiletime) {
 			$lastbackupfiletime = &timeformat($lastbackup,1);
 			$lastbackupfiletime =~ s/<.*?>//g;
-			$lastbackupfiletime =~ s/ .+// if $backupmethod eq '/usr/bin/zip';
+			if ($backupmethod eq '/usr/bin/zip') {
+#                            $lastbackupfiletime =~ s/ .+//;
+                        @lbt = split / /, $lastbackupfiletime;
+                        $lastbackupfiletime = join q{ }, $lbt[0],$lbt[1],$lbt[2];
+                        }
 			$yymain .= qq~</td></tr><tr><td align="center">
          <input type="button" name="submit2" value="$backup_txt{'25a'} $lastbackupfiletime" onclick="BackupNewest($lastbackup);" class="button" />~;
 		}
@@ -579,7 +581,7 @@ sub check_backup_settings {
 
 sub print_BackupSettings {
 	my @newpaths;
-	foreach my $path qw(src bo lan mem mes temp var html upld) {
+	foreach my $path (qw(src bo lan mem mes temp var html upld)) {
 		foreach (@backup_paths) {
 			if ($_ eq $path) { push(@newpaths, $path); last; }
 		}

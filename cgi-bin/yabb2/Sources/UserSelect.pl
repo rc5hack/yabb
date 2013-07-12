@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$userselectplver = 'YaBB 2.5 AE $Revision: 1.55 $';
+$userselectplver = 'YaBB 2.5.2 $Revision: 1.1 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if ($iamguest && $INFO{'toid'} ne "userspec" && $action ne "checkavail") { &fatal_error("members_only"); }
@@ -147,14 +145,14 @@ sub MemberList {
 			$LetterLinks .= qq~<div style="float: left; text-align: center; padding-left: 2px; padding-right: 2px; margin-top: 1px; margin-bottom: 1px;"><a href="$scripturl?action=imlist;sort=$INFO{'sort'};toid=$to_id;letter=all"><span class="small"><b>$usersel_txt{'allsearch'}</b></span></a></div>~;
 		}
 	}
-	if ($to_id eq 'groups') { $LetterLinks = ''; } 
+	if ($to_id eq 'groups') { $LetterLinks = ''; }
 	unless ($INFO{'letter'} eq 'all') { $letter = lc($INFO{'letter'}); }
 
 	$i = 0;
 	$recent_exist = 1;
 	@recentUsers = ();
 
-	if ($to_id =~ /toshow/ || $to_id =~ /buddylist/ || $to_id =~ /ignore/) { 
+	if ($to_id =~ /toshow/ || $to_id =~ /buddylist/ || $to_id =~ /ignore/) {
 		&loadRecentPMs;
 	}
 	if (!@recentUsers) {
@@ -175,7 +173,7 @@ sub MemberList {
 			fopen(FILE, ">$memberdir/$username.usctmp");
 			foreach $membername (sort { lc $memberinf{$a} cmp lc $memberinf{$b} } keys %memberinf) {
 				($memrealname, $mememail, undef) = split(/\|/, $memberinf{$membername}, 3);
-				## don't find own name - unless for search or board mods!
+				## do not find own name - unless for search or board mods!
 				if ($to_id !~ /moderators\d/ && $to_id !~ /userspec/) {
 					if ($memrealname =~ /$LookFor/ig && $membername ne $username  ) {
 						print FILE "$membername,$memrealname|$mememail\n";
@@ -205,7 +203,7 @@ sub MemberList {
 		$ToShow[0] = 'bmallmembers';
 		$ToShow[1] = '';
 		$ToShow[2] = 'bmadmins';
-		$ToShow[3] = 'bmgmods'; 
+		$ToShow[3] = 'bmgmods';
 		$ToShow[4] = 'bmmods';
 		$ToShow[5] = '';
 		my $x = 6;
@@ -289,7 +287,7 @@ sub MemberList {
 			} else {
 				my $groupName = '';
 				my $groupdisabled = '';
-				if ($user ne '') { 
+				if ($user ne '') {
 					$groupName = $usersel_txt{$user};
 					if ($groupName eq '') { $groupName = (split /\|/, $NoPost{$user})[0]; }
 					$user = $user eq 'bmallmembers' ? 'all' : ($user eq 'bmadmins' ? 'admins' : ($user eq 'bmgmods' ? 'gmods' : ($user eq 'bmmods' ? 'mods' : $user)));
@@ -423,7 +421,7 @@ sub buildIndex {
 
 				$pageindexjs = qq~
 <script language="JavaScript1.2" type="text/javascript">
-<!-- 
+<!--
 	function SelDec(decparam, visel) {
 		splitparam = decparam.split("|");
 		var vistart = parseInt(splitparam[0]);
@@ -719,7 +717,7 @@ sub loadRecentPMs {
 		## split down to all strings of names
 		my ($messid, $fromName, $toNames, $toCCNames, $toBCCNames, undef, undef, undef, undef, undef, undef, $messStatus, undef) = split(/\|/, $usermessage); # pull name from PM
 		if ($messStatus =~ /b/ || $messStatus =~ /g/) { next; }
-		## push all name strings 
+		## push all name strings
 		if ($fromName && $fromName ne $username) { push(@recentUsers, $fromName); }
 		if ($toNames) {
 			foreach my $listItem (split(/\,/, $toNames)) {
@@ -736,7 +734,7 @@ sub loadRecentPMs {
 				if ($listItem ne $username) { push(@recentUsers, $listItem); }
 			}
 		}
-	}	
+	}
 	@recentUsers = &undupe(@recentUsers);
 	@recentUsers = sort @recentUsers;
 	return @recentUsers;
@@ -800,7 +798,7 @@ sub checkUserAvail {
      &LoadLanguage('Register');
 
      my $taken = "false";
-     
+
      fopen(RESERVE, "$vardir/reserve.txt") || &fatal_error("cannot_open","$vardir/reserve.txt", 1);
      @reserve = <RESERVE>;
      fclose(RESERVE);
@@ -824,7 +822,7 @@ sub checkUserAvail {
      } elsif ($INFO{'type'} eq "display") {
  	    $INFO{'display'} =~ s~\A\s+|\s+\z~~g;
  	    $type = $register_txt{'111'};
- 	    if (lc $INFO{'display'} eq lc &MemberIndex("check_exist", $INFO{'display'})) {
+ 	    if ((lc $INFO{'display'} eq lc &MemberIndex("check_exist", $INFO{'display'})) && (lc $INFO{'display'} ne lc ${$uid.$username}{'realname'})) {
  		    $taken = "true";
  	    }
  	    if ($matchname) {
@@ -857,7 +855,7 @@ sub checkUserAvail {
  		    }
  	    }
      }
-     
+
      if ($taken eq "false") {
  	    $avail = qq~<img src="$imagesdir/check.png">&nbsp;&nbsp;<span style="color:#00dd00">$type$register_txt{'114'}</span>~;
      } elsif ($taken eq "true") {

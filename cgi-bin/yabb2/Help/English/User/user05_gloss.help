@@ -137,7 +137,7 @@ $SectionBody1 = qq~YaBB has many descriptive terms that refer to its component p
   <dt><b>&#40;PM&#41; Personal Message or Private Message</b></dt>
   <dd>An inner-forum communication similar to an email that is seen only by the sender and the recipient. PMs can be accessed in the User Control Panel.</dd> 
   <dt><b>Profile</b></dt>
-  <dd>This consists of the user's Profile Page and Profile Settings. It is sometimes used synonomously with Profile Page, as in "I see in your Profile &#40;page&#41; you have 1200 posts."</dd>
+  <dd>This consists of the user's Profile Page and Profile Settings. It is sometimes used synonymously with Profile Page, as in "I see in your Profile &#40;page&#41; you have 1200 posts."</dd>
   <dt><b>Profile Page</b></dt>
   <dd>This is a page where a user's information is displayed, such as display name, number of posts, date registered, link to their website, last posts made by user, etc. You can access a user's profile page by clicking on their Display Name.</dd>  
   <dt><b>Profile Settings</b></dt>

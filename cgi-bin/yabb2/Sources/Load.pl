@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$loadplver = 'YaBB 2.5 AE $Revision: 1.43 $';
+$loadplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 
 sub LoadBoardControl {
 	my ($cntcat, $cntboard, $cntpic, $cntdescription, $cntmods, $cntmodgroups, $cnttopicperms, $cntreplyperms, $cntpollperms, $cntzero, $dummy, $dummy, $dummy, $cnttotals);
@@ -176,6 +174,7 @@ sub LoadUser {
 			fclose(LOADUSER);
 		}
 
+            &ToChars(${$uid.$user}{'realname'});
 		&FormatUserName($user);
 		&LoadMiniUser($user);
 
@@ -270,7 +269,8 @@ sub LoadUserDisplay {
 	}
 	&LoadCensorList;
 
-	${$uid.$user}{'weburl'} = ${$uid.$user}{'weburl'} ? qq~<a href="${$uid.$user}{'weburl'}" target="_blank">~ . ($sm ? $img{'website_sm'} : $img{'website'}) . '</a>' : '';
+    if (!$minlinkweb) { $minlinkweb = 0; }
+	${$uid.$user}{'weburl'} = (${$uid.$user}{'weburl'} && (${$uid.$user}{'postcount'} >= $minlinkweb || ${$uid.$user}{'position'} eq 'Administrator' || ${$uid.$user}{'position'} eq 'Global Moderator')) ? qq~<a href="${$uid.$user}{'weburl'}" target="_blank">~ . ($sm ? $img{'website_sm'} : $img{'website'}) . '</a>' : '';
 
 	$displayname = ${$uid.$user}{'realname'};
 	if (${$uid.$user}{'signature'}) {
@@ -725,7 +725,7 @@ sub WhatLanguage {
 #		messagestatus|flags|storefolder|attachment
 # messagestatus = c(confidential)/h(igh importance)/s(tandard)
 # parentmid stays same, reply# increments for replies, so we can build conversation threads
-# storefolder = name of storage folder. Start with in & out for everyone. 
+# storefolder = name of storage folder. Start with in & out for everyone.
 # flags - u(nread)/f(orward)/q(oute)/r(eply)/c(alled back)
 #
 # old file
@@ -853,7 +853,7 @@ sub buildIMS {
 			if ((split(/\|/, $imstore[$x]))[13] eq $currStoreFolders[$y]) {
 				$storefoldersCount[$y]++;
 			}
-		} 
+		}
 	}
 	$storeCounts = join('|', @storefoldersCount);
 
@@ -999,19 +999,19 @@ sub convert_IMSTORE {
 	foreach my $oldmessage (@oldstoremessages) {
 		my @oldformat = split(/\|/, $oldmessage);
 		my ($touser, $fromuser);
-		if ($oldformat[7] eq 'outbox') { 
+		if ($oldformat[7] eq 'outbox') {
 			$oldformat[7] = 'out';
 			$touser = $oldformat[0];
 			$fromuser = $builduser;
 			if (!$oldformat[6]) { $oldformat[6] = 'u'; }
 			elsif ($oldformat[6] == 1) { $oldformat[6] = 'r'; }
-		} elsif ($oldformat[7] eq 'inbox') { 
+		} elsif ($oldformat[7] eq 'inbox') {
 			$oldformat[7] = 'in';
 			$touser = $builduser;
 			$fromuser = $oldformat[0];
 			if ($oldformat[6] == 1) { $oldformat[6] = 'u'; }
 			elsif ($oldformat[6] == 2) { $oldformat[6] = 'r'; }
-		} 
+		}
 		push (@imstore, "$oldformat[4]|$fromuser|$touser|||$oldformat[1]|$oldformat[2]|$oldformat[3]|$oldformat[4]|0|$oldformat[5]|s|$oldformat[6]|$oldformat[7]|\n");
 	}
 	print OLDIMSTORE @imstore;

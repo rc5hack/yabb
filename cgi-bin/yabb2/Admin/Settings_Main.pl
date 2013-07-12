@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$settings_mainplver = 'YaBB 2.5 AE $Revision: 1.59 $';
+$settings_mainplver = 'YaBB 2.5.2 $Revision: 1.2 $';
 if ($action eq 'detailedversion') { return 1; }
 
 # Language requirements
@@ -104,7 +102,9 @@ my @lfilesanddirs = readdir(LNGDIR);
 close(LNGDIR);
 foreach my $fld (sort {lc($a) cmp lc($b)} @lfilesanddirs) {
 	if (-e "$langdir/$fld/Main.lng") {
-		$drawnldirs .= qq~<option value="$fld" ${isselected($fld eq $lang)}>$fld</option>~;
+	  my $displang = $fld;
+        $displang =~ s~(.+?)\_(.+?)$~$1 ($2)~gi;
+        $drawnldirs .= qq~<option value="$fld" ${isselected($fld eq $lang)}>$displang</option>~;
 	}
 }
 
@@ -158,7 +158,7 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 	"- Crypt::SSLeay &lt;- <b>" . ($modulCrypt ? $modulCrypt : $admin_txt{'377b'}) . "</b><br />" .
 	$admin_txt{'377c'};
 }
-# googiespell end 
+# googiespell end
 
 # List of settings
 @settings = (
@@ -739,6 +739,14 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 			name => 'addmemgroup_enabled',
 			validate => 'number',
 		},
+            {
+                description =>
+qq~<label for="self_del_user">$admin_txt{'586'}</label>~,
+                input_html =>
+qq~<input type="checkbox" name="self_del_user" id="self_del_user" value="1" ${ischecked($self_del_user)}/>~,
+                name     => 'self_del_user',
+                validate => 'boolean',
+            },
 		{
 			description => qq~<label for="extendedprofiles">$admin_txt{'extendedprofiles'}</label>~,
 			input_html => qq~<input type="checkbox" name="extendedprofiles" id="extendedprofiles" value="1" ${ischecked($extendedprofiles)}/>~,
@@ -836,10 +844,10 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 			validate => 'number,null',
 		},
 		{
-			description => $register_txt{'gender_reg'},
-			input_html => qq~
-			<select name="gender_on_reg" size="1">
-			  <option value="0">$register_txt{'771'}</option>
+        		description => qq~<label for="gender_on_reg">$register_txt{'gender_reg'}</label>~,
+            	input_html => qq~
+            	<select name="gender_on_reg" id="gender_on_reg" size="1">
+            	  <option value="0">$register_txt{'771'}</option>
 			  <option value="1"${isselected($gender_on_reg == 1)}>$register_txt{'gender_reg_opt'}</option>
 			  <option value="2"${isselected($gender_on_reg == 2)}>$register_txt{'gender_reg_req'}</option>
 			</select>~,
@@ -878,6 +886,15 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 			validate => 'boolean',
 			depends_on => ['regtype!=0'],
 		},
+            {
+                description =>
+                  qq~<label for="nomailspammer">$admin_txt{'nospammer'}</label>~,
+                input_html =>
+qq~<input type="checkbox" name="nomailspammer" id="nomailspammer" value="1" ${ischecked($nomailspammer)} />~,
+                name       => 'nomailspammer',
+                validate   => 'boolean',
+                depends_on => ['regtype==1'],
+            },
 		{
 			header => $settings_txt{'memberlist'},
 		},
@@ -1092,25 +1109,28 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 			depends_on => ['PM_level!=0'],
 		},
 		{
+			header => $settings_txt{'alertmessages'},
+		},
+		{
 			description => qq~<label for="PMenableGuestButton">$imtxt{'88'}</label>~,
 			input_html => qq~<input type="checkbox" name="PMenableGuestButton" id="PMenableGuestButton" value="1"${ischecked($PMenableGuestButton)} />~,
 			name => 'PMenableGuestButton',
 			validate => 'boolean',
-			depends_on => ['PMenableBm_level!=0', 'PM_level!=0'],
+			depends_on => ['PM_level!=0'],
 		},
 		{
 			description => qq~<label for="PMenableAlertButton">$imtxt{'89'}</label>~,
 			input_html => qq~<input type="checkbox" name="PMenableAlertButton" id="PMenableAlertButton" value="1"${ischecked($PMenableAlertButton)} />~,
 			name => 'PMenableAlertButton',
 			validate => 'boolean',
-			depends_on => ['PMenableBm_level!=0', 'PM_level!=0'],
+			depends_on => ['PM_level!=0'],
 		},
 		{
 			description => qq~<label for="PMAlertButtonGuests">$imtxt{'90'}</label>~,
 			input_html => qq~<input type="checkbox" name="PMAlertButtonGuests" id="PMAlertButtonGuests" value="1"${ischecked($PMAlertButtonGuests)} />~,
 			name => 'PMAlertButtonGuests',
 			validate => 'boolean',
-			depends_on => ['PMenableBm_level!=0', 'PMenableAlertButton', 'PM_level!=0'],
+			depends_on => ['PMenableAlertButton', 'PM_level!=0'],
 		},
 
 
@@ -1137,7 +1157,7 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 			name => 'numibox',
 			validate => 'number,null',
 			depends_on => ['enable_imlimit', 'PM_level!=0'],
-			 
+
 		},
 		{
 			description => qq~<label for="numstore">$imtxt{'03'} $imtxt{'46'}</label>~,
@@ -1159,7 +1179,7 @@ my $googiehtml = qq~<input type="checkbox" name="enable_spell_check" id="enable_
 			name => 'PMenable_cc',
 			validate => 'boolean',
 			depends_on => ['PM_level!=0'],
-		 
+
 		},
 		{
 			description => qq~<label for="PMenable_bcc">$imtxt{'allowbcc'}</label>~,
@@ -1280,7 +1300,8 @@ sub SaveSettings {
 	$settings{'imtext'} =~ s~\n~<br />~g;
 
 	# Fix $pwstrengthmeter_common
-	$settings{'pwstrengthmeter_common'} =~ s/'//g;
+	$settings{'pwstrengthmeter_common'} =~ s/'//g; #' make my syntax checker happy;
+	if (($settings{'set_subjectMaxLength'} < 10 && $settings{'set_subjectMaxLength'} != 0) || $settings{'set_subjectMaxLength'} > 255) { &admin_fatal_error("invalid_value", "set_subjectMaxLength ($admin_txt{'498a'})"); }
 
 	# Convert unwanted tags in Board Name
 	&ToHTML($settings{'mbname'});

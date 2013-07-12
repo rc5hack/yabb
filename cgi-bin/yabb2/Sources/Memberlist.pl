@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$memberlistplver = 'YaBB 2.5 AE $Revision: 1.24 $';
+$memberlistplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 if ($iamguest && $ML_Allowed) { &fatal_error('no_access'); }
@@ -173,7 +171,7 @@ sub MLPosition {
 			if ($_ == $memposition) {
 				$memposition = sprintf("%06d", $nopostorder{$_});
 				$TopMembers{$membername} = "d$memposition$memposts$memberrealname";
-				next memberposition; 
+				next memberposition;
 			}
 		}
 
@@ -223,7 +221,8 @@ sub showRows {
 	if ($user ne '') {
 		&LoadUser($user);
 		if (${$uid.$user}{'realname'} eq "") { ${$uid.$user}{'realname'} = $user; }
-		if (${$uid.$user}{'weburl'}) { $wwwshow = qq~<a href="${$uid.$user}{'weburl'}" target="_blank"><img src="$imagesdir/www.gif" border="0" alt="${$uid.$user}{'webtitle'}" title="${$uid.$user}{'webtitle'}" /></a>~; }
+		if (!$minlinkweb) { $minlinkweb = 0; }
+		if (${$uid.$user}{'weburl'} && (${$uid.$user}{'postcount'} >= $minlinkweb || ${$uid.$user}{'position'} eq 'Administrator' || ${$uid.$user}{'position'} eq 'Global Moderator')) { $wwwshow = qq~<a href="${$uid.$user}{'weburl'}" target="_blank"><img src="$imagesdir/www.gif" border="0" alt="${$uid.$user}{'webtitle'}" title="${$uid.$user}{'webtitle'}" /></a>~; }
 		$barchart = ${$uid.$user}{'postcount'};
 		$bartemp  = (${$uid.$user}{'postcount'} * $maxbar);
 		$barwidth = ($bartemp / $barmax);
@@ -428,7 +427,7 @@ sub buildIndex {
 	}
 
 	sub buildPages {
-		
+
 		$FindForm .= qq~
 			<form action="$scripturl?action=ml;sort=memsearch" method="post" id="form1" name="form1" enctype="application/x-www-form-urlencoded" style="display: inline;">
 			<input type="text" name="member" id="member" value="$ml_txt{'801'}" style="font-size: 11px; width: 180px;" onfocus="txtInFields(this, '$ml_txt{'801'}');" onblur="txtInFields(this, '$ml_txt{'801'}')" />
@@ -499,7 +498,7 @@ sub buildIndex {
 		<tr>
 		<td class="catbg" colspan="$headercount" width="100%" align="left" valign="middle">
 		<div style="float: left; width: 50%; text-align: left;">$pageindex2</div>
-		<div style="float: left; width: 49%; color: #AA0000; font-weight: normal; vertical-align: middle; text-align: right;">$dr_warning</div> 
+		<div style="float: left; width: 49%; color: #AA0000; font-weight: normal; vertical-align: middle; text-align: right;">$dr_warning</div>
 		$pageindexjs
 		</td>
 		</tr>

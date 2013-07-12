@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$captchaplver = 'YaBB 2.5 AE $Revision: 1.9 $';
+$captchaplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 $| = 1;
@@ -1351,7 +1349,7 @@ $ci{'z'} = qq~
 	# width, height
 	print pack 'v2', $w, $h;
 
-	# use global colour map (not local), sequential (not interlaced) 
+	# use global colour map (not local), sequential (not interlaced)
 	print "\0";
 
 	# Raster Data
@@ -1372,12 +1370,12 @@ $ci{'z'} = qq~
 			$cx = int($x / $DOT_WIDTH) % $CHAR_WIDTH; # x coord in character dots
 			$i = int($x / $DOT_WIDTH / $CHAR_WIDTH); # index into message string
 			$line = $lines[$y / $LINE_HEIGHT];
-			$c = ($i < length $line) ? substr $line, $i, 1 : ' '; 
+			$c = ($i < length $line) ? substr $line, $i, 1 : ' ';
 			$d = substr $ci{$c}, $cy * ($CHAR_WIDTH + $nl) + $cx + $nl, 1; # dot in character definition
 			if ($distortion > 0) {
 				$dis_level = 9 - $distortion;
 				if ($random_number <= $dis_level) { $di = ($d eq 'X') ? $dot : $nodot;} elsif ($random_number > $dis_level){ $di = ($d eq 'X') ? $dot : $invnodot;}
-			} else { 
+			} else {
 				$di = ($d eq 'X') ? $dot : $nodot;
 			}
 			$di = substr $di, $dy * ($DOT_WIDTH + $nl) + $nl, $DOT_WIDTH;

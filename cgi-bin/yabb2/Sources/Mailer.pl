@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$mailerplver = 'YaBB 2.5 AE $Revision: 1.27 $';
+$mailerplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub sendmail {
@@ -93,12 +91,12 @@ sub sendmail {
 		if ($@) { &fatal_error("net_fatal","$error_txt{'error_verbose'}: $@"); }
 
 		eval q^
-			$smtp->mail($from); 
+			$smtp->mail($from);
 			foreach (split(/, /, $to)) { $smtp->to($_); }
-			$smtp->data(); 
-			$smtp->datasend("To: $toheader\r\n"); 
-			$smtp->datasend("From: $fromheader\r\n"); 
-			$smtp->datasend("X-Mailer: YaBB Net::SMTP\r\n"); 
+			$smtp->data();
+			$smtp->datasend("To: $toheader\r\n");
+			$smtp->datasend("From: $fromheader\r\n");
+			$smtp->datasend("X-Mailer: YaBB Net::SMTP\r\n");
 			$smtp->datasend("Subject: $subject\r\n");
 			$smtp->datasend("Content-Type: text/plain\; charset=$charsetheader\r\n");
 			$smtp->datasend("\r\n");

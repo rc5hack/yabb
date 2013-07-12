@@ -3,18 +3,16 @@
 ###############################################################################
 # YaBB: Yet another Bulletin Board                                            #
 # Open-Source Community Software for Webmasters                               #
-# Version:        YaBB 2.5 Anniversary Edition                                #
-# Packaged:       July 04, 2010                                               #
+# Version:        YaBB 2.5.2                                                  #
+# Packaged:       October 21, 2012                                            #
 # Distributed by: http://www.yabbforum.com                                    #
 # =========================================================================== #
-# Copyright (c) 2000-2010 YaBB (www.yabbforum.com) - All Rights Reserved.     #
+# Copyright (c) 2000-2012 YaBB (www.yabbforum.com) - All Rights Reserved.     #
 # Software by:  The YaBB Development Team                                     #
 #               with assistance from the YaBB community.                      #
-# Sponsored by: Xnull Internet Media, Inc. - http://www.ximinc.com            #
-#               Your source for web hosting, web design, and domains.         #
 ###############################################################################
 
-$printpageplver = 'YaBB 2.5 AE $Revision: 1.8 $';
+$printpageplver = 'YaBB 2.5.2 $Revision: 1.0 $';
 if ($action eq 'detailedversion') { return 1; }
 
 sub Print_IM {
@@ -37,7 +35,7 @@ sub Print_IM {
 function printPage() {
 	if (window.print) {
 		agree = confirm('$maintxt{773}');
-		if (agree) window.print(); 
+		if (agree) window.print();
 	}
 }
 
@@ -174,7 +172,7 @@ sub Print {
 function printPage() {
 	if (window.print) {
 		agree = confirm('$maintxt{773}');
-		if (agree) window.print(); 
+		if (agree) window.print();
 	}
 }
 
@@ -372,8 +370,7 @@ sub donoopen {
 sub do_print {
 	$threadpost =~ s~<br />~\n~ig;
 	$threadpost =~ s~\[highlight(.*?)\](.*?)\[/highlight\]~$2~isg;
-	$threadpost =~ s~\[code\]\n*(.+?)\n*\[/code\]~<br /><b>Code:</b><br /><table cellspacing="1"><tr><td><table cellpadding="2" cellspacing="0"><tr><td><font face="Courier" size="1">$1</font></td></tr></table></td></tr></table>~isg;
-
+    $threadpost =~ s~\[code\s*(.+?)\]\n*(.+?)\n*\[/code\]~<br /><b>Code ($1):</b><br /><table cellspacing="1"><tr><td><table cellpadding="2" cellspacing="0"><tr><td><font face="Courier" size="1">$2</font></td></tr></table></td></tr></table>~isg; 
 	$threadpost =~ s~\[([^\]]{0,30})\n([^\]]{0,30})\]~\[$1$2\]~g;
 	$threadpost =~ s~\[/([^\]]{0,30})\n([^\]]{0,30})\]~\[/$1$2\]~g;
 	$threadpost =~ s~(\w+://[^<>\s\n\"\]\[]+)\n([^<>\s\n\"\]\[]+)~$1\n$2~g;
